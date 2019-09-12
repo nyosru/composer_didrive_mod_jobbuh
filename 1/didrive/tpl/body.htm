@@ -1,23 +1,42 @@
+{% spaceless %}
 
-<div class="container-fluid">
-    <div class="grid">
 
-        {# list #}
 
-        {# если редактирование, то показываем форму редактирования #}
+    <div class="container-fluid">
+        <div class="grid">
 
-        {#
-            {% if get.edit_id is defined and list.data[get.edit_id] is defined %}
+            {% set t = didrive_f__timer_start(99) %}
 
-                {% include 'vendor/didrive_mod/items/1/didrive/t/body.form_add.htm' %}
+            {% if 1 == 2 %}            
+                <div class="row">
+                    <div class="col-xs-12 col-xl-12">
+
+                        {# Выберите сотрудника #}
+                        <br/>
+
+                    </div>
+                </div>
+            {% endif %}
+
+            {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.dates.htm' %}
+
+            {% if get.d_start is defined and get.d_fin is defined %}
+
+                {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.htm' %}
 
             {% else %}
 
-                {% include 'vendor/didrive_mod/items/1/didrive/t/body.form_add.htm' %}
-                {% include 'vendor/didrive_mod/items/1/didrive/t/body.list_items.htm' %}
+                <div class="alert-warning text-center" style="padding: 5px 10px;">
+                    Выберите расчётный период
+                </div>
 
             {% endif %}
-        #}
 
+            {% set t = didrive_f__timer_stop(99) %}
+            <div class="alert-warning" style="position: fixed; bottom: 10px; right: 10px; padding: 3px 10px;">обработка всего шаблона {{ t }} сек</div>
+
+
+        </div>
     </div>
-</div>
+
+{% endspaceless %}
