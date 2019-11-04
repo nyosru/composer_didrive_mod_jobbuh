@@ -1,3 +1,4 @@
+
 .ttable{ display: table; width: 100%; }
 .ttable .trow{ display: table-row; }
 .ttable .tcell{ display: table-cell; }
@@ -60,10 +61,21 @@
 .checks_item.smena{
     background-color: rgba(0,255,0,0.3);
 }
+.checks_item.spec{
+    background-color: rgba(255,0,0,0.3);
+}
 .checks_item.plus{
     background-color: lawngreen;
 }
 .checks_item.minus{
     background-color: hotpink;
+}
+
+.checks_item.sp1{
+    background-color: rgba(0,0,0,0.05);
+}
+
+.checks_item.dolgn{
+    background-color: rgba(0,200,200,0.15);
 }
 

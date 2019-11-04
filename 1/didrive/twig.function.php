@@ -26,6 +26,20 @@ $function = new Twig_SimpleFunction('job_buh__jobman_on_sp', function ( $db, str
 $twig->addFunction($function);
 
 
+/**
+ * получаем сотрудников кто работал в указанном промежутке
+ */
+$function = new Twig_SimpleFunction('job_buh__getJobmansOnTime', function ( $db, string $date_start, string $date_finish ) {
+    
+    return \Nyos\mod\JobDesc::getJobmansOnTime($db, $date_start, $date_finish);
+    
+});
+$twig->addFunction($function);
+
+
+/**
+ * получаем список платежей по чекинам
+ */
 $function = new Twig_SimpleFunction('job_buh__get_payed', function ( $db, string $date_start, string $date_finish ) {
     
     $d = \Nyos\mod\items::getItemsSimple($db, '075.buh_oplats' );
@@ -33,7 +47,9 @@ $function = new Twig_SimpleFunction('job_buh__get_payed', function ( $db, string
     $r = [];
     
     foreach( $d['data'] as $k => $v ){
-        $r[$v['dop']['checkin']] = $v['dop'];
+        if( isset($v['dop']['checkin']) ){
+        $r[$v['dop']['checkin']][] = $v['dop'];
+        }
     }
     
     return $r;

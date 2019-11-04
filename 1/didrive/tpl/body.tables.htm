@@ -1,8 +1,21 @@
 {% spaceless %}
 
+    <style>
+        div sup{ color: rgba(0,0,0,0.05); }
+        div:HOVER > sup{ color: rgba(0,0,0,0.5); }
+    </style>
+    
+    {# таблицы если выбрана дата показа #}
+
     <div class="row">
 
         <div class="col-xs-12 col-xl-12">
+
+            {% set sps = readItems( 'sale_point', null )  %}
+            {#{ pa(sps.data,2) }#}
+
+            {% set dolgns = readItems( '061.dolgnost', null )  %}
+            {#{ pa(dolgns.data,2) }#}
 
             {% set date_start = get.d_start %}
             {% set date_finish = get.d_fin %}
@@ -10,16 +23,20 @@
             {#{ date_start }} // {{ date_finish }#}
 
             {% if 1 == 1 %}
+
                 {% set checks = job_buh__getChecksMinusPlus(db,date_start,date_finish) %}
 
-                {#                checks
-                                <div style="max-height: 250px; overflow: auto;" >
-                                    {{ pa(checks) }}
-                                </div>
-                #}
+                {% if 1 == 2 %}
+                    checks
+                    <div style="max-height: 250px; overflow: auto;" >
+                        {{ pa(checks,2) }}
+                    </div>
+                {% endif %}
+
             {% endif %}
 
 
+            {# достаём оплаты по чек инам #}
             {% if 1 == 1 %}
 
                 {% set payed = job_buh__get_payed(db,date_start,date_finish) %}
@@ -33,58 +50,64 @@
 
             {% endif %}
 
-
-
             {% if 1 == 1 %}
 
 
                 {#% set mans = readItems( '070.jobman', null )  %#}
                 {#{ pa(mans) }#}
-
-                {% set sp = readItems( 'sale_point', null )  %}
-                {#{ pa(sp.data) }#}
-
-
-                {% if 1 == 1 %}
-
-                    {#% set t = didrive_f__timer_start() %#}
-
-                    {% set jobs_on_sp = job_buh__jobman_on_sp( db, date_start, date_finish ) %}
+                {% if 1 == 2 %}
                     {% if 1 == 2 %}
-                        jobs_on_sp
-                        <div style="max-height: 300px; overflow: auto; border: 1px solid gray;" >
-                            {{ pa(jobs_on_sp) }}
-                        </div>
+
+                        {% set mans_jobs = job_buh__getJobmansOnTime( db, date_start, date_finish ) %}
+                        {% if 1 == 1 %}
+                            mans_jobs
+                            <div style="max-height: 300px; overflow: auto; border: 1px solid gray;" >
+                                {{ pa(mans_jobs) }}
+                            </div>
+                        {% endif %}
+
+
                     {% endif %}
 
-                    {#% set t = didrive_f__timer_stop() %}
-                    <br/>checki {{ t }#}
+                    {% if 1 == 2 %}
 
+                        {#% set t = didrive_f__timer_start() %#}
+
+                        {% set jobs_on_sp = job_buh__jobman_on_sp( db, date_start, date_finish ) %}
+                        {% if 1 == 1 %}
+                            jobs_on_sp
+                            <div style="max-height: 300px; overflow: auto; border: 1px solid gray;" >
+                                {{ pa(jobs_on_sp) }}
+                            </div>
+                        {% endif %}
+
+                        {#% set t = didrive_f__timer_stop() %}
+                        <br/>checki {{ t }#}
+
+                    {% endif %}
+
+                    {% if 1 == 2 %}
+                        {% set pays = job_buhGetGuhPay( db, date_start, date_finish ) %}
+
+                        {#                    pays
+                                            <div style="max-height: 300px; overflow: auto; border: 1px solid gray;" >
+                                                {{ pa(pays) }}
+                                            </div>
+                        #}
+                    {% endif %}
+
+
+                    {#% set spoint = sp.data[sp_now] %#}
+                    {#{ pa(spoint) }#}
+
+                    {% if 1 == 2 %}
+                        {% set jobs = jobdesc__get_smena_jobs( date_start, date_finish ) %}
+                        jobs
+                        <div style="max-height: 200px; overflow: auto; border: 1px solid gray;" >
+                            {{ pa(jobs) }}
+                        </div>
+                    {% endif %}
                 {% endif %}
-
-
-                {% if 1 == 2 %}
-                    {% set pays = job_buhGetGuhPay( db, date_start, date_finish ) %}
-
-                    {#                    pays
-                                        <div style="max-height: 300px; overflow: auto; border: 1px solid gray;" >
-                                            {{ pa(pays) }}
-                                        </div>
-                    #}
-                {% endif %}
-
-
-                {#% set spoint = sp.data[sp_now] %#}
-                {#{ pa(spoint) }#}
-
-                {% if 1 == 2 %}
-                    {% set jobs = get_smena_jobs( date_start, date_finish ) %}
-                    jobs
-                    <div style="max-height: 200px; overflow: auto; border: 1px solid gray;" >
-                        {{ pa(jobs) }}
-                    </div>
-                {% endif %}
-
 
                 <span style="position: relative;">
 
@@ -107,233 +130,45 @@
 
 
 
-
-
-
-
-
-
-
-
                         {#{ pa(jobs_on_sp) }#}
 
                         {#% for jobs_on_sp, v in jobs_on_sp %#}
-                        {% for sp3, v2 in jobs_on_sp.jobs_on_sp %}
+                        {% for workman_id, checks_man in checks if checks_man['fio'] is defined  %}
+
+                            {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.1user2.htm' %}
+
+                        {% endfor %}
+                        {#% endfor %#}
 
 
-                            <div class="trow stick-top2" >
-
-                                <div class="tcell" style="border: none;" >&nbsp;</div>
-                                <div class="tcell" style="background-color: lightyellow;" >
-                                    точка продаж <b>{{ sp.data[sp3]['head'] }}</b> &nbsp; <sup style="color:gray;">{{ sp3 }}</sup>
-                                </div>
-                                <div class="tcell" style="border: none;" >&nbsp;</div>
-                                <div class="tcell" style="border: none;" >&nbsp;</div>
-
-                            </div>
+                        {% if 1 == 2 %}
+                            {#% for jobs_on_sp, v in jobs_on_sp %#}
+                            {% for sp3, v2 in mans_jobs.jobs_on_sp %}
 
 
-
-                            {% for jman, v3 in v2 %}
-
-                                {#
-                                <hr>
-                                <br/>
-                                {{ jobs_on_sp }} - {{ v }} -2 {{ who_is_job }} -3 {{ v2 }} -4 {{ v }} -5 {{ k3 }} -6 {{v3 }}
-                                <br/>
-                                #}
-
-
-                                {% set summa_man = 0 %}                                
-
-                                {#% for k, d in jobs_on_sp.jobs if  %#}
-                                {% for jobman, ar1 in checks.items if jobman == jman %}
-
-                                    <div class="trow stick-top3" >
+                                {# выключаю показ точек продаж #}
+                                {% if 1 == 2 %}
+                                    <div class="trow stick-top2" >
 
                                         <div class="tcell" style="border: none;" >&nbsp;</div>
-                                        <div class="tcell" style="background-color: lightgreen;" >
-                                            <b>{{ checks.fio[jobman] }}</b> &nbsp; <sup style="color:gray;">{{ jobman }}</sup>
+                                        <div class="tcell" style="background-color: lightyellow;" >
+                                            точка продаж <b>{{ sp.data[sp3]['head'] }}</b> &nbsp; <sup style="color:gray;">{{ sp3 }}</sup>
                                         </div>
                                         <div class="tcell" style="border: none;" >&nbsp;</div>
                                         <div class="tcell" style="border: none;" >&nbsp;</div>
 
                                     </div>
+                                {% endif %}
 
+                                {% for jman, v3 in v2 %}
 
-                                    {#% for date, ar in ar1 %#}
+                                    {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.1user.htm' %}
 
-                                    {% for nn, d in ar1 %}
-
-                                        {% if jobs_on_sp['jobs'][jobman][d.date] is defined %}
-                                            {% set now = jobs_on_sp['jobs'][jobman][d.date] %}
-                                        {% endif %}
-
-                                        {# показываем плюсы минусы и смены где часов больше ноля #}
-                                        {% if d.type == 'plus' or d.type == 'minus' or ( d.type == 'checks' and now.hour > 0 ) %}
-
-                                            <div class="trow"  >
-
-                                                <div class="tcell" >
-                                                    {{ d.date|date('d.m.Y') }}
-                                                </div>
-
-                                                <div class="tcell bg-white stick-left" >
-
-                                                    {% if d.type == 'minus' %}
-
-                                                        <span class="checks_item minus" >Взыскание</span> {{ d.text }}
-
-                                                    {% elseif d.type == 'plus' %}
-
-                                                        <span class="checks_item plus" >Премия</span> {{ d.text }}
-
-                                                    {% elseif d.type == 'checks' %}
-
-                                                        <span class="checks_item smena" >Раб. смена</span>
-
-                                                        c {{ d.start[11:5] }} до {{ d.fin[11:5] }}
-                                                        <br/>
-
-                                                        {#{ pa(d) }}
-                                                        {{ pa( jobs_on_sp['jobs'][jobman][d.date] ) }#}
-
-
-                                                        {% if now.hour is defined %}
-                                                            Часов: {{ now.hour }}
-                                                        {% endif %}
-
-                                                        {% if now.ocenka_skip is defined %}
-
-                                                            {% if now.price_hour is defined %}
-                                                                Цена часа: {{ now.price_hour }} р
-                                                            {% endif %}
-
-                                                        {% elseif now.ocenka is not defined or now.ocenka == 0 %}
-
-                                                            <div class="alert-warning" style="padding:5px;">для расчёта нет оценки за смену</div>
-
-                                                        {% else %}
-
-                                                            {% if now.ocenka is defined %}
-                                                                Оценка: {{ now.ocenka }}
-                                                            {% endif %}
-
-                                                            {% if now.price_hour is defined %}
-                                                                Цена часа: {{ now.price_hour }} р
-                                                            {% endif %}
-
-                                                        {% endif %}
-
-                                                    {% else %}
-                                                        - пожалуйста напишите администратору -
-                                                    {% endif %}
-
-                                                    {#% if d.date == '2019-07-06' %}
-                                                        {{ pa(d) }}
-                                                        {{ pa(now) }}
-                                                    {% endif %#}
-
-                                                </div>
-
-                                                <div class="tcell text-right" >
-
-                                                    {% set summa = 0 %}
-
-                                                    {% if now.summa > 0 %}
-
-                                                        {% set summa = now.summa %}
-
-                                                    {% elseif d.summa > 0 %}
-
-                                                        {% set summa = d.summa %}
-
-                                                    {% endif %}
-
-                                                    {% if summa > 0 %}
-
-                                                        {{ summa|number_format(0, '.', '`') }}
-                                                        {% set summa_man = summa_man + summa %}
-
-                                                    {% endif %}
-
-                                                </div>
-                                                <div class="tcell" >
-
-                                                    {% if payed[d.id_check] is defined %}
-
-                                                        выплачено {{ summa }}
-
-                                                    {% else %}
-
-                                                        {% if summa > 0 %}
-
-                                                            <button class="btn btn-xs btn-light send-pay-good" 
-
-                                                                    val-summa="{{ summa }}" 
-                                                                    val-checkin="{{ d.id_check }}"
-
-                                                                    show_on_click="res{{ d.id_check }}"
-                                                                    resto="res{{ d.id_check }}"
-
-                                                                    >Выплачено</button>
-
-                                                            <div id="res{{ d.id_check }}" >111</div>
-
-                                                            {#{ summa }}
-                                                            {{ d.id_check }#}
-                                                        {% endif %}
-
-                                                    {% endif %}
-
-
-                                                    {#{ pa(d) }#}
-
-                                                </div>
-
-                                            </div>
-
-                                        {% endif %}
-                                    {% endfor %}
-
-                                    {#% endfor %#}
                                 {% endfor %}
 
-
-                                <div class="trow"  >
-
-                                    <div class="tcell" >
-                                    </div>
-
-                                    <div class="tcell bg-white text-right" >
-                                        <b>Итого:</b>
-                                    </div>
-
-                                    <div class="tcell bg-white text-right" >
-                                        <b>{{ summa_man|number_format(0, '.', '`') }}</b>
-                                    </div>
-
-                                    <div class="tcell" >
-                                    </div>
-
-                                </div>
-
                             {% endfor %}
-
-
-
-
-
-
-
-
-
-
-
-
-
-                        {% endfor %}
-                        {#% endfor %#}
+                            {#% endfor %#}
+                        {% endif %}
 
                     </div>
                 </span>

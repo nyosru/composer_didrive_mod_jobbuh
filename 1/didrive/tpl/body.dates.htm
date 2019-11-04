@@ -1,6 +1,7 @@
 {% spaceless %}
 
-
+    {# список дат на верху страницы #}
+    
     <div class="row">
         <div class="col-xs-12 col-xl-12" style="margin-top: 3vh; margin-bottom: 3vh;">
 
@@ -103,7 +104,7 @@
                             {% set month2 = month %}
                         {% endif %}
 
-                        {% if ( year == 2019 and month > 6  and month <= now_m ) or year > 2019 %}
+                        {% if ( year == 2019 and month > 8  and month <= now_m ) or year > 2019 %}
 
                             {#{ year }} {{ month }} <br/> #}
                             {% set d1 = year~'-'~month2~'-01' %}

@@ -1,7 +1,5 @@
 {% spaceless %}
 
-
-
     <div class="container-fluid">
         <div class="grid">
 
@@ -13,7 +11,6 @@
 
                         {# Выберите сотрудника #}
                         <br/>
-
                     </div>
                 </div>
             {% endif %}
@@ -22,18 +19,20 @@
 
             {% if get.d_start is defined and get.d_fin is defined %}
 
+                {#% set sps = readItems( 'sale_point', null )  %#}
+                {#{ pa(sps.data,2) }#}
                 {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.htm' %}
-
+                
             {% else %}
 
-                <div class="alert-warning text-center" style="padding: 5px 10px;">
+                <div class="alert-warning text-center" style="padding: 5px 10px; max-width: 300px; border-radius: 5px;">
                     Выберите расчётный период
                 </div>
 
             {% endif %}
 
             {% set t = didrive_f__timer_stop(99) %}
-            <div class="alert-warning" style="position: fixed; bottom: 10px; right: 10px; padding: 3px 10px;">обработка всего шаблона {{ t }} сек</div>
+            <div class="alert-warning" style="position: fixed; bottom: 10px; right: 10px; padding: 3px 10px;">обработка {{ t }} сек</div>
 
 
         </div>
