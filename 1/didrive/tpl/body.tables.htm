@@ -3,13 +3,16 @@
     <style>
         div sup{ color: rgba(0,0,0,0.05); }
         div:HOVER > sup{ color: rgba(0,0,0,0.5); }
+        .sup_hover_gray sup{ color: rgba(0,0,0,0.3); }
+        .sup_hover_gray:HOVER > sup.gray{ color: rgba(0,0,0,0.7); }
     </style>
-    
+
     {# таблицы если выбрана дата показа #}
 
     <div class="row">
 
         <div class="col-xs-12 col-xl-12">
+
 
             {% set sps = readItems( 'sale_point', null )  %}
             {#{ pa(sps.data,2) }#}
@@ -22,19 +25,17 @@
 
             {#{ date_start }} // {{ date_finish }#}
 
+            
+            
+            
+            
+            
             {% if 1 == 1 %}
-
                 {% set checks = job_buh__getChecksMinusPlus(db,date_start,date_finish) %}
-
-                {% if 1 == 2 %}
-                    checks
-                    <div style="max-height: 250px; overflow: auto;" >
-                        {{ pa(checks,2) }}
-                    </div>
-                {% endif %}
-
+                {# checks
+                {{ pa(checks,2) }} 
+                #}
             {% endif %}
-
 
             {# достаём оплаты по чек инам #}
             {% if 1 == 1 %}
@@ -43,71 +44,36 @@
 
                 {% if 1 == 2 %}
                     payed
-                    <div style="max-height: 250px; overflow: auto;" >
+                    <div style="max-height: 400px; overflow: auto;" >
                         {{ pa(payed) }}
                     </div>
                 {% endif %}
 
             {% endif %}
-
+            
+            {# достаём плюсы минусы #}
             {% if 1 == 1 %}
+                {%  set money_dops = jobdesc__get_money_dops( db, date_start, date_finish, null, 'jobman-date' ) %}
+                {#
+                    money_dops
+                    <div style="max-height: 400px; overflow: auto;" >
+                        {{ pa(money_dops) }}
+                    </div>
+                #}
+            {% endif %}
 
-
-                {#% set mans = readItems( '070.jobman', null )  %#}
-                {#{ pa(mans) }#}
-                {% if 1 == 2 %}
-                    {% if 1 == 2 %}
-
-                        {% set mans_jobs = job_buh__getJobmansOnTime( db, date_start, date_finish ) %}
-                        {% if 1 == 1 %}
-                            mans_jobs
-                            <div style="max-height: 300px; overflow: auto; border: 1px solid gray;" >
-                                {{ pa(mans_jobs) }}
-                            </div>
-                        {% endif %}
-
-
-                    {% endif %}
-
-                    {% if 1 == 2 %}
-
-                        {#% set t = didrive_f__timer_start() %#}
-
-                        {% set jobs_on_sp = job_buh__jobman_on_sp( db, date_start, date_finish ) %}
-                        {% if 1 == 1 %}
-                            jobs_on_sp
-                            <div style="max-height: 300px; overflow: auto; border: 1px solid gray;" >
-                                {{ pa(jobs_on_sp) }}
-                            </div>
-                        {% endif %}
-
-                        {#% set t = didrive_f__timer_stop() %}
-                        <br/>checki {{ t }#}
-
-                    {% endif %}
-
-                    {% if 1 == 2 %}
-                        {% set pays = job_buhGetGuhPay( db, date_start, date_finish ) %}
-
-                        {#                    pays
-                                            <div style="max-height: 300px; overflow: auto; border: 1px solid gray;" >
-                                                {{ pa(pays) }}
-                                            </div>
-                        #}
-                    {% endif %}
-
-
-                    {#% set spoint = sp.data[sp_now] %#}
-                    {#{ pa(spoint) }#}
-
-                    {% if 1 == 2 %}
-                        {% set jobs = jobdesc__get_smena_jobs( date_start, date_finish ) %}
-                        jobs
-                        <div style="max-height: 200px; overflow: auto; border: 1px solid gray;" >
-                            {{ pa(jobs) }}
-                        </div>
-                    {% endif %}
-                {% endif %}
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            {# показ таблицы с данными #}
+            {% if 1 == 1 %}
 
                 <span style="position: relative;">
 
@@ -128,47 +94,11 @@
                             </div>
                         </div>
 
-
-
-                        {#{ pa(jobs_on_sp) }#}
-
-                        {#% for jobs_on_sp, v in jobs_on_sp %#}
                         {% for workman_id, checks_man in checks if checks_man['fio'] is defined  %}
 
                             {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.1user2.htm' %}
 
                         {% endfor %}
-                        {#% endfor %#}
-
-
-                        {% if 1 == 2 %}
-                            {#% for jobs_on_sp, v in jobs_on_sp %#}
-                            {% for sp3, v2 in mans_jobs.jobs_on_sp %}
-
-
-                                {# выключаю показ точек продаж #}
-                                {% if 1 == 2 %}
-                                    <div class="trow stick-top2" >
-
-                                        <div class="tcell" style="border: none;" >&nbsp;</div>
-                                        <div class="tcell" style="background-color: lightyellow;" >
-                                            точка продаж <b>{{ sp.data[sp3]['head'] }}</b> &nbsp; <sup style="color:gray;">{{ sp3 }}</sup>
-                                        </div>
-                                        <div class="tcell" style="border: none;" >&nbsp;</div>
-                                        <div class="tcell" style="border: none;" >&nbsp;</div>
-
-                                    </div>
-                                {% endif %}
-
-                                {% for jman, v3 in v2 %}
-
-                                    {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.1user.htm' %}
-
-                                {% endfor %}
-
-                            {% endfor %}
-                            {#% endfor %#}
-                        {% endif %}
 
                     </div>
                 </span>

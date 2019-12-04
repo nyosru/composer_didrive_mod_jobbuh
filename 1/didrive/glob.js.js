@@ -1,6 +1,6 @@
 $(document).ready(function () { // вся мaгия пoслe зaгрузки стрaницы
 
-    $('body').on('click', '.send-pay-good', function (event) {
+    $('body').on('click', '.send-pay', function (event) {
 
         // alert('2323');
         // $(this).removeClass("show_job_tab");
@@ -34,18 +34,18 @@ $(document).ready(function () { // вся мaгия пoслe зaгрузки с�
 
         });
 
-        console.log($vars['resto']);
-
-        console.log($uri_query);
+        // console.log($vars['resto']);
+        //console.log($uri_query);
         //$(this).html("тут список");
+
         var $th = $(this);
 
         $.ajax({
 
-            xurl: "/sites/yadom_admin/module/000.index/ajax.php",
-            xurl: "/vendor/didrive_mod/jobdesc/1/didrive/ajax.php",
+//            xurl: "/sites/yadom_admin/module/000.index/ajax.php",
+//            xurl: "/vendor/didrive_mod/jobdesc/1/didrive/ajax.php",
             url: "/vendor/didrive_mod/job_buh/1/didrive/ajax.php",
-            data: "action=send-pay-good" + $uri_query,
+            data: "action=send-pay" + $uri_query,
             cache: false,
             dataType: "json",
             type: "post",

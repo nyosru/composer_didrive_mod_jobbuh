@@ -34,9 +34,15 @@
     {# список смен и начислений и взысканий #}
 
     {% set date_last = '' %}
+    {% set summa_man = 0 %}
 
-    {% for date, v3 in checks_man['items'] %}
-        {% for kk, d in v3 %}
+    {% set payed_man = 0 %}
+    
+    {% for date, v3 in checks['days'] %}
+        {#% for date, v3 in checks_man['items'] %#}
+
+        {#% for kk, d in v3 %#}
+        {% for kk, d in checks_man['items'][date] %}
 
             <div
                 {% if 1 == 2 and ( d.ocenka is not defined or now.ocenka == 0 ) %}
@@ -60,15 +66,12 @@
 
                 <div class="tcell bg-white stick-left" >
 
-                    {% if d.type == 'minus' %}
 
-                        <span class="checks_item minus" >Взыскание</span> {{ d.text }}
 
-                    {% elseif d.type == 'plus' %}
 
-                        <span class="checks_item plus" >Премия</span> {{ d.text }}
+                    {% set sum_day = 0 %}
 
-                    {% elseif d.type == 'check' %}
+                    {% if d.type == 'check' %}
 
                         {% if d.now_job.type2 == 'spec' %}
                             <span class="checks_item spec" >Спец. назначение</span>
@@ -81,39 +84,97 @@
                         {% endif %}
 
                         {% if dolgns.data[d.now_job.dolgnost]['head'] is defined %}
-                            <span class="checks_item dolgn" >{{ dolgns.data[d.now_job.dolgnost]['head'] }}</span>
+                            <span class="checks_item dolgn sup_hover_gray" >{{ dolgns.data[d.now_job.dolgnost]['head'] }}
+                                {% if d.now.smoke is defined and d.now.smoke != 0 %}
+                                    <sup>курит</sup>
+                                {% endif %}
+                            </span>
                         {% endif %}
 
                         c {{ d.start[11:5] }} до {{ d.fin[11:5] }}
                         <br/>
 
-                        {#{ pa(d) }#}
-                        {#{ pa( jobs_on_sp['jobs'][jobman][d.date] ) }#}
-
                         {% if d.hour_on_job is defined %}
                             Часов: {{ d.hour_on_job }}
+
+                            {% if d.now.ocenka is defined %}
+                                Оценка: {{ d.now.ocenka }}
+
+                                {% if d.now.price_hour is defined %}
+                                    Цена часа: {{ d.now.price_hour + d.now.smoke }}
+                                    
+                                    {% set sum_day = ( d.now.price_hour + d.now.smoke ) * d.hour_on_job %}
+                                    
+                                {% endif %}
+                                
+                            {% endif %}
+                            
                         {% endif %}
 
-                        {% if d.ocenka_skip is defined %}
 
-                            {% if d.price_hour is defined %}
-                                Цена часа: {{ d.price_hour }} р
+                        {#{ pa(d) }#}
+                        {#{ pa(d,2) }#}
+
+                        {% if 1 == 2 %}
+
+                            {#{ pa( jobs_on_sp['jobs'][jobman][d.date] ) }#}
+
+                            {% if d.hour_on_job is defined %}
+                                Часов: {{ d.hour_on_job }}
                             {% endif %}
 
-                        {% elseif d.ocenka is not defined or d.ocenka == 0 %}
 
-                            <div class="alert-warning" style="padding:5px;">для расчёта нет оценки за смену</div>
+                            {% if d.price_hour is defined and d.price_summa is defined %}
 
-                        {% else %}
+                                Цена часа: {{ d.price_hour }}
+                                Сумма: {{ d.price_summa }} р
 
-                            {% if d.ocenka is defined %}
-                                Оценка: {{ d.ocenka }}
+
+                            {% else %}
+
+
+
+
+
+                                {% if d.ocenka_skip is defined %}
+
+                                    {% if d.price_hour is defined %}
+                                        Цена часа: {{ d.price_hour }} р
+                                    {% endif %}
+
+                                {% elseif d.ocenka is not defined or d.ocenka == 0 %}
+
+                                    <div class="alert-warning" style="padding:5px;">для расчёта нет оценки за смену</div>
+
+
+                                {% elseif d.ocenka_auto is not defined or d.ocenka_auto == 0 %}
+
+                                    {% if d.ocenka_auto is defined %}
+                                        Оценка: {{ d.ocenka_auto }}
+                                    {% endif %}
+
+                                    {% if d.salary-now['ocenka-hour-'~d.ocenka_auto] is defined %}
+
+                                        {{ d.salary-now['ocenka-hour-'~d.ocenka_auto] }}
+
+                                    {% endif %}
+
+                                    {% if d.price_hour is defined %}
+                                        Цена часа: {{ d.price_hour }} р
+                                    {% endif %}
+
+                                {% else %}
+
+                                    {% if d.ocenka is defined %}
+                                        Оценка: {{ d.ocenka }}
+                                    {% endif %}
+
+                                    {% if d.price_hour is defined %}
+                                        Цена часа: {{ d.price_hour }} р
+                                    {% endif %}
+                                {% endif %}
+
                             {% endif %}
-
-                            {% if d.price_hour is defined %}
-                                Цена часа: {{ d.price_hour }} р
-                            {% endif %}
-
                         {% endif %}
 
                     {% else %}
@@ -124,12 +185,13 @@
                         {{ pa(d) }}
                         {{ pa(now) }}
                     {% endif %#}
-
-                    {% if 1 == 2 %}
+                    {#
+                    <br/>
+                    {% if 1 == 1 %}
                         d
                         {{ pa(d,2) }}
                     {% endif %}
-
+#}
                     {#
                         now
                         {{ pa(now,2) }}
@@ -139,33 +201,23 @@
 
                 <div class="tcell text-right" >
 
-                    {% set summa = 0 %}
+                    {#{ pa(d) }#}
+                    
+                    {% if sum_day is defined and sum_day > 0 %}
 
-                    {% if now.summa > 0 %}
+                        {{ sum_day|number_format(0, '.', '`') }}
+                        {% set summa_man = summa_man + sum_day %}
 
-                        {% set summa = now.summa %}
-
-                    {% elseif d.summa > 0 %}
-
-                        {% set summa = d.summa %}
-
-                    {% endif %}
-
-
-
-                    {% if summa > 0 %}
-
-                        {{ summa|number_format(0, '.', '`') }}
-                        {% set summa_man = summa_man + summa %}
+                        {#{ d.now.summa|number_format(0, '.', '`') }#}
+                        {#% set d.now.summa = 0 %#}
 
                     {% endif %}
-
-
 
                 </div>
                 <div class="tcell" >
 
-                    {% set ostatok = summa %}
+                    {% set ostatok = sum_day %}
+                    {% set payed = 0 %}
 
                     {% if payed[d.id_check] is defined %}
 
@@ -173,13 +225,16 @@
 
                         {% for k,v in payed[d.id_check] %}
                             {#{ pa(v) }#}
-                            {{ v.summa }}₽ <sup>{{ v.pay_buh_start[0:16] }}</sup>
+                            выплачено {{ v.summa }}₽ <sup>{{ v.pay_buh_start[0:16] }}</sup>
                             {% set ostatok = ostatok - v.summa %}
+                            
+                            {% set payed = payed + v.summa %}
+                            
                             <br/>
                         {% endfor %}
-                        
+
                         {% if ostatok != 0 %}
-                        Остаток: {{ ostatok }}₽
+                            Остаток: {{ ostatok }}₽
 
                             <button class="btn btn-xs btn-light send-pay-good" 
 
@@ -192,11 +247,11 @@
                                     >Оплатить остаток</button>
 
                             <div id="res{{ d.id_check }}" ></div>
-                        
+
                         {% else %}
                             <span class="fa fa-thumbs-o-up" ></span>
                         {% endif %}
-                        
+
                     {% else %}
 
                         {% if summa > 0 %}
@@ -219,7 +274,32 @@
 
                     {% endif %}
 
+                    
+                    
+                    
+                    
+                    
+                    {% if ostatok > 0 %}
+                    для оплаты доступно: {{ ostatok }}
+                    {#
+                            <button class="btn btn-xs btn-light send-pay" 
 
+                                    val-summa="{{ ostatok }}" 
+                                    val-checkin="{{ d.id_check }}"
+                                    s="{{ creatSecret( d.id_check~'s'~ostatok ) }}"
+
+                                    show_on_click="res{{ d.id_check }}"
+                                    resto="res{{ d.id_check }}"
+
+                                    >Выплачено</button>
+
+                            <div id="res{{ d.id_check }}" ></div>
+                    #}
+                    
+                    {% endif %}
+
+                    {% set payed_man = payed_man + payed %}
+                    
                     {#{ pa(d) }#}
 
                 </div>
@@ -227,8 +307,57 @@
             </div>
 
         {% endfor %}
+
+        
+        
+        {%  if money_dops[checks_man.user_id][date] is defined %}
+            {%  for k1,v1 in money_dops[checks_man.user_id][date] %}
+
+                <div class="trow info_{{ checks_man.user_id }}" style="display:none;" >
+                    <div class="tcell" >{{ date|date('d.m.Y') }}</div>
+                    <div class="tcell" >
+
+                        {% if v1.type2 == 'minus' %}
+                            <span class="checks_item minus" >Взыскание</span> {{ d.text }}
+                        {% elseif v1.type2 == 'plus' %}
+                            <span class="checks_item plus" >Премия</span> {{ d.text }}
+                        {% endif %}
+
+                        {{ v1.text }}
+                        {#{ pa(v1) }#}
+                    </div>
+                    <div class="tcell text-right"  >
+                        {{ v1.summa|number_format(0, '.', '`') }}
+                        {% set summa_man = summa_man + v1.summa %}
+                    </div>
+                    <div class="tcell" >
+                        
+                        {% if payed_man > 0 %}
+                        Выплачено: {{ payed_man }}
+                        {% else %}
+                        &nbsp;
+                        {% endif %}
+                        
+                    </div>
+                </div>
+
+            {% endfor %}
+        {% endif %}
+
+
     {% endfor %}
 
+
+
+
+    <div class="trow stick-top3" >
+
+        <div class="tcell" >&nbsp;</div>
+        <div class="tcell" >&nbsp;</div>
+        <div class="tcell text-right"  >{{ summa_man|number_format(0, '.', '`') }}</div>
+        <div class="tcell" >&nbsp;</div>
+
+    </div>
 
 
 
