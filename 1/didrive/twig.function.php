@@ -10,9 +10,9 @@
 // $twig->addFunction($function);
 
 
-$function = new Twig_SimpleFunction('job_buh__getChecksMinusPlus', function ( $db, $date_start, $date_fin, $module_jobman = '070.jobman', $module_sp = 'sale_point', $module_send_jobman_to_sp = 'jobman_send_on_sp' ) {
+$function = new Twig_SimpleFunction('job_buh__getChecksMinusPlus', function ( $db, $date_start, $date_fin, $sp_on = 'all', $module_jobman = '070.jobman', $module_sp = 'sale_point', $module_send_jobman_to_sp = 'jobman_send_on_sp' ) {
 
-    return \Nyos\mod\JobBuh::getChecksMinusPlus($db, $date_start, $date_fin);
+    return \Nyos\mod\JobBuh::getChecksMinusPlus($db, $date_start, $date_fin, $sp_on );
     
 });
 $twig->addFunction($function);

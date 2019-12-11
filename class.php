@@ -117,7 +117,6 @@ class JobBuh {
      */
     public static function calcChecks($db, $date_start, $date_fin, $module_jobman = '070.jobman', $module_sp = 'sale_point', $module_send_jobman_to_sp = 'jobman_send_on_sp') {
 
-
         $dt_start = date('Y-m-d 07:00:01', strtotime($date_start));
         $dt_fin = date('Y-m-d 03:00:01', strtotime($date_fin ?? $dt_start) + 3600 * 24);
 
@@ -328,7 +327,7 @@ class JobBuh {
      * @param type $module_send_jobman_to_sp
      * @return type
      */
-    public static function getChecksMinusPlus($db, $date_start, $date_fin, $module_jobman = '070.jobman', $module_sp = 'sale_point', $module_send_jobman_to_sp = 'jobman_send_on_sp') {
+    public static function getChecksMinusPlus($db, $date_start, $date_fin, $sp_on = 'all', $module_jobman = '070.jobman', $module_sp = 'sale_point', $module_send_jobman_to_sp = 'jobman_send_on_sp') {
         
         //echo '<br/>' . $date_start . ', ' . $date_fin;
 
@@ -336,7 +335,7 @@ class JobBuh {
             return self::$cash['ChecksMinusPlus'][$date_start][$date_fin];
         
         $return = self::calcChecks($db, $date_start, $date_fin);
-        // \f\pa($return,4);
+        //\f\pa($return,4);
 
         usort($return, "\\f\\sort_ar_str_fio");
 

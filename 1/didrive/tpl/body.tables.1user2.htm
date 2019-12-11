@@ -38,12 +38,17 @@
 
     {% set payed_man = 0 %}
     
+    {#{ pa(checks['days']) }#}
+    
     {% for date, v3 in checks['days'] %}
         {#% for date, v3 in checks_man['items'] %#}
 
         {#% for kk, d in v3 %#}
         {% for kk, d in checks_man['items'][date] %}
 
+{#{  pa(d) }#}
+{#{  pa(d.now_job.sale_point) }#}
+            
             <div
                 {% if 1 == 2 and ( d.ocenka is not defined or now.ocenka == 0 ) %}
                     class="trow"
@@ -65,9 +70,6 @@
                 </div>
 
                 <div class="tcell bg-white stick-left" >
-
-
-
 
                     {% set sum_day = 0 %}
 
