@@ -1,7 +1,7 @@
 {% spaceless %}
 
     {# список дат на верху страницы #}
-    
+
     <div class="row">
         <div class="col-xs-12 col-xl-12" style="margin-top: 3vh; margin-bottom: 3vh;">
 
@@ -94,6 +94,9 @@
 
                 {% set now_d = "now"|date("d") %}
 
+                {% set gets = get %}
+                {#{ pa(gets) }#}
+
                 {% for year in 2019..2030 if year <= now_y %}
 
                     {% for month in 1..12 if year < now_y or ( year == now_y and month <= now_m+1 )  %}
@@ -113,29 +116,42 @@
                             {% set d4 = d3|date("Y-m-t") %}
                             {# { d }} - #}
 
+
+
+
+
                             <div class="btn-group btn-group-xs" role="group" aria-label="..." style="margin-right:10px;">
 
-                                <a href="?level={{ get.level }}&d_start={{ d1 }}&d_fin={{ d2 }}"
-                                   class="btn-date-pick btn btn-xs 
+                                {% set gets = gets|merge({ 'd_start':d1, 'd_fin':d2 }) %}
 
-                                   {% if get.d_start is defined and get.d_start == d1 and get.d_fin is defined and get.d_fin == d2 %}
-                                       btn-success
-                                   {% else %}
-                                       btn-light
-                                   {% endif %}
+                                <a 
+                                    href="?{{ http_build_query(gets) }}"
+                                    xhref="?level={{ get.level }}&d_start={{ d1 }}&d_fin={{ d2 }}"
+                                    class="btn-date-pick btn btn-xs 
 
-                                   " >{{ d1[5:2] }}.{{ d1[8:2] }} - {{ d2[5:2] }}.{{ d2[8:2] }}</a>
+                                    {% if get.d_start is defined and get.d_start == d1 and get.d_fin is defined and get.d_fin == d2 %}
+                                        btn-success
+                                    {% else %}
+                                        btn-light
+                                    {% endif %}
 
-                                <a href="?level={{ get.level }}&d_start={{ d3 }}&d_fin={{ d4 }}&month_end=da"
-                                   class="btn-date-pick btn btn-xs 
+                                    " >{{ d1[5:2] }}.{{ d1[8:2] }} - {{ d2[5:2] }}.{{ d2[8:2] }}</a>
 
-                                   {% if get.d_start is defined and get.d_start == d3 and get.d_fin is defined and get.d_fin == d4 %}
-                                       btn-success
-                                   {% else %}
-                                       btn-light
-                                   {% endif %}
 
-                                   " >{{ d3[5:2] }}.{{ d3[8:2] }} - {{ d4[5:2] }}.{{ d4[8:2] }}</a>
+                                {% set gets = gets|merge({ 'd_start':d3, 'd_fin':d4 }) %}
+
+                                <a 
+                                    href="?{{ http_build_query(gets) }}"
+                                    xhref="?level={{ get.level }}&d_start={{ d3 }}&d_fin={{ d4 }}&month_end=da"
+                                    class="btn-date-pick btn btn-xs 
+
+                                    {% if get.d_start is defined and get.d_start == d3 and get.d_fin is defined and get.d_fin == d4 %}
+                                        btn-success
+                                    {% else %}
+                                        btn-light
+                                    {% endif %}
+
+                                    " >{{ d3[5:2] }}.{{ d3[8:2] }} - {{ d4[5:2] }}.{{ d4[8:2] }}</a>
 
                             </div>
                         {% endif %}
@@ -148,51 +164,53 @@
 
             </div>
 
-                
-                
-                
-    {% set sps = items__get( db, 'sale_point' )  %}
-    {#{ pa(sps) }#}
 
-    {# если модератор то выводим исписок точек к оторым есть доступ #}    
-    {% set sp_access = jobdesc__get__access_moders( db )  %}
-    {#{ pa(sp_access) }#}
 
-                {# текущие доступные точки #}
-                {% if 1 == 1 %}
-                    <div class="btn-group" role="group" aria-label="Basic example" style="margin-top: 0.2em;">
 
-                        {# <div class="btn-group mr-2" role="group" aria-label="First group"> #}
-                        <button type="button" class="btn btn-xs btn-default">Показать:</button>
-                        {# </div>
-                        <div class="btn-group mr-2" role="group" aria-label="First group"> #}
-                        {% set gets = get %}
-                        {#{ pa(gets) }#}
+            {% set sps = items__get( db, 'sale_point' )  %}
+            {#{ pa(sps) }#}
 
-                        {% set gets = gets|merge({'sp':'all'}) %}
-                        <a class="btn btn-xs {% if get.sp == 'all' %}btn-info{% else %}btn-light{% endif %} " href="?{{ http_build_query(gets) }}" >ВСЕ</a>
+            {# если модератор то выводим исписок точек к оторым есть доступ #}    
+            {% set sp_access = jobdesc__get__access_moders( db )  %}
+            {#{ pa(sp_access) }#}
 
-                        {#{ pa(jobs_on_sp.sort) }# }
-                        sp {{ pa(sp) }}
-                        sps {{ pa(sps) }#}
+            {# текущие доступные точки #}
+            {% if 1 == 1 %}
 
-                        {% for kk, sp_now in sps if sp_now.head != 'default' and ( sp_access == false or sp_access[sp_now.id] is defined ) %}
+                {% set gets = get %}
+                {#{ pa(gets) }#}
 
-                            {#% set gets['now_sp'] = sp_now %#}
-                            {% set gets = gets|merge({'sp':sp_now['id']}) %}
-                            <a class="btn btn-xs  {% if get.sp == sp_now.id %}btn-info{% else %}btn-light{% endif %} " href="?{{ http_build_query(gets) }}" >{{ sp_now['head'] }}</a>
-                            {#{ pa(sp_now) }#}
+                <div class="btn-group" role="group" aria-label="Basic example" style="margin-top: 0.2em;">
 
-                        {% endfor %}
-                        {#
-                                                </div>
-                        #}
+                    {# <div class="btn-group mr-2" role="group" aria-label="First group"> #}
+                    <button type="button" class="btn btn-xs btn-default">Показать:</button>
+                    {# </div>
+                    <div class="btn-group mr-2" role="group" aria-label="First group"> #}
+
+                    {% set gets = gets|merge({'sp':'all'}) %}
+                    <a class="btn btn-xs {% if get.sp == 'all' %}btn-info{% else %}btn-light{% endif %} " href="?{{ http_build_query(gets) }}" >ВСЕ</a>
+
+                    {#{ pa(jobs_on_sp.sort) }# }
+                    sp {{ pa(sp) }}
+                    sps {{ pa(sps) }#}
+
+                    {% for kk, sp_now in sps if sp_now.head != 'default' and ( sp_access == false or sp_access[sp_now.id] is defined ) %}
+
+                        {#% set gets['now_sp'] = sp_now %#}
+                        {% set gets = gets|merge({'sp':sp_now['id']}) %}
+                        <a class="btn btn-xs  {% if get.sp == sp_now.id %}btn-info{% else %}btn-light{% endif %} " href="?{{ http_build_query(gets) }}" >{{ sp_now['head'] }}</a>
+                        {#{ pa(sp_now) }#}
+
+                    {% endfor %}
+                    {#
                     </div>
+                    #}
+                </div>
 
-                {% endif %}
+            {% endif %}
 
-            
-            
+
+
         </div>
     </div>
 
