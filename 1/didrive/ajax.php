@@ -3,10 +3,7 @@
 ini_set('display_errors', 'On'); // сообщения с ошибками будут показываться
 error_reporting(E_ALL); // E_ALL - отображаем ВСЕ ошибки
 
-if ($_SERVER['HTTP_HOST'] == 'photo.uralweb.info' 
-        || $_SERVER['HTTP_HOST'] == 'yapdomik.uralweb.info' 
-        || $_SERVER['HTTP_HOST'] == 'a2.uralweb.info' 
-        || $_SERVER['HTTP_HOST'] == 'adomik.uralweb.info'
+if ($_SERVER['HTTP_HOST'] == 'photo.uralweb.info' || $_SERVER['HTTP_HOST'] == 'yapdomik.uralweb.info' || $_SERVER['HTTP_HOST'] == 'a2.uralweb.info' || $_SERVER['HTTP_HOST'] == 'adomik.uralweb.info'
 ) {
     date_default_timezone_set("Asia/Omsk");
 } else {
@@ -15,13 +12,8 @@ if ($_SERVER['HTTP_HOST'] == 'photo.uralweb.info'
 
 define('IN_NYOS_PROJECT', true);
 
-//session_start();
-
 require $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
 require( $_SERVER['DOCUMENT_ROOT'] . '/all/ajax.start.php' );
-
-//require_once( DR.'/vendor/didrive/base/class/Nyos.php' );
-//require_once( dirname(__FILE__).'/../class.php' );
 
 if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'scan_new_datafile') {
 
@@ -29,16 +21,13 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'scan_new_datafile') {
     //cron_scan_new_datafile();
 }
 
-
-if (isset($_REQUEST['action']) && $_REQUEST['action'] = 'send-pay-good') {
+elseif (isset($_REQUEST['action']) && $_REQUEST['action'] == 'send-pay-good') {
 
     // \f\pa($_REQUEST);
-
 //    [val-summ] => 1842
 //    [val-checkin] => 20969
 //    [show_on_click] => res20969
 //    [resto] => res20969    
-
     //\f\pa($_SESSION);
 
     $in = array(
@@ -49,7 +38,7 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] = 'send-pay-good') {
         'pay_buh_start' => date('Y-m-d H:i:s')
     );
 
-    \Nyos\mod\items::addNewSimple($db, '075.buh_oplats', $in );
+    \Nyos\mod\items::addNewSimple($db, '075.buh_oplats', $in);
 
     \f\end2('отмечено', true);
 }
@@ -72,8 +61,7 @@ if (
 }
 //
 else {
-    f\end2('Произошла неописуемая ситуация #' . __LINE__ . ' обратитесь к администратору ' // . $_REQUEST['id'] . ' && ' . $_REQUEST['secret']
-            , 'error');
+    \f\end2('Произошла неописуемая ситуация #' . __LINE__ . ' обратитесь к администратору ' , false );
 }
 
 //require_once( $_SERVER['DOCUMENT_ROOT'] . '/0.all/sql.start.php');
@@ -83,10 +71,24 @@ else {
 
 
 
+if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'send-pay-form') {
 
+    $in = $_REQUEST;
+    // $in['date'] = date( 'Y-m-d', $_SERVER['REQUEST_TIME'] );
 
+    if( !empty($_SESSION['now_user_di']['id']) )
+    $in['pay_buh_who'] = $_SESSION['now_user_di']['id'];
 
-if (isset($_POST['action']) && $_POST['action'] == 'show_info_strings') {
+    $in['pay_buh_dt'] = date( 'Y-m-d H:I:s', $_SERVER['REQUEST_TIME'] );
+
+    $e = \Nyos\mod\items::addNewSimple($db, '075.buh_oplats', $in );
+    
+    // \f\end2('sdf',false, $_SESSION );
+    \f\end2('Оплата '.$in['summa'].' зафиксирована',true, $e );
+    \f\end2('sdf',false, $e );
+}
+//
+elseif (isset($_POST['action']) && $_POST['action'] == 'show_info_strings') {
 
 
     require_once '../../../../all/ajax.start.php';
@@ -234,7 +236,7 @@ elseif (isset($_POST['action']) && $_POST['action'] == 'edit_dop_pole') {
 }
 
 
-f\end2('Произошла неописуемая ситуация #' . __LINE__ . ' обратитесь к администратору', 'error');
+f\end2('Произошла неописуемая ситуация #' . __LINE__ . ' обратитесь к администратору', false );
 
 
 
@@ -416,8 +418,7 @@ if (1 == 2) {
                         , 'ok', array('number_kupon' => $res['number_kupon'])
                 );
             }
-        }
-        else {
+        } else {
 
 //require_once($_SERVER['DOCUMENT_ROOT'] . '/0.all/f/smarty.php');
 //f\end2(f\compileSmarty('ajax_form_enter.htm', array(), dirname(__FILE__) . '/../../lk/3/tpl_smarty/')

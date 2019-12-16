@@ -93,6 +93,7 @@
                 {% endif %}
 
                 {% set now_d = "now"|date("d") %}
+                {% set now_d2 = "now"|date("Y-m-d") %}
 
                 {% set gets = get %}
                 {#{ pa(gets) }#}
@@ -122,36 +123,44 @@
 
                             <div class="btn-group btn-group-xs" role="group" aria-label="..." style="margin-right:10px;">
 
-                                {% set gets = gets|merge({ 'd_start':d1, 'd_fin':d2 }) %}
+                                {% if now_d2 >= d2 %}
 
-                                <a 
-                                    href="?{{ http_build_query(gets) }}"
-                                    xhref="?level={{ get.level }}&d_start={{ d1 }}&d_fin={{ d2 }}"
-                                    class="btn-date-pick btn btn-xs 
+                                    {% set gets = gets|merge({ 'd_start0':d1, 'd_start':d1, 'd_fin':d2 , 'd_stop':'' }) %}
 
-                                    {% if get.d_start is defined and get.d_start == d1 and get.d_fin is defined and get.d_fin == d2 %}
-                                        btn-success
-                                    {% else %}
-                                        btn-light
+                                    <a 
+                                        href="?{{ http_build_query(gets) }}"
+                                        xhref="?level={{ get.level }}&d_start={{ d1 }}&d_fin={{ d2 }}"
+                                        class="btn-date-pick btn btn-xs 
+
+                                        {% if get.d_start0 is defined and get.d_start0 == d1 and get.d_fin is defined and get.d_fin == d2 %}
+                                            btn-success
+                                        {% else %}
+                                            btn-light
+                                        {% endif %}
+
+                                        " >{{ d1[5:2] }}.{{ d1[8:2] }} - {{ d2[5:2] }}.{{ d2[8:2] }}</a>
+
+                                    {% if now_d2 >= d4 %}
+
+                                        {% set gets = gets|merge({ 'd_start0':d3, 'd_start':d1, 'd_fin':d4 , 'd_stop':d2  }) %}
+
+                                        <a 
+                                            href="?{{ http_build_query(gets) }}"
+                                            xhref="?level={{ get.level }}&d_start={{ d3 }}&d_fin={{ d4 }}&month_end=da"
+                                            class="btn-date-pick btn btn-xs 
+
+                                            {% if get.d_start0 is defined and get.d_start0 == d3 and get.d_fin is defined and get.d_fin == d4 %}
+                                                btn-success
+                                            {% else %}
+                                                btn-light
+                                            {% endif %}
+
+                                            " >{{ d3[5:2] }}.{{ d3[8:2] }} - {{ d4[5:2] }}.{{ d4[8:2] }}</a>
+
                                     {% endif %}
 
-                                    " >{{ d1[5:2] }}.{{ d1[8:2] }} - {{ d2[5:2] }}.{{ d2[8:2] }}</a>
+                                {% endif %}
 
-
-                                {% set gets = gets|merge({ 'd_start':d3, 'd_fin':d4 }) %}
-
-                                <a 
-                                    href="?{{ http_build_query(gets) }}"
-                                    xhref="?level={{ get.level }}&d_start={{ d3 }}&d_fin={{ d4 }}&month_end=da"
-                                    class="btn-date-pick btn btn-xs 
-
-                                    {% if get.d_start is defined and get.d_start == d3 and get.d_fin is defined and get.d_fin == d4 %}
-                                        btn-success
-                                    {% else %}
-                                        btn-light
-                                    {% endif %}
-
-                                    " >{{ d3[5:2] }}.{{ d3[8:2] }} - {{ d4[5:2] }}.{{ d4[8:2] }}</a>
 
                             </div>
                         {% endif %}
@@ -163,9 +172,6 @@
 
 
             </div>
-
-
-
 
             {% set sps = items__get( db, 'sale_point' )  %}
             {#{ pa(sps) }#}
@@ -187,8 +193,10 @@
                     {# </div>
                     <div class="btn-group mr-2" role="group" aria-label="First group"> #}
 
-                    {% set gets = gets|merge({'sp':'all'}) %}
-                    <a class="btn btn-xs {% if get.sp == 'all' %}btn-info{% else %}btn-light{% endif %} " href="?{{ http_build_query(gets) }}" >ВСЕ</a>
+                    {#
+                                        {% set gets = gets|merge({'sp':'all'}) %}
+                                        <a class="btn btn-xs {% if get.sp == 'all' %}btn-info{% else %}btn-light{% endif %} " href="?{{ http_build_query(gets) }}" >ВСЕ</a>
+                    #}
 
                     {#{ pa(jobs_on_sp.sort) }# }
                     sp {{ pa(sp) }}

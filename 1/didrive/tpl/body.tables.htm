@@ -38,8 +38,10 @@
             {% if 1 == 1 %}
 
                 {% set payed = job_buh__get_payed(db,date_start,date_finish) %}
-
+                {#{ pa(payed) }#}
+                
                 {% if 1 == 2 %}
+                    <br/>
                     payed
                     <div style="max-height: 400px; overflow: auto;" >
                         {{ pa(payed) }}
@@ -59,15 +61,10 @@
                 #}
             {% endif %}
 
-            
-            
-            
-            
-            
-            
-            
-            
-            
+            {# <br/> #}
+            {# ss - {{ date_start }} , {{ date_finish }} #}
+            {#% set pays = job_buh__get_pays(db,date_start,date_finish) %}
+            {{ pa(pays,2) }#}
             
             {# показ таблицы с данными #}
             {% if 1 == 1 %}
@@ -84,11 +81,16 @@
                                 За что
                             </div>
                             <div class="tcell" >
-                                Сумма
+                                Сумма к оплате
                             </div>
                             <div class="tcell" >
-                                Статус оплаты
+                                Оплачено/Учтено
                             </div>
+                            {#
+                            <div class="tcell" >
+                                Остаток к&nbsp;оплате
+                            </div>
+                            #}
                         </div>
 
                         
@@ -97,6 +99,7 @@
                         {# pa(jobs_on_sp) {{ pa(jobs_on_sp.jobs_on_sp[get.sp],2) }} #}
                         
                         {% for workman_id, checks_man in checks if 
+
                             checks_man['fio'] is defined 
                             and ( 
                                 get.sp is defined 
@@ -104,6 +107,7 @@
                                     get.sp == 'all' 
                                     or jobs_on_sp.jobs_on_sp[get.sp][checks_man.user_id] is defined 
                                 ) 
+
                             ) %}
 
                             {#{ pa(checks_man.user_id) }#}
