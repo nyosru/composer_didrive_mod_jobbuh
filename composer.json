@@ -1,7 +1,7 @@
 {
     "name": "didrive_mod/job_buh",
     "description": "расчёт денег по учёту работы",
-    "version": "0.0.9",
+    "version": "1.0.0",
     
     "keywords": [
         "didrive", "module", "nyos", "uralweb.info"
