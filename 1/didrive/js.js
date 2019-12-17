@@ -34,11 +34,13 @@ $(document).ready(function () { // вся мaгия пoслe зaгрузки с�
 //
 
         var resto_id = '';
+        var resto_id2 = '';
 
         $.each(this.attributes, function () {
             if (this.specified) {
                 if (this.name == 'resto_id') {
                     resto_id = '#' + this.value;
+                    resto_id2 = '#' + this.value + '-2' ;
                 } else if (this.name.indexOf('ajax') + 1) {
 //                    console.log( 1, this.name, this.value);
                     uri_query = uri_query + '&' + this.name + '=' + this.value;
@@ -99,7 +101,7 @@ $(document).ready(function () { // вся мaгия пoслe зaгрузки с�
                 // $("#ok_but").hide();
 
                 if (resto_id != '') {
-                    $(resto_id).html('<img src="/img/load.gif" style="width:50px;" alt="" border=0 />');
+                    $(resto_id2).html('<img src="/img/load.gif" style="width:50px;" alt="" border=0 />');
                 }
 
             }
@@ -109,14 +111,17 @@ $(document).ready(function () { // вся мaгия пoслe зaгрузки с�
 
 
                 if( $j.status == 'ok' ){
-                    console.log(1, $j);
+                    // console.log(1, $j);
                     $th.hide('slow');
-                }else{
-                    console.log(2, $j);
                 }
+//                else{
+//                    console.log(2, $j);
+//                }
 
                 if (resto_id != '') {
-                    $(resto_id).html($j['html']);
+                    // $(resto_id).html($j['html']);
+                    $(resto_id2).hide();
+                    $(resto_id).append($j['html']+'<br/>');
                 }
                 
 

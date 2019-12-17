@@ -1,8 +1,5 @@
 {% spaceless %}
 
-    {#% for date, v3 in checks_man['items'] %#}
-
-    {#% for kk, d in v3 %#}
     {% for kk, d in checks_man['items'][date] %}
 
         {#{  pa(d) }#}
@@ -256,18 +253,18 @@
                     {% if ostatok > 0 %}
                         для оплаты доступно: {{ ostatok }}
                         {#
-                                <button class="btn btn-xs btn-light send-pay" 
-    
-                                        val-summa="{{ ostatok }}" 
-                                        val-checkin="{{ d.id_check }}"
-                                        s="{{ creatSecret( d.id_check~'s'~ostatok ) }}"
-    
-                                        show_on_click="res{{ d.id_check }}"
-                                        resto="res{{ d.id_check }}"
-    
-                                        >Выплачено</button>
-    
-                                <div id="res{{ d.id_check }}" ></div>
+                        <button class="btn btn-xs btn-light send-pay" 
+
+                                val-summa="{{ ostatok }}" 
+                                val-checkin="{{ d.id_check }}"
+                                s="{{ creatSecret( d.id_check~'s'~ostatok ) }}"
+
+                                show_on_click="res{{ d.id_check }}"
+                                resto="res{{ d.id_check }}"
+
+                                >Выплачено</button>
+
+                        <div id="res{{ d.id_check }}" ></div>
                         #}
 
                     {% endif %}
@@ -316,5 +313,4 @@
                     {% endfor %}
                 {% endif %}
 
-                
                 {% endspaceless %}

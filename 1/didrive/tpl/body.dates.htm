@@ -117,10 +117,6 @@
                             {% set d4 = d3|date("Y-m-t") %}
                             {# { d }} - #}
 
-
-
-
-
                             <div class="btn-group btn-group-xs" role="group" aria-label="..." style="margin-right:10px;">
 
                                 {% if now_d2 >= d2 %}
@@ -193,10 +189,12 @@
                     {# </div>
                     <div class="btn-group mr-2" role="group" aria-label="First group"> #}
 
-                    {#
-                                        {% set gets = gets|merge({'sp':'all'}) %}
-                                        <a class="btn btn-xs {% if get.sp == 'all' %}btn-info{% else %}btn-light{% endif %} " href="?{{ http_build_query(gets) }}" >ВСЕ</a>
-                    #}
+                    {#{  pa(session) }#}
+
+                    {% if session['now_user_di']['access'] is defined and session['now_user_di']['access'] == 'admin' %}
+                        {% set gets = gets|merge({'sp':'all'}) %}
+                        <a class="btn btn-xs {% if get.sp == 'all' %}btn-info{% else %}btn-light{% endif %} " href="?{{ http_build_query(gets) }}" >ВСЕ</a>
+                    {% endif %}
 
                     {#{ pa(jobs_on_sp.sort) }# }
                     sp {{ pa(sp) }}

@@ -42,13 +42,13 @@ $function = new Twig_SimpleFunction('job_buh__get_payed', function ( $db, string
 //    echo '<br/>'.__FILE__.' #'.__LINE__;
     
     // \Nyos\mod\items::$show_sql = true;
-//    \Nyos\mod\items::$join_where = ' INNER JOIN `mitems-dops` midop ON '
-//            . ' midop.name = \'date\' '
-//            . ' AND midop.id_item = mi.id '
-//            . ' AND midop.value_date >= \'' . date('Y-m-d', strtotime($date_start)) . '\' '
-//            . ' AND midop.value_date <= \'' . date('Y-m-d', strtotime($date_finish)) . '\' '
-//    ;
-    $d = \Nyos\mod\items::getItemsSimple3($db, '075.buh_oplats');
+    \Nyos\mod\items::$join_where = ' INNER JOIN `mitems-dops` midop ON '
+            . ' midop.name = \'date\' '
+            . ' AND midop.id_item = mi.id '
+            . ' AND midop.value_date >= \'' . date('Y-m-d', strtotime($date_start)) . '\' '
+            . ' AND midop.value_date <= \'' . date('Y-m-d', strtotime($date_finish)) . '\' '
+    ;
+    $d = \Nyos\mod\items::getItemsSimple3($db, '075.buh_oplats',null,'date_asc');
 
     // \f\pa($d,'','','d');
     

@@ -31,7 +31,8 @@
 .stick-top3{
     xposition: static; 
     xposition: sticky; 
-    top:140px;
+    xtop:140px;
+    top:9.2em;
     position: -webkit-sticky;
     position: -moz-sticky;
     position: -ms-sticky;
@@ -79,3 +80,23 @@
     background-color: rgba(0,200,200,0.15);
 }
 
+.row_user .tcell{
+    background-color: #efefef; 
+    border: none;
+}
+
+
+
+.trow.user_head .tcell span,
+.tcell.nameuser > span,
+.tcell.summa1,
+.tcell.ostatki{
+   font-size: 1.3rem;
+}
+.tcell.ostatki{
+    text-align: center;
+}
+
+.tcell.plategi{
+    font-size: 1rem;
+}

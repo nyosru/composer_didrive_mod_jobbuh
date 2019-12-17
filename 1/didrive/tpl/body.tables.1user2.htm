@@ -12,24 +12,26 @@
 
     {% set jobman = checks_man.user_id %}
 
-    <div class="trow stick-top3" style="background-color: lightgreen;" >
 
-        <div class="tcell" style="background-color: lightgreen; border: none;" >&nbsp;</div>
-        <div class="tcell" style="background-color: lightgreen;" >
+    <div class="trow stick-top3 row_user" 
+         {# style="background-color: lightgreen;" #}
+         >
+
+        <div class="tcell"  >&nbsp;</div>
+        <div class="tcell nameuser" >
 
             <button class="btn-xs btn" 
                     onclick="$('.info_{{ jobman }}').toggle('slow');"
                     style="float:right;">показать/скрыть подробности</button>
 
-            <b>{{ checks_man['fio'] }}</b> &nbsp; <sup style="color:gray;">{{ jobman }}</sup>
+            <span>{{ checks_man['fio'] }}</span> &nbsp; <sup style="color:gray;">{{ jobman }}</sup>
 
         </div>
 
-        <div class="tcell" style="background-color: lightgreen; border: none;" >&nbsp;</div>
-        <div class="tcell" style="background-color: lightgreen; border: none;" >&nbsp;</div>
-        {#
-        <div class="tcell" style="background-color: lightgreen; border: none;" >&nbsp;</div>
-        #}
+        <div class="tcell" >&nbsp;</div>
+        <div class="tcell" >&nbsp;</div>
+
+        <div class="tcell" >&nbsp;</div>
 
     </div>
 
@@ -365,7 +367,6 @@
                         {% endfor %}
                     {% endif %}
 
-
                     {% endfor %}
 
 
@@ -373,7 +374,7 @@
 
                             <div class="tcell" >&nbsp;</div>
                             <div class="tcell" >&nbsp;</div>
-                            <div class="tcell text-right" >
+                            <div class="tcell summa1 text-right" >
                                 {{ summa_man|number_format(0, '.', '`') }}
 
                                 {#
@@ -387,107 +388,112 @@
                                                     >Оплатить остаток</button>
                                             <div id="res{{ d.id_check }}" ></div>
                                 #}
+
+
                             </div>
-                            <div class="tcell" >
+                            <div class="tcell plategi text-right" >
 
+                                {% set ostatok = summa_man %}
 
-                                {% set ii = items__get(db,'075.buh_oplats') %}
-
-                                {#{  pa(ii) }#}
-                                
-                                {% for k5, v5 in ii if v5.date is defined and v5.date >= get.d_start0 and v5.date <= get.d_fin 
-                                    and v5.user_id is defined and v5.user_id == jobman %}
-                                {{ v5.summa }} Р <sup>{{ v5.date }}</sup><br/>
+                                {% for k51, v51 in payeds['payed'][jobman] %}
+                                    {% for k5, v5 in v51 %}
+                                        {{ v5.summa|number_format(0, '.', '`') }} <sup>{{ v5.date }}</sup><br/>
+                                        {% set ostatok = ostatok - v5.summa %}
+                                    {% endfor %}
                                 {% endfor %}
 
-                                    {% if 1 == 2 %}
-                                        {% if payed['payed'][jobman] is defined %}
-                                            {% for date3, v3 in payed['payed'][jobman] %}
-                                                {% for k5, v5 in v3 %}
+                                {% if show_for_user_pay == true %}
 
-                                                    {#{ pa(v5) }#}
-                                                    {{ v5.summa }} Р <sup>{{ v5.date }}</sup><br/>
+                                    {# форма фиксации оплаты #}
+                                    {% if 1 == 1 %}                                
 
-                                                {% endfor %}
-                                            {% endfor %}
-                                        {% endif %}
+                                        <br/>
+                                        <a href="#" 
+                                           id="nadpis_form_send_money_{{ jobman }}"
+                                           onclick="$('#form_send_money_{{ jobman }}').show('slow');
+                                                   $(this).hide('slow');
+                                                   return false;"><span class="fa fa-plus" ></span> добавить выплату</a>
+                                        <center>
+                                            <form 
+                                                action=""
+                                                method="post"
+                                                class="send-pay-form"
+                                                id="form_send_money_{{ jobman }}" 
+                                                style=" display:none; background-color:rgba(0,0,255,0.2);
+                                                padding: 5px 10px; width:200px; border-radius:15px; text-align:center;"
+
+                                                {# если есть "ajax" то передаётся в форму ajax_resto_id="res_form_add_{{ jobman }}" #}
+                                                {# куда печатаем результат#}
+                                                resto_id="res_form_add_{{ jobman }}"
+
+                                                >
+
+                                                добавить выплату
+
+                                                <div class="input-group" >
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text" id="inputGroupPrepend">дата</span>
+                                                    </div>
+                                                    <input type="date" class="form-control" xstyle="padding:3px;"
+                                                           name="date" 
+                                                           {%  if "now"|date('Y-m-d') >= get.d_start|date('Y-m-d') and "now"|date('Y-m-d') <= get.d_fin|date('Y-m-d') %}
+                                                               value="{{ "now"|date('Y-m-d') }}" 
+                                                           {%  else %}
+                                                               value="{{ get.d_fin|date('Y-m-d') }}" 
+                                                           {% endif %}
+                                                           min="{{ get.d_start|date('Y-m-d') }}" max="{{ get.d_fin|date('Y-m-d') }}" 
+                                                           required="required"
+                                                           />
+
+                                                </div>
+
+                                                <div class="input-group" >
+
+                                                    <input 
+                                                        type="number" min="1" max="{{ ostatok }}" 
+                                                        name="summa"
+                                                        value="{{ ostatok }}" class="form-control"  
+                                                        required="required"
+                                                        > 
+
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text" id="inputGroupPrepend">₽</span>
+                                                    </div>
+
+                                                </div>
+
+                                                <input type="hidden" name="user_id" value="{{ jobman }}" />
+                                                <input type="hidden" name="id" value="{{ jobman }}" />
+                                                <input type="hidden" name="s" value="{{ creatSecret(jobman) }}" />
+
+                                                <input type="submit" class="xform-control xbtn-xs btn btn-success" value="Выплачено" />
+
+                                            </form>
+                                        </center>
+                                        <div id="res_form_add_{{ jobman }}-2"></div>
+                                        <div id="res_form_add_{{ jobman }}"></div>
+                                    {% endif %}                                
+
+                                {%  endif %}
+                            </div>
+
+                            <div class="tcell ostatki {% if ostatok == 0 %} bg-success {% else %} bg-warning {% endif %}" >
+                                {% if ostatok == 0 %}
+                                    <center title="всё оплачено" class="text-white" >
+                                        оплачено
+                                    </center>
+                                {% else %}
+                                    {% if show_for_user_pay == true %}
+                                        <a href="#" 
+                                           onclick="$('#nadpis_form_send_money_{{ jobman }}').hide();$('#form_send_money_{{ jobman }}').show('slow');$('#form_send_money_{{ jobman }} input[name=summa]').val('{{ ostatok }}');
+                                                   return false;">
+                                            {{ ostatok|number_format(0, '.', '`') }}
+                                        </a>
+                                    {% else %}
+                                        {{ ostatok|number_format(0, '.', '`') }}
                                     {% endif %}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                    {#{  pa(jobman) }#}
-                                    <a href="#" onclick="$('#form_send_money_{{ jobman }}').show('slow');
-                                        $(this).hide('slow');
-                                        return false;">добавить выплату</a>
-
-                                    <form 
-                                        action=""
-                                        method="post"
-                                        class="send-pay-form"
-                                        id="form_send_money_{{ jobman }}" 
-                                        style=" display:none; background-color:rgba(255,255,0,0.2);padding: 5px 10px; width:200px; border-radius:15px; text-align:center;"
-
-                                        {# если есть "ajax" то передаётся в форму ajax_resto_id="res_form_add_{{ jobman }}" #}
-                                        {# куда печатаем результат#}
-                                        resto_id="res_form_add_{{ jobman }}"
-
-                                        >
-
-                                        добавить выплату
-
-                                        <div class="input-group rounded" >
-
-                                            <input 
-                                                type="number" min="1" max="200000" 
-                                                name="summa"
-                                                value="{{ summa_man }}" class="form-control"  > 
-
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text" id="inputGroupPrepend">₽</span>
-                                            </div>
-
-                                        </div>
-
-                                        <input type="hidden" name="user_id" value="{{ jobman }}" />
-                                        <input type="hidden" name="id" value="{{ jobman }}" />
-                                        <input type="hidden" name="s" value="{{ creatSecret(jobman) }}" />
-
-                                        <input type="date" min="{{ get.d_start|date('Y-m-d') }}" max="{{ get.d_fin|date('Y-m-d') }}" name="date" 
-                                               {%  if "now"|date('Y-m-d') >= get.d_start|date('Y-m-d') and "now"|date('Y-m-d') <= get.d_fin|date('Y-m-d') %}
-                                                   value="{{ "now"|date('Y-m-d') }}" 
-                                               {%  else %}
-                                                   value="{{ get.d_fin|date('Y-m-d') }}" 
-                                               {% endif %}
-                                               />
-
-                                        <input type="submit" class="form-control xbtn-xs xbtn xbtn-success" value="Выплачено 1" />
-
-                                    </form>
-
-                                    <div id="res_form_add_{{ jobman }}"></div>
-
-                                </div>
-                                {#
-                            <div class="tcell" >
-                                остаток
+                                {% endif %}
                             </div>
-                                #}
-                            </div>
+                        </div>
 
-                            {% endspaceless %}
+                        {% endspaceless %}

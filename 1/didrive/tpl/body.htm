@@ -1,5 +1,16 @@
 {% spaceless %}
 
+    
+    {% if session['now_user_di']['access'] is defined and session['now_user_di']['access'] == 'admin' %}
+        {% set show_for_user_pay = true %}
+    {% else %}
+        {% set show_for_user_pay = false %}
+    {% endif %}
+    
+    
+    
+    
+    
     <div class="container-fluid">
         <div class="grid">
 
