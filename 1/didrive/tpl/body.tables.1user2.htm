@@ -127,9 +127,12 @@
 
                             c {{ d.start[11:5] }} до {{ d.fin[11:5] }}
                             <br/>
+                            
+                            {#{ pa(d) }#}
+                            
+                            {% if d.hours_on_job is defined %}
 
-                            {% if d.hour_on_job is defined %}
-                                Часов: {{ d.hour_on_job }}
+                                Часов: {{ d.hours_on_job }}
 
                                 {% if d.now.ocenka is defined %}
                                     Оценка: {{ d.now.ocenka }}
@@ -137,7 +140,7 @@
                                     {% if d.now.price_hour is defined %}
                                         Цена часа: {{ d.now.price_hour + d.now.smoke }}
 
-                                        {% set sum_day = ( d.now.price_hour + d.now.smoke ) * d.hour_on_job %}
+                                        {% set sum_day = ( d.now.price_hour + d.now.smoke ) * d.hours_on_job %}
 
                                     {% endif %}
 

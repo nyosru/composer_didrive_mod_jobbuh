@@ -33,12 +33,12 @@ class JobBuh {
 
         $d_start = $d_month . '-01';
         $d_finish = date('Y-m-d', strtotime($d_start . ' +1 month -1 day'));
-        
+
 //        \Nyos\mod\items::$where2 = ' AND ( midop.name = \'date\' AND midop.value_date '
 //                . ' BETWEEN \''.date('Y-m-d',strtotime($d_start)).'\' '
 //                . ' AND \''.date('Y-m-d',strtotime($d_finish)).'\' ) ';
 //        $oborots = \Nyos\mod\items::getItemsSimple2($db, $module_oborot);
-        
+
         $oborots = \Nyos\mod\items::getItemsSimple3($db, $module_oborot);
         // \f\pa($oborots);
 
@@ -132,9 +132,8 @@ class JobBuh {
         // compileSalarysJobmans($db, substr($dt_start,0,10) );
         // \f\pa($salarises, 2, '', '$salarises');
         // \f\pa($salarises, '', '', '$salarises');
-
         // \f\timer::start(156);
-        
+
         $return = [
             // тащим список назначений на работу в точке продаж в период времени
             'jobman_on' => \Nyos\mod\JobDesc::getJobmansOnTime1910($db, $dt_start, $dt_fin)
@@ -144,71 +143,64 @@ class JobBuh {
         ];
 
         // echo '<br/>timer1:'. \f\timer::stop( 'str' , 156 );
-
-        
         // \f\pa($return,2,'','$return');
 
         $where_job = \Nyos\mod\JobDesc::whereJobmansPeriod($db, $dt_start, $dt_fin);
         // \f\pa($where_job,2,'','$where_job');
-
         // echo '<br/>timer2:'. \f\timer::stop( 'str' , 156 );
 
-                        
-        
+
+
         \Nyos\mod\items::$get_data_simple = true;
         $jobmans = \Nyos\mod\items::getItemsSimple($db, $module_jobman);
         // \f\pa($jobmans,2,'','$jobmans');
-
         // echo '<br/>timer2:'. \f\timer::stop( 'str' , 156 );
 
-        
-  /*      
-        \Nyos\mod\items::$get_data_simple = true;
-        // $checks = \Nyos\mod\items::getItemsSimple($db, '050.chekin_checkout', 'show');
-        $checks = \Nyos\mod\items::getItemsSimple($db, '050.chekin_checkout');
-        \f\pa($checks,2,'','checks');
-*/
-        
-        
+
         /*
-        $ee = \Nyos\mod\items::$where2 = ' AND ( midop.name = \'start\' AND midop.value_datetime '
-                . 'BETWEEN \''.date('Y-m-d',strtotime($date_start)).' 08:00:00\' AND \''.date('Y-m-d',strtotime($date_fin.' +1 day')).' 03:00:00\' ) ';
-        // $ee = \Nyos\mod\items::$where2 = ' AND midop.name = \'date_now\'  ';
-        
-        $checks = \Nyos\mod\items::getItemsSimple2($db, '050.chekin_checkout');
-        \f\pa($checks,2,'','checks');
-        */
-        
-        
-        
-        
-        
-        
-        
+          \Nyos\mod\items::$get_data_simple = true;
+          // $checks = \Nyos\mod\items::getItemsSimple($db, '050.chekin_checkout', 'show');
+          $checks = \Nyos\mod\items::getItemsSimple($db, '050.chekin_checkout');
+          \f\pa($checks,2,'','checks');
+         */
+
+
+        /*
+          $ee = \Nyos\mod\items::$where2 = ' AND ( midop.name = \'start\' AND midop.value_datetime '
+          . 'BETWEEN \''.date('Y-m-d',strtotime($date_start)).' 08:00:00\' AND \''.date('Y-m-d',strtotime($date_fin.' +1 day')).' 03:00:00\' ) ';
+          // $ee = \Nyos\mod\items::$where2 = ' AND midop.name = \'date_now\'  ';
+
+          $checks = \Nyos\mod\items::getItemsSimple2($db, '050.chekin_checkout');
+          \f\pa($checks,2,'','checks');
+         */
+
+
+
+
+
+
+
         //echo '<br/>timer8:'. \f\timer::start( 999 );
-        
+
         \Nyos\mod\items::$where2dop = ' AND '
                 . ' ( '
                 . '  ( '
                 . '  midop.name = \'start\' '
                 . '  AND midop.value_datetime '
-                . '  BETWEEN \''.date('Y-m-d 08:00:00',strtotime($date_start)).'\' AND \''.date('Y-m-d 03:00:00',strtotime($date_fin.' +1 day')).'\' '
+                . '  BETWEEN \'' . date('Y-m-d 08:00:00', strtotime($date_start)) . '\' AND \'' . date('Y-m-d 03:00:00', strtotime($date_fin . ' +1 day')) . '\' '
                 . '  ) '
                 . ' OR '
                 . '  midop.name != \'start\' '
                 . ' ) ';
-        \Nyos\mod\items::$need_polya_vars = [ 'start', 'jobman' ];
+        \Nyos\mod\items::$need_polya_vars = ['start', 'jobman'];
         // \f\pa(\Nyos\mod\items::$need_polya_vars);
-        
+
         $checks = \Nyos\mod\items::getItemsSimple3($db, '050.chekin_checkout');
         //\f\pa($checks,2,'','checks');
-      
         //echo '<br/>timer (getItemsSimple3($db, 050.chekin_checkout);) :'. \f\timer::stop( 'str' , 999 );
-        
         // echo '<br/>timer8:'. \f\timer::stop( 'str' , 156 );
-        
         //return ;
-        
+
         $mod_jobman = $module_jobman;
 
 //        echo '<br/>';
@@ -230,9 +222,8 @@ class JobBuh {
 //            } else {
 //                continue;
 //            }
-
             //\f\pa($v);
-            
+
             $v['id_check'] = $v['id'];
             $v['type'] = 'check';
             $v['date'] = substr($v['start'], 0, 10);
@@ -242,44 +233,60 @@ class JobBuh {
 
             // какой уровень оплаты
             if (!empty($v['now_job']['sale_point']) && !empty($v['now_job']['dolgnost']) && !empty($v['date'])) {
-                
+
                 $v['oborot_sp_month'] = \Nyos\mod\JobBuh::getOborotSpMonth($db, $v['now_job']['sale_point'], $v['date']);
 //                // ищем текущее значение
                 $v['salary-now'] = \Nyos\mod\JobDesc::getSalaryJobman($db, $v['now_job']['sale_point'], $v['now_job']['dolgnost'], $v['date']);
 //                //\f\pa($v['salary-now']);
                 //$v['now'] = \Nyos\mod\JobDesc::calcSummaDay($v);
                 $v['summa-day'] = \Nyos\mod\JobDesc::calcSummaDay($v);
-                
+            }
+
+            // \f\pa($v);
+            
+            if (!empty($v['hour_on_job_hand'])) {
+                $v['hours_on_job'] = $v['hour_on_job_hand'];
+            } 
+            //
+            elseif (!empty($v['hour_on_job'])) {
+                $v['hours_on_job'] = $v['hour_on_job'];
+            } 
+            //
+            else {
+                $v['hours_on_job'] = 0;
             }
 
             // \f\pa($v['now'],2,'','now1');
-
             // какой уровень оплаты 
-
             //\f\pa($v);
-            
-            if ( !empty($v['ocenka']) && is_numeric($v['ocenka']) && !empty($v['salary-now']['ocenka-hour-' . $v['ocenka']])) {
+
+            if (!empty($v['ocenka']) && is_numeric($v['ocenka']) && !empty($v['salary-now']['ocenka-hour-' . $v['ocenka']])) {
 
                 $v['now']['ocenka'] = $v['ocenka'];
                 $v['now']['price_hour'] = $v['salary-now']['ocenka-hour-' . $v['now']['ocenka']];
             }
             //
-            elseif (!empty($v['ocenka_auto']) && !empty($v['salary-now']['ocenka-hour-' . $v['ocenka_auto']])
-                && is_numeric($v['ocenka_auto']) ) {
+            elseif (!empty($v['ocenka_auto']) && !empty($v['salary-now']['ocenka-hour-' . $v['ocenka_auto']]) && is_numeric($v['ocenka_auto'])) {
 
                 $v['now']['ocenka'] = $v['ocenka_auto'];
                 $v['now']['price_hour'] = $v['salary-now']['ocenka-hour-' . $v['now']['ocenka']];
             } else {
-                
+
                 $v['now']['ocenka'] = null;
                 $v['now']['price_hour'] = null;
             }
 
+
+
+
+
+
+
             if (empty($v['now']['price_hour'])) {
-                
+
                 continue;
             } elseif (!empty($v['price_hour']) && !empty($v['hour_on_job'])) {
-                
+
                 $v['now']['summa'] = ceil($v['price_hour'] * $v['hour_on_job']);
             }
 
@@ -295,22 +302,16 @@ class JobBuh {
             if (!isset($return[$v['jobman']]['user_id']))
                 $return[$v['jobman']]['user_id'] = $jobmans[$v['jobman']]['_id'];
 
-            if ( isset($return[$v['jobman']]['user']))
+            if (isset($return[$v['jobman']]['user']))
                 unset($return[$v['jobman']]['user']);
 //            if (!isset($return[$v['jobman']]['user']))
 //                $return[$v['jobman']]['user'] = $jobmans[$v['jobman']];
-
             //\f\pa($v,2,'','$v');
         }
 
-        
+
         // echo '<br/>timer '.__FUNCTION__.' end '. \f\timer::stop( 'str' , 156 );
         //return ;
-        
-        
-        
-        
-        
         // \f\pa($return['items'],2,'','items');
 //$return = [];
 
@@ -328,12 +329,12 @@ class JobBuh {
      * @return type
      */
     public static function getChecksMinusPlus($db, $date_start, $date_fin, $sp_on = 'all', $module_jobman = '070.jobman', $module_sp = 'sale_point', $module_send_jobman_to_sp = 'jobman_send_on_sp') {
-        
+
         //echo '<br/>' . $date_start . ', ' . $date_fin;
 
         if (isset(self::$cash['ChecksMinusPlus'][$date_start][$date_fin]))
             return self::$cash['ChecksMinusPlus'][$date_start][$date_fin];
-        
+
         $return = self::calcChecks($db, $date_start, $date_fin);
         //\f\pa($return,4);
 
@@ -352,11 +353,9 @@ class JobBuh {
                 break;
 
             $return['days'][$dd] = 1;
-
         }
 
         return self::$cash['ChecksMinusPlus'][$date_start][$date_fin] = $return;
-        
     }
 
 }
