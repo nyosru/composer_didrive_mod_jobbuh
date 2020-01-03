@@ -9,165 +9,168 @@
 
                 {% if 1 == 2 %}
 
-                    {% set now_y = "now"|date("Y") %}
-                    {% set now_m = "now"|date("m") %}
-                    {% set now_d = "now"|date("d") %}
+                    {% if 1 == 2 %}
 
-                    {% for year in 2019..2030 if year <= now_y %}
+                        {% set now_y = "now"|date("Y") %}
+                        {% set now_m = "now"|date("m") %}
+                        {% set now_d = "now"|date("d") %}
 
-                        <div class="btn-date-pick btn btn-xs btn-info" >{{ year }}</div>
-                        {% set year2 = year+1 %}
+                        {% for year in 2019..2030 if year <= now_y %}
 
-                        {% for i in 1..12  if i <= now_m %}
+                            <div class="btn-date-pick btn btn-xs btn-info" >{{ year }}</div>
+                            {% set year2 = year+1 %}
 
-                            {% if i == 10 %}
-                                {% set m = i %}
-                                {% set m2 = i+1 %}
-                            {% elseif i == 11 %}
-                                {% set m = i %}
-                                {% set m2 = i+1 %}
-                            {% elseif i == 12 %}
-                                {% set m = i %}
-                                {% set m2 = i+1 %}
-                            {% elseif i == 9 %}
-                                {% set m = '0'~i %}
-                                {% set m2 = i+1 %}
-                            {% else %}
-                                {% set m = '0'~i %}
-                                {% set m2 = '0'~(i+1) %}
-                            {% endif %}
+                            {% for i in 1..12  if i <= now_m %}
 
-                            {% set d1 = year~'-'~m~'-06' %}
-                            {% set d2 = year~'-'~m~'-20' %}
-                            {% set d3 = year~'-'~m~'-21' %}
+                                {% if i == 10 %}
+                                    {% set m = i %}
+                                    {% set m2 = i+1 %}
+                                {% elseif i == 11 %}
+                                    {% set m = i %}
+                                    {% set m2 = i+1 %}
+                                {% elseif i == 12 %}
+                                    {% set m = i %}
+                                    {% set m2 = i+1 %}
+                                {% elseif i == 9 %}
+                                    {% set m = '0'~i %}
+                                    {% set m2 = i+1 %}
+                                {% else %}
+                                    {% set m = '0'~i %}
+                                    {% set m2 = '0'~(i+1) %}
+                                {% endif %}
 
-                            {% if m == 12 %}
-                                {% set d4 = year2~'-'~m2~'-05' %}
-                            {% else %}
-                                {% set d4 = year~'-'~m2~'-05' %}
-                            {% endif %}
+                                {% set d1 = year~'-'~m~'-06' %}
+                                {% set d2 = year~'-'~m~'-20' %}
+                                {% set d3 = year~'-'~m~'-21' %}
 
-                            {#% if d2[0:4] <= now_y and d2[5:2] <= now_m and d2[8:2] <= now_d %#}
+                                {% if m == 12 %}
+                                    {% set d4 = year2~'-'~m2~'-05' %}
+                                {% else %}
+                                    {% set d4 = year~'-'~m2~'-05' %}
+                                {% endif %}
 
-                            {% if m < now_m or ( m == now_m and now_d < 5 ) %}
+                                {#% if d2[0:4] <= now_y and d2[5:2] <= now_m and d2[8:2] <= now_d %#}
 
-                                <a href="?level={{ get.level }}&d_start={{ d1 }}&d_fin={{ d2 }}"  
-                                   class="btn-date-pick btn btn-xs 
+                                {% if m < now_m or ( m == now_m and now_d < 5 ) %}
 
-                                   {% if get.d_start is defined and get.d_start == d1 and get.d_fin is defined and get.d_fin == d2 %}
-                                       btn-success
-                                   {% else %}
-                                       btn-light
-                                   {% endif %}
-
-                                   " >{{ d1[5:2] }}.{{ d1[8:2] }} - {{ d2[5:2] }}.{{ d2[8:2] }}</a>
-
-                                {% if m < now_m or ( m == now_m and now_d < 20 ) %}
-
-                                    <a href="?level={{ get.level }}&d_start={{ d3 }}&d_fin={{ d4 }}"
+                                    <a href="?level={{ get.level }}&d_start={{ d1 }}&d_fin={{ d2 }}"  
                                        class="btn-date-pick btn btn-xs 
 
-                                       {% if get.d_start is defined and get.d_start == d3 and get.d_fin is defined and get.d_fin == d4 %}
+                                       {% if get.d_start is defined and get.d_start == d1 and get.d_fin is defined and get.d_fin == d2 %}
                                            btn-success
                                        {% else %}
                                            btn-light
                                        {% endif %}
 
-                                       " >{{ d3[5:2] }}.{{ d3[8:2] }} - {{ d4[5:2] }}.{{ d4[8:2] }}</a>
+                                       " >{{ d1[5:2] }}.{{ d1[8:2] }} - {{ d2[5:2] }}.{{ d2[8:2] }}</a>
 
-                                {% endif %}
+                                    {% if m < now_m or ( m == now_m and now_d < 20 ) %}
 
-                            {% endif %}
+                                        <a href="?level={{ get.level }}&d_start={{ d3 }}&d_fin={{ d4 }}"
+                                           class="btn-date-pick btn btn-xs 
 
-                            {#% endif %#}
+                                           {% if get.d_start is defined and get.d_start == d3 and get.d_fin is defined and get.d_fin == d4 %}
+                                               btn-success
+                                           {% else %}
+                                               btn-light
+                                           {% endif %}
 
-                        {% endfor %}
-                    {% endfor %}
-                {% endif %}
-
-                {% set now_y = "now"|date("Y") %}
-                {% set now_m = "now"|date("m") %}
-
-                {% if now_m < 10 %}
-                    {% set now_m1 = '0'~now_m %}
-                {% endif %}
-
-                {% set now_d = "now"|date("d") %}
-                {% set now_d2 = "now"|date("Y-m-d") %}
-
-                {% set gets = get %}
-                {#{ pa(gets) }#}
-
-                {% for year in 2019..2030 if year <= now_y %}
-
-                    {% for month in 1..12 if year < now_y or ( year == now_y and month <= now_m+1 )  %}
-
-                        {% if month < 10 %}
-                            {% set month2 = '0'~month %}
-                        {% else %}
-                            {% set month2 = month %}
-                        {% endif %}
-
-                        {% if ( year == 2019 and month > 8  and month <= now_m ) or year > 2019 %}
-
-                            {#{ year }} {{ month }} <br/> #}
-                            {% set d1 = year~'-'~month2~'-01' %}
-                            {% set d2 = year~'-'~month2~'-20' %}
-                            {% set d3 = year~'-'~month2~'-21' %}
-                            {% set d4 = d3|date("Y-m-t") %}
-                            {# { d }} - #}
-
-                            <div class="btn-group btn-group-xs" role="group" aria-label="..." style="margin-right:10px;">
-
-                                {% if now_d2 >= d2 %}
-
-                                    {% set gets = gets|merge({ 'd_start0':d1, 'd_start':d1, 'd_fin':d2 , 'd_stop':'' }) %}
-
-                                    <a 
-                                        href="?{{ http_build_query(gets) }}"
-                                        xhref="?level={{ get.level }}&d_start={{ d1 }}&d_fin={{ d2 }}"
-                                        class="btn-date-pick btn btn-xs 
-
-                                        {% if get.d_start0 is defined and get.d_start0 == d1 and get.d_fin is defined and get.d_fin == d2 %}
-                                            btn-success
-                                        {% else %}
-                                            btn-light
-                                        {% endif %}
-
-                                        " >{{ d1[5:2] }}.{{ d1[8:2] }} - {{ d2[5:2] }}.{{ d2[8:2] }}</a>
-
-                                    {% if now_d2 >= d4 %}
-
-                                        {% set gets = gets|merge({ 'd_start0':d3, 'd_start':d1, 'd_fin':d4 , 'd_stop':d2  }) %}
-
-                                        <a 
-                                            href="?{{ http_build_query(gets) }}"
-                                            xhref="?level={{ get.level }}&d_start={{ d3 }}&d_fin={{ d4 }}&month_end=da"
-                                            class="btn-date-pick btn btn-xs 
-
-                                            {% if get.d_start0 is defined and get.d_start0 == d3 and get.d_fin is defined and get.d_fin == d4 %}
-                                                btn-success
-                                            {% else %}
-                                                btn-light
-                                            {% endif %}
-
-                                            " >{{ d3[5:2] }}.{{ d3[8:2] }} - {{ d4[5:2] }}.{{ d4[8:2] }}</a>
+                                           " >{{ d3[5:2] }}.{{ d3[8:2] }} - {{ d4[5:2] }}.{{ d4[8:2] }}</a>
 
                                     {% endif %}
 
                                 {% endif %}
 
+                                {#% endif %#}
 
-                            </div>
-                        {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                    {% endif %}
+
+                    {% set now_y = "now"|date("Y") %}
+                    {% set now_m = "now"|date("m") %}
+
+                    {% if now_m < 10 %}
+                        {% set now_m1 = '0'~now_m %}
+                    {% endif %}
+
+                    {% set now_d = "now"|date("d") %}
+                    {% set now_d2 = "now"|date("Y-m-d") %}
+
+                    {% set gets = get %}
+                    {#{ pa(gets) }#}
+
+                    {% for year in 2019..2030 if year <= now_y %}
+
+                        {% for month in 1..12 if year > now_y or ( year == now_y and month <= now_m+1 )  %}
+
+                            {% if month < 10 %}
+                                {% set month2 = '0'~month %}
+                            {% else %}
+                                {% set month2 = month %}
+                            {% endif %}
+
+                            {% if ( year == 2019 and month > 8  and month <= now_m ) or year > 2019 %}
+
+                                {#{ year }} {{ month }} <br/> #}
+                                {% set d1 = year~'-'~month2~'-01' %}
+                                {% set d2 = year~'-'~month2~'-20' %}
+                                {% set d3 = year~'-'~month2~'-21' %}
+                                {% set d4 = d3|date("Y-m-t") %}
+                                {# { d }} - #}
+
+                                <div class="btn-group btn-group-xs" role="group" aria-label="..." style="margin-right:10px;">
+
+                                    {% if now_d2 >= d2 %}
+
+                                        {% set gets = gets|merge({ 'd_start0':d1, 'd_start':d1, 'd_fin':d2 , 'd_stop':'' }) %}
+
+                                        <a 
+                                            href="?{{ http_build_query(gets) }}"
+                                            xhref="?level={{ get.level }}&d_start={{ d1 }}&d_fin={{ d2 }}"
+                                            class="btn-date-pick btn btn-xs 
+
+                                            {% if get.d_start0 is defined and get.d_start0 == d1 and get.d_fin is defined and get.d_fin == d2 %}
+                                                btn-success
+                                            {% else %}
+                                                btn-light
+                                            {% endif %}
+
+                                            " >{{ d1[5:2] }}.{{ d1[8:2] }} - {{ d2[5:2] }}.{{ d2[8:2] }}</a>
+
+                                        {% if now_d2 >= d4 %}
+
+                                            {% set gets = gets|merge({ 'd_start0':d3, 'd_start':d1, 'd_fin':d4 , 'd_stop':d2  }) %}
+
+                                            <a 
+                                                href="?{{ http_build_query(gets) }}"
+                                                xhref="?level={{ get.level }}&d_start={{ d3 }}&d_fin={{ d4 }}&month_end=da"
+                                                class="btn-date-pick btn btn-xs 
+
+                                                {% if get.d_start0 is defined and get.d_start0 == d3 and get.d_fin is defined and get.d_fin == d4 %}
+                                                    btn-success
+                                                {% else %}
+                                                    btn-light
+                                                {% endif %}
+
+                                                " >{{ d3[5:2] }}.{{ d3[8:2] }} - {{ d4[5:2] }}.{{ d4[8:2] }}</a>
+
+                                        {% endif %}
+
+                                    {% endif %}
+
+
+                                </div>
+                            {% endif %}
+
+                        {% endfor %}
 
                     {% endfor %}
 
-                {% endfor %}
-
-
+                {% endif %}
 
             </div>
+
 
             {% set sps = items__get( db, 'sale_point' )  %}
             {#{ pa(sps) }#}
@@ -182,7 +185,7 @@
                 {% set gets = get %}
                 {#{ pa(gets) }#}
 
-                <div class="btn-group" role="group" aria-label="Basic example" style="margin-top: 0.2em;">
+                <div class="btn-group" role="group" aria-label="Basic example" style="margin-bottom: 0.2em; margin-top: 0.2em;" >
 
                     {# <div class="btn-group mr-2" role="group" aria-label="First group"> #}
                     <button type="button" class="btn btn-xs btn-default">Показать:</button>
@@ -216,6 +219,80 @@
             {% endif %}
 
 
+
+
+
+
+            {% set gets = get %}
+            {% set last_y = '' %}
+            {% set d_now = "now"|date("Y-m-d") %}
+            {% set d_start = "2019-11-01" %}
+
+            {% for k in 0..50 %}
+
+                {% set date1 = d_start|date_modify("+"~k~" month")|date("Y-m-d") %}
+
+                {% if d_now > date1 %}
+
+                    {% set now_y = d_start|date_modify("+"~k~" month")|date("Y") %}
+
+                    {% if last_y != now_y %}
+                        
+                        {% if last_y != '' %}
+                        </div>
+                        {% endif %}
+                        
+                        <br/>
+                        <div class="btn-group" role="group" aria-label="Basic example" style="margin-bottom: 0.2em; margin-top: 0.2em;">
+                        <button type="button" class="btn-date-pick btn btn-xs btn-light"><b>{{ now_y }}</b>:</button>
+
+                        {% set last_y = now_y %}
+
+                    {% endif %}
+
+                    {# + {{ date1 }} #}
+
+                    {# <div class="btn-group" role="group" xaria-label="Basic example" style="margin-right:10px; margin-top: 5px;"> #}
+
+                        {% set d1 = date1|date('Y-m-01') %}
+                        {% set d2 = date1|date('Y-m-20') %}
+
+                        {% set gets = gets|merge({ 'd_start0':d1, 'd_start':d1, 'd_fin':d2 , 'd_stop':'' }) %}
+                        
+                        <a href="?{{ http_build_query(gets) }}"
+                           class="btn-date-pick btn btn-xs 
+
+                           {% if get.d_start is defined and get.d_start == d1 and get.d_fin is defined and get.d_fin == d2 %}
+                               btn-success
+                           {% else %}
+                               btn-light
+                           {% endif %}
+
+                           " >{{ d1[5:2] }}.{{ d1[8:2] }} - {{ d2[5:2] }}.{{ d2[8:2] }}</a>
+
+                        {% set d3 = date1|date('Y-m-21') %}
+                        {% set d4 = date1|date('Y-m-01')|date_modify("+1 month -1 day")|date("Y-m-d") %}
+
+                        {% set gets = gets|merge({ 'd_start0':d3, 'd_start':d1, 'd_fin':d4 , 'd_stop':d2  }) %}
+                        
+                        <a href="?{{ http_build_query(gets) }}"
+                           class="btn-date-pick btn btn-xs 
+
+                           {% if get.d_start is defined and get.d_start == d1 and get.d_fin is defined and get.d_fin == d4 %}
+                               btn-success
+                           {% else %}
+                               btn-light
+                           {% endif %}
+
+                           " >{{ d1[5:2] }}.{{ d1[8:2] }} - {{ d4[5:2] }}.{{ d4[8:2] }}</a>
+
+                    {# </div> #}
+
+                {% endif %}
+
+            {% endfor %}
+            {# закрываем блок что держит год #}
+            </div>
 
         </div>
     </div>

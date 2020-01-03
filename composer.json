@@ -1,7 +1,7 @@
 {
     "name": "didrive_mod/job_buh",
     "description": "расчёт денег по учёту работы",
-    "version": "1.0.1",
+    "version": "1.0.2",
     
     "keywords": [
         "didrive", "module", "nyos", "uralweb.info"
@@ -20,21 +20,15 @@
     "license": "MIT",
 
     "require": {
-        
-        "php": ">=7.1.0"
-        ,
-        "twig/twig": ">=2.10.0"
-        ,
-        "didrive_mod/jobdesc": ">=0.0.1"
-        ,
+        "php": ">=7.1.0",
+        "twig/twig": ">=2.10.0",
+        "didrive_mod/jobdesc": ">=0.0.1",
         "didrive_mod/iiko_checks": ">=0.0.8"
-        
     }
     ,
     "autoload": {
-        "files": [ 
+        "files": [
             "class.php"
-        ]    
+        ]
     }
-    
 }
