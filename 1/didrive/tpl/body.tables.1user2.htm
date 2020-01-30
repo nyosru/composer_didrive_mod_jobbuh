@@ -12,7 +12,6 @@
 
     {% set jobman = checks_man.user_id %}
 
-
     <div class="trow stick-top3 row_user" 
          {# style="background-color: lightgreen;" #}
          >
@@ -65,17 +64,21 @@
 
             {% set stopline = true %}
 
-            <div class="trow info_{{ jobman }}" style="display:none; background-color: rgba(0,255,0,0.1);">
-                <div class="tcell" >
-                </div>
-                <div class="tcell" >
-                    старт второго периода оплаты с 21 числа
-                </div>
-                <div class="tcell" >
-                </div>
-                <div class="tcell" >
-                </div>
-            </div>
+
+
+            {#            
+                        <div class="trow info_{{ jobman }}" style="display:none; background-color: rgba(0,255,0,0.1);">
+                            <div class="tcell" >
+                            </div>
+                            <div class="tcell" >
+                                старт второго периода оплаты с 21 числа
+                            </div>
+                            <div class="tcell" >
+                            </div>
+                            <div class="tcell" >
+                            </div>
+                        </div>
+            #}
 
             {% endif %}
 
@@ -127,9 +130,9 @@
 
                             c {{ d.start[11:5] }} до {{ d.fin[11:5] }}
                             <br/>
-                            
+
                             {#{ pa(d) }#}
-                            
+
                             {% if d.hours_on_job is defined %}
 
                                 Часов: {{ d.hours_on_job }}
@@ -307,8 +310,8 @@
 
                         {% endif %}
 
-                        
-                        
+
+
                         {% if 1 == 2 and ostatok > 0 %}
                             для оплаты доступно: {{ ostatok }}
                             {#
@@ -466,6 +469,8 @@
                                                     </div>
 
                                                 </div>
+
+                                                <input type="hidden" name="sp" value="{{ get.sp }}" />
 
                                                 <input type="hidden" name="user_id" value="{{ jobman }}" />
                                                 <input type="hidden" name="id" value="{{ jobman }}" />

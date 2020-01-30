@@ -1,0 +1,31 @@
+{% spaceless %}
+
+    {# user id = workman_id, user array = man #}
+    {#{ pa(man) }#}
+
+    <div class="trow stick-top3 row_user" 
+         {# style="background-color: lightgreen;" #}
+         >
+
+        <div class="tcell"  >&nbsp;</div>
+        <div class="tcell nameuser" >
+
+            <button class="btn-xs btn" 
+                    onclick="$('.info_{{ man_id }}').toggle('slow');"
+                    style="float:right;">показать/скрыть подробности</button>
+
+            <span title="#{{ man_id }}" >{{ man['fio'] }}</span> &nbsp; <sup style="color:gray;" title="отмечены точки продаж где сотрудник работает в этом месяце">
+                {% for k,v in getListJobsPeriodAll.data.job_on_sp if v[man_id] is defined %}
+                    <span style="background-color: rgba(0,255,0,0.2); margin-right:2px; padding:3px 5px;" >{{ sps[k]['head'] }}</span>
+                {% endfor %}
+            </sup>
+
+        </div>
+
+        <div class="tcell" >&nbsp;</div>
+        <div class="tcell" >&nbsp;</div>
+        <div class="tcell" >&nbsp;</div>
+
+    </div>
+
+{% endspaceless %}

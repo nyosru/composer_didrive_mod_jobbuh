@@ -1,0 +1,208 @@
+{% spaceless %}
+
+    {#% set summa_man = summa_man + 10 %#}
+
+    <div
+        {% if 1 == 2 and ( item.ocenka is not defined or now.ocenka == 0 ) %}
+            class="trow"
+            {% set error_ruk = true %}
+        {% else %}
+            class="trow info_{{ man_id }}" style="display:none;"  
+        {% endif %}
+        >
+
+        <div class="tcell" >
+
+            {% if date_last != item.start|date('d.m.Y') %}
+
+                {{ item.start|date('d.m.Y') }}
+                {% set date_last = item.start|date('d.m.Y') %}
+
+            {% endif %}
+
+            {#{ pa(item) }#}
+
+        </div>
+
+        <div class="tcell bg-white stick-left" >
+
+            {% set sum_day = 0 %}
+
+            {% if sps[now_day_job.sale_point]['head'] is defined %}
+                <span class="checks_item sp1" >{{ sps[now_day_job.sale_point]['head'] }}</span>
+            {% endif %}
+
+            {% if now_day_job.type is defined and now_day_job.type == 'spec' %}
+                <span class="checks_item spec" >Спец. назначение</span>
+            {% endif %}
+
+            <span class="checks_item smena" >Раб. смена</span>
+
+            {% if dolgns.data[now_day_job.dolgnost]['head'] is defined %}
+                <span class="checks_item dolgn sup_hover_gray" >{{ dolgns.data[now_day_job.dolgnost]['head'] }}
+                    {% if now_day_job.smoke is defined and now_day_job.smoke == 'da' %}
+                        <sup>курит</sup>
+                    {% endif %}
+                </span>
+            {% endif %}
+
+            c {{ item.start[11:5] }} до {% if item.start[11:2] < item.fin[11:2] %}{{ item.fin|date('H:i') }}{% else %}{{ item.fin|date('d.m.Y H:i') }}{% endif %}
+            
+            <br/>
+
+            Часов: {{ item.hour_on_job_hand ?? item.hour_on_job ?? '-' }}
+            Оценка: {{ item.ocenka ?? item.ocenka_auto ?? '-' }}
+            Цена часа: {{ item.salary_hour ?? '-' }}
+
+            {#{ pa(now_day_job) }#}
+            
+        </div>
+        <div class="tcell text-right" >
+
+            {% if item.summa is defined and item.summa > 0 %}
+
+                {{ item.summa|number_format(0, '.', '`') }}
+                {#% set summa_man = summa_man + item.summa %#}
+
+            {% endif %}
+
+        </div>
+        <div class="tcell" >
+        </div>
+        <div class="tcell" >
+        </div>
+
+        {% if 1 == 2 %}            
+            <div class="tcell" >
+
+                {% set ostatok = item.summa %}
+                {% set payed = 0 %}
+
+                {#{ pa(payed) }#}
+
+                {% if payed[item.id_check] is defined %}
+
+                    {# выплачено {{ summa }} #}
+
+                    {% for k,v in payed[item.id_check] %}
+                        {#{ pa(v) }#}
+                        выплачено {{ v.summa }}₽ <sup>{{ v.pay_buh_start[0:16] }}</sup>
+                        {% set ostatok = ostatok - v.summa %}
+
+                        {% set payed = payed + v.summa %}
+
+                        <br/>
+                    {% endfor %}
+
+                    {% if ostatok != 0 %}
+                        Остаток: {{ ostatok }}₽
+
+                        <button class="btn btn-xs btn-light send-pay-good" 
+
+                                val-summa="{{ ostatok }}" 
+                                val-checkin="{{ item.id_check }}"
+
+                                show_on_click="res{{ item.id_check }}"
+                                resto="res{{ item.id_check }}"
+
+                                >Оплатить остаток</button>
+
+                        <div id="res{{ item.id_check }}" ></div>
+
+                    {% else %}
+                        <span class="fa fa-thumbs-o-up" ></span>
+                    {% endif %}
+
+                {% else %}
+
+                    {% if summa > 0 %}
+
+                        <button class="btn btn-xs btn-light send-pay-good" 
+
+                                val-summa="{{ summa }}" 
+                                val-checkin="{{ item.id_check }}"
+
+                                show_on_click="res{{ item.id_check }}"
+                                resto="res{{ item.id_check }}"
+
+                                >Выплачено</button>
+
+                        <div id="res{{ item.id_check }}" ></div>
+
+                        {#{ summa }}
+                        {{ item.id_check }#}
+                    {% endif %}
+
+                {% endif %}
+
+                {% if 1 == 2 and ostatok > 0 %}
+
+                    для оплаты доступно: {{ ostatok }}
+
+                    {#
+                    <button class="btn btn-xs btn-light send-pay" 
+    
+                            val-summa="{{ ostatok }}" 
+                            val-checkin="{{ item.id_check }}"
+                            s="{{ creatSecret( item.id_check~'s'~ostatok ) }}"
+    
+                            show_on_click="res{{ item.id_check }}"
+                            resto="res{{ item.id_check }}"
+    
+                            >Выплачено</button>
+    
+                    <div id="res{{ item.id_check }}" ></div>
+                    #}
+
+                {% endif %}
+
+                {#% set payed_man = payed_man + payed %#}
+                {#{ pa(d) }#}
+
+            </div>
+            <div class="tcell" >
+
+                {#% set summa_man = summa_man + ostatok %#}
+                {#{ summa_man|number_format(0, '.', '`') }#}
+
+            </div>
+        {% endif %}
+
+        {%  if money_dops[checks_man.user_id][date] is defined %}
+            {%  for k1,v1 in money_dops[checks_man.user_id][date] %}
+
+                <div class="trow info_{{ checks_man.user_id }}" style="display:none;" >
+                    <div class="tcell" >{{ date|date('d.m.Y') }}</div>
+                    <div class="tcell" >
+
+                        {# % if v1.type2 == 'minus' %}
+                            <span class="checks_item minus" >Взыскание</span> {{ d.text }}
+                        {% elseif v1.type2 == 'plus' %}
+                            <span class="checks_item plus" >Премия</span> {{ d.text }}
+                        {% endif % #}
+
+                        {{ item.text }}
+                        {#{ pa(v1) }#}
+
+                    </div>
+                    <div class="tcell text-right"  >
+                        {{ item.summa|number_format(0, '.', '`') }}
+                        {% set summa_man = summa_man + item.summa %}
+                    </div>
+                    <div class="tcell" >
+
+                        {% if payed_man > 0 %}
+                            Выплачено: {{ payed_man }}
+                        {% else %}
+                            &nbsp;
+                        {% endif %}
+
+                    </div>
+                </div>
+
+            {% endfor %}
+        {% endif %}
+
+    </div>
+
+{% endspaceless %}

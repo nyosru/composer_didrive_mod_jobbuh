@@ -1,0 +1,27 @@
+{% spaceless %}
+
+    {#% set summa_man = summa_man + 10 %#}
+
+    <div class="trow info_{{ man_id }}" style="display:none;" >
+
+        <div class="tcell" >
+            {{ run_date|date('d.m.Y') }}
+            {#{ pa(item) }#}
+        </div>
+
+        <div class="tcell bg-white stick-left" >
+            <span class="checks_item plus" >Бонус</span>
+            {{ item.text }}
+        </div>
+        <div class="tcell text-right" >
+            {% if item.summa > 0 %}
+                {{ item.summa|number_format(0, '.', '`') }}
+            {% else %}
+                -
+            {% endif %}
+        </div>
+        <div class="tcell" ></div>
+        <div class="tcell" ></div>
+    </div>
+
+{% endspaceless %}
