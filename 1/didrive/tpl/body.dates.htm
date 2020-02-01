@@ -194,10 +194,11 @@
 
                     {#{  pa(session) }#}
 
-                    {% if session['now_user_di']['access'] is defined and session['now_user_di']['access'] == 'admin' %}
+                    
+                    {#% if session['now_user_di']['access'] is defined and session['now_user_di']['access'] == 'admin' %}
                         {% set gets = gets|merge({'sp':'all'}) %}
                         <a class="btn btn-xs {% if get.sp == 'all' %}btn-info{% else %}btn-light{% endif %} " href="?{{ http_build_query(gets) }}" >ВСЕ</a>
-                    {% endif %}
+                    {% endif %#}
 
                     {#{ pa(jobs_on_sp.sort) }# }
                     sp {{ pa(sp) }}

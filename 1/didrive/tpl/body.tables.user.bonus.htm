@@ -10,6 +10,11 @@
         </div>
 
         <div class="tcell bg-white stick-left" >
+            
+            {% if sps[item.sale_point]['head'] is defined %}
+                <span class="checks_item sp1" >{{ sps[item.sale_point]['head'] }}</span>
+            {% endif %}
+            
             <span class="checks_item plus" >Бонус</span>
             {{ item.text }}
         </div>
