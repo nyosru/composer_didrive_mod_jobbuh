@@ -15,9 +15,16 @@
                     style="float:right;">показать/скрыть подробности</button>
 
             <span title="#{{ man_id }}" >{{ man['fio'] }}</span> &nbsp; <sup style="color:gray;" title="отмечены точки продаж где сотрудник работает в этом месяце">
+
                 {% for k,v in getListJobsPeriodAll.data.job_on_sp if v[man_id] is defined %}
-                    <span style="background-color: rgba(0,255,0,0.2); margin-right:2px; padding:3px 5px;" >{{ sps[k]['head'] }}</span>
+
+                    <span style="background-color: rgba(0,255,0,0.2); margin-right:2px; padding:3px 5px;" >
+                        <span class="fa fa-circle-o"></span>
+                        {{ sps[k]['head'] }}
+                    </span>
+
                 {% endfor %}
+
             </sup>
 
         </div>

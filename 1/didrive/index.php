@@ -1,5 +1,7 @@
 <?php
 
+$vv['in_body_end'][] = '<script defer="defer" src="' . DS . 'vendor' . DS . 'didrive' . DS . 'base' . DS . 'js.lib' . DS . 'jquery.ba-throttle-debounce.min.js"></script>';
+
 $vv['krohi'] = [];
 $vv['krohi'][1] = array(
     'text' => $vv['now_level']['name'],

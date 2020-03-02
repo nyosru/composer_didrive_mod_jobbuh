@@ -3,11 +3,131 @@
     <div class="trow xstick-top3" >
 
         <div class="tcell" >&nbsp;</div>
-        <div class="tcell" >&nbsp;</div>
+        <div class="tcell summa1 text-left" >
+
+            {% set pm_user = job_buh__get_buh_PM(db,get.d_start,man_id) %}
+            {#{ pa(pm_user) }#}
+
+            {#{ pa(buh_pm_cfg) }#}
+
+
+            {% set diff_summ = 0 %}
+
+
+            <div class="container-fluid" >
+                <div class="row" >
+                    <div class="col-xs-12 col-sm-6" style="font-size:10px;">
+
+                        {% if now_level.type2 is defined and now_level.type2 == 'buh' %}
+                            <div xclass="bg-warning" style="background-color: rgba(0,255,0,0.2); padding:10px;" >
+                                плюс</div>
+                            {% endif %}
+
+                        {% for k,v in buh_pm_cfg.plus if k != 'skip' %}
+
+                            {% set diff_summ = diff_summ + ( pm_user[k]['summa'] ?? 0 ) %}
+
+                            {% if now_level.type2 is defined and now_level.type2 == 'buh' %}
+
+                                <div>
+                                    <input type="number" 
+                                           class="items__newedit_dop_pole"
+
+                                           step="0.01"
+                                           min="1"
+                                           max="99999"
+
+                                           placeholder=""
+                                           value="{{ pm_user[k]['summa'] ?? '' }}"
+
+                                           items_module="003_money_buh_pm"
+                                           edit_item_id="{{ pm_user[k]['id'] ?? '' }}"
+                                           edit_dop_name="summa"
+
+                                           addpole1 = "jobman"
+                                           addpole1val = "{{ man_id }}"
+                                           addpole2 = "date"
+                                           addpole2val = "{{ get.d_start }}"
+                                           {# addpole3 = "type_minus" #}
+                                           addpole3 = "type_plus"
+                                           addpole3val = "{{ k }}"
+
+                                           s="{{ creatSecret( ( pm_user[k]['id'] ?? '' )~"summa"~( man_id ?? '' )~( get.d_start ?? '' )~( k ?? '' ) ) }}"
+
+                                           style="xfloat:left; xmargin-bottom:10px; width: 80px;"
+
+                                           >
+                                    {{ v }}                                
+                                </div>
+                                {#<br clear="all" />#}
+
+                            {% else %}
+                                {% if pm_user[k]['summa'] is defined and pm_user[k]['summa'] > 0 %}
+                                    <b>{{ pm_user[k]['summa']|number_format(0, '.', '`') }}р</b> {{ v }}<br/>
+                                {% endif %}
+                            {% endif %}
+
+                        {% endfor %}
+                    </div>
+
+                    <div class="col-xs-12 col-sm-6" style="font-size:10px;">
+
+                        {% if now_level.type2 is defined and now_level.type2 == 'buh' %}
+                            <div xclass="bg-warning" style="background-color: rgba(255,0,0,0.2); padding:10px;" >
+                                взыскания</div>
+                            {% endif %}
+
+                        {% for k,v in buh_pm_cfg.minus if k != 'skip' %}
+
+                            {% set diff_summ = diff_summ - ( pm_user[k]['summa'] ?? 0 ) %}
+
+
+                            {% if now_level.type2 is defined and now_level.type2 == 'buh' %}
+                                <div>
+                                    <input type="number" 
+                                           class="items__newedit_dop_pole"
+
+                                           step="0.01"
+                                           min="1"
+                                           max="99999"
+
+                                           placeholder=""
+                                           value="{{ pm_user[k]['summa'] ?? '' }}"
+
+                                           items_module="003_money_buh_pm"
+                                           edit_item_id="{{ pm_user[k]['id'] ?? '' }}"
+                                           edit_dop_name="summa"
+
+                                           addpole1 = "jobman"
+                                           addpole1val = "{{ man_id }}"
+                                           addpole2 = "date"
+                                           addpole2val = "{{ get.d_start }}"
+                                           addpole3 = "type_minus"
+                                           {# addpole3 = "type_plus" #}
+                                           addpole3val = "{{ k }}"
+
+                                           s="{{ creatSecret( ( pm_user[k]['id'] ?? '' )~"summa"~( man_id ?? '' )~( get.d_start ?? '' )~( k ?? '' ) ) }}"
+
+                                           style="xfloat:left; xmargin-bottom:10px; width: 80px;"
+
+                                           >
+                                    {{ v }}
+                                </div>
+                            {% else %}
+                                {% if pm_user[k]['summa'] is defined and pm_user[k]['summa'] > 0 %}
+                                    <b>{{ pm_user[k]['summa']|number_format(0, '.', '`') }}р</b> {{ v }}<br/>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
         <div class="tcell summa1 text-right" >
 
-            {% set summa_man = getListJobsPeriodAll.data.money_to_pay[get.sp][man_id] %}
-
+            {% set summa_man = getListJobsPeriodAll.data.money_to_pay[get.sp][man_id] + diff_summ %}
             {{ summa_man|number_format(0, '.', '`') }}
 
             {#
@@ -27,7 +147,7 @@
         <div class="tcell plategi text-right" >
 
             {% set ostatok = summa_man - getListJobsPeriodAll.data.money_oplats[get.sp][man_id] %}
-            
+
             {#{  pa(getListJobsPeriodAll.data.money_oplats[get.sp][man_id]) }#}
 
             {% for k51, pay in getListJobsPeriodAll.data.oplats if pay.jobman == man_id and pay.sale_point == get.sp %}
