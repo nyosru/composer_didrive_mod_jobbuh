@@ -7,18 +7,11 @@
         .sup_hover_gray:HOVER > sup.gray{ color: rgba(0,0,0,0.7); }
     </style>
 
-
     {# таблицы если выбрана дата показа #}
 
     <div class="row">
 
         <div class="col-xs-12 col-xl-12">
-
-            {% set sps = items__get( db, 'sale_point' )  %}    
-            {#{ pa(sps) }#} 
-
-            {% set dolgns = readItems( '061.dolgnost', null )  %}
-            {#{ pa(dolgns.data,2) }#}
 
             {% set date_start = get.d_start %}
             {% set date_finish = get.d_fin %}
@@ -33,11 +26,29 @@
 
             {% if get.sp is defined and getListJobsPeriodAll.data.job_on_sp[get.sp] is defined %}
 
+
+
+                {% set buh_pm_cfg = get_buh_PM_cfg() %}
+
+                {% set sps = items__get( db, 'sale_point' )  %}    
+                {#{ pa(sps) }#} 
+
+                {% set dolgns = readItems( '061.dolgnost', null )  %}
+                {#{ pa(dolgns.data,2) }#}
+
+
+
                 {# показ таблицы с данными #}
                 {% if 1 == 1 %}
 
                     <span style="position: relative;">
-
+                        
+                        
+                        {% set gets = get %}
+                        {% set gets = gets|merge({ 'type':'print' }) %}
+                        <a href="/i.didrive.php?{{ http_build_query(gets) }}" target="_blank" 
+                           xclass="btn btn-xs btn-success" style="display:inline-block; margin-bottom:15px; float:right;">бух.ведомость распечатать</a>
+                        
                         <div class="ttable cell-padding5 list_otrezki2 cell-border">
 
                             <div class="trow user_head alert-warning stick-top"  >
@@ -47,6 +58,7 @@
                                 <div class="tcell" >
                                     <span>За что</span>
                                 </div>
+
                                 <div class="tcell" >
                                     <span>Начислено</span>&nbsp;₽
                                 </div>
