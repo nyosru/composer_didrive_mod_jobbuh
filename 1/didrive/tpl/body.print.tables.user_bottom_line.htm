@@ -34,6 +34,9 @@
     {% endfor %}    
 
     <td class="text-right">
+        {{ summa_man|number_format(0, '.', '`') }}
+    </td>
+    <td class="text-right">
         {% if pm_user['avans_on_karta']['summa'] is defined %}
             {{ pm_user['avans_on_karta']['summa']|number_format(0, '.', '`') }}
         {% else %}
@@ -57,11 +60,15 @@
 
     <td class="text-right">
 
-        {% set summa_man2 = summa_man - ( pm_user['avans_on_karta']['summa'] ?? 0 ) %}
-        {% set aa = summa_man2/100/100*90 %}
-        {% set a1 = aa|round(0,'floor') * 100 %}
+        {% set summa90 = summa_man/100*90 %}
+        {% set summa_all = summa90 - ( pm_user['avans_on_karta']['summa'] ?? 0 ) - ( pm_user['ndfl']['summa'] ?? 0 ) %}
+        {#% set aa = summa_man2/100/100*90 %#}
+        {#% set a1 = aa|round(0,'floor') * 100 %#}
+        {% set a22 = summa_all/100 %}
+        {#{ a22 }} ++  #}
+        {% set a1 = a22|round(0,'floor')*100 %}
+        {#{ a1 }} ++ #}
         {{ a1|number_format(0, '.', '`') }}
-
 
     </td>
 

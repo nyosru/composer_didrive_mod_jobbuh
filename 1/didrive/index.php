@@ -15,3 +15,12 @@ if (isset($_REQUEST['type']) && $_REQUEST['type'] == 'print') {
 
     $vv['tpl_body'] = \f\like_tpl('body', dir_mods_mod_vers_didrive_tpl, dir_site_module_nowlev_tpldidr, DR);
 }
+
+
+
+
+
+
+
+
+
