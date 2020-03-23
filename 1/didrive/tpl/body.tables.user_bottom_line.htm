@@ -10,7 +10,6 @@
 
             {#{ pa(buh_pm_cfg) }#}
 
-
             {% set diff_summ = 0 %}
 
 
@@ -73,9 +72,12 @@
                     <div class="col-xs-12 col-sm-6" style="font-size:10px;">
 
                         {% if now_level.type2 is defined and now_level.type2 == 'buh' %}
+
                             <div xclass="bg-warning" style="background-color: rgba(255,0,0,0.2); padding:10px;" >
-                                взыскания</div>
-                            {% endif %}
+                                взыскания
+                            </div>
+
+                        {% endif %}
 
                         {% for k,v in buh_pm_cfg.minus if k != 'skip' %}
 
@@ -127,8 +129,17 @@
 
         <div class="tcell summa1 text-right" >
 
-            {% set summa_man = getListJobsPeriodAll.data.money_to_pay[get.sp][man_id] + diff_summ %}
+            {% set summa_man0 = getListJobsPeriodAll.data.money_to_pay[get.sp][man_id] %}
+            {% set summa_man = summa_man0 + diff_summ %}
+
+            {#
+            11111
             {{ summa_man|number_format(0, '.', '`') }}
+            + 222222 +
+            {{ diff_summ|number_format(0, '.', '`') }}
+            + 222222 +
+            #}
+            {{ summa_man0|number_format(0, '.', '`') }}
 
             {#
                         <br/>
@@ -266,6 +277,7 @@
             {% endif %}
 
         </div>
+
     </div>
 
 {% endspaceless %}

@@ -28,6 +28,7 @@ $function = new Twig_SimpleFunction('get_buh_PM_cfg', function () {
                 !empty(\Nyos\Nyos::$menu[\Nyos\mod\JobDesc::$mod_buh_pm]['type_' . $t]['item' . $w . 'val'])) {
             $return[$t][\Nyos\Nyos::$menu[\Nyos\mod\JobDesc::$mod_buh_pm]['type_' . $t]['item' . $w . 'val']] = \Nyos\Nyos::$menu[\Nyos\mod\JobDesc::$mod_buh_pm]['type_' . $t]['item' . $w];
         }
+
     }
 
     return $return;

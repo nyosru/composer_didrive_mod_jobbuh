@@ -26,8 +26,6 @@
 
             {% if get.sp is defined and getListJobsPeriodAll.data.job_on_sp[get.sp] is defined %}
 
-
-
                 {% set buh_pm_cfg = get_buh_PM_cfg() %}
 
                 {% set sps = items__get( db, 'sale_point' )  %}    
@@ -35,8 +33,6 @@
 
                 {% set dolgns = readItems( '061.dolgnost', null )  %}
                 {#{ pa(dolgns.data,2) }#}
-
-
 
                 {# показ таблицы с данными #}
                 {% if 1 == 1 %}
@@ -133,42 +129,7 @@ getListJobsPeriodAll.data.checks
 
                                     {% endfor %}
 
-
-
-
-
-
-
                                 {% endfor %}
-
-
-                                {% if 1 == 2 %}
-
-                                    {# список смен и начислений и взысканий #}
-                                    {% set date_last = '' %}
-
-                                    {% set summa_man = 0 %}
-
-                                    {% set payed_man = 0 %}
-                                    {% set stopline = false %}
-                                    {#{ pa(checks['days']) }#}
-
-                                    {% for check_id, item in getListJobsPeriodAll.data.checks if item.jobman == man_id %}
-
-                                        {#{ pa(item) }#}
-
-                                        {%  set now_day_job = getListJobsPeriodAll.data.where_job__workman_date[man_id][item.start|date('Y-m-d')] %}
-                                        {#{ pa(now_day_job) }#}
-
-                                        {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.user.smena.htm' %}
-
-                                        11+{{ summa_man|number_format(0, '.', '`') }}
-
-                                    {% endfor %}
-
-                                    22++{{ summa_man|number_format(0, '.', '`') }}
-
-                                {% endif %}
 
                                 {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.user_bottom_line.htm' %}
 
@@ -180,114 +141,6 @@ getListJobsPeriodAll.data.checks
                 {% endif %}
 
 
-
-                {# старая таблица #}
-            {% elseif 1 == 2 %}
-
-
-
-                {#{ date_start }} // {{ date_finish }#}
-
-                {% if 1 == 1 %}
-
-                    {% set checks = job_buh__getChecksMinusPlus(db,date_start,date_finish, get.sp ) %}
-                    {# checks
-                    {{ pa(checks,2) }} 
-                    #}
-
-                {% endif %}
-
-                {# достаём оплаты ( по дате и по чек инам ) #}
-                {#% set buh_oplats = items__get(db,'075.buh_oplats') %#}
-
-                {# достаём оплаты по чек инам #}
-                {% if 1 == 1 %}
-
-                    {% set payeds = job_buh__get_payed(db,date_start,date_finish) %}
-                    {#{ pa(payed) }#}
-
-                    {% if 1 == 2 %}
-                        <br/>
-                        payeds
-                        <div style="max-height: 400px; overflow: auto;" >
-                            {{ pa(payeds) }}
-                        </div>
-                    {% endif %}
-
-                {% endif %}
-
-
-
-                {# достаём плюсы минусы #}
-                {% if 1 == 1 %}
-                    {%  set money_dops = jobdesc__get_money_dops( db, date_start, date_finish, null, 'jobman-date' ) %}
-                    {#
-                        money_dops
-                        <div style="max-height: 400px; overflow: auto;" >
-                            {{ pa(money_dops) }}
-                        </div>
-                    #}
-                {% endif %}
-
-
-                {# <br/> #}
-                {# ss - {{ date_start }} , {{ date_finish }} #}
-                {#% set pays = job_buh__get_pays(db,date_start,date_finish) %}
-                {{ pa(pays,2) }#}
-
-
-                {% set jobs_on_sp = jobdesc__jobmans_job_on_sp( db, null, date_start, date_finish ) %}
-                {% if 1 == 2 %} <br/> pa(jobs_on_sp) {{ pa(jobs_on_sp,2) }} {% endif %}
-                {# pa(jobs_on_sp) {{ pa(jobs_on_sp.jobs_on_sp[get.sp],2) }} #}
-
-
-
-
-
-
-
-
-
-
-
-
-                {# показ таблицы с данными #}
-                {% if 1 == 1 %}
-
-                    <span style="position: relative;">
-
-                        <div class="ttable cell-padding5 list_otrezki2 cell-border">
-
-                            <div class="trow user_head alert-warning stick-top"  >
-                                <div class="tcell" >
-                                    <span>Когда</span>
-                                </div>
-                                <div class="tcell" >
-                                    <span>За что</span>
-                                </div>
-                                <div class="tcell" >
-                                    <span>Начислено</span>&nbsp;₽
-                                </div>
-                                <div class="tcell" >
-                                    <span>Оплачено</span>&nbsp;₽
-                                </div>
-
-                                <div class="tcell" >
-                                    <span>Остаток</span>&nbsp;₽
-                                </div>
-
-                            </div>
-
-                            {% for workman_id, checks_man in checks if checks_man['fio'] is defined and ( get.sp is defined and ( get.sp == 'all' or jobs_on_sp.jobs_on_sp[get.sp][checks_man.user_id] is defined ) ) %}
-
-                                {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.1user2.htm' %}
-
-                            {% endfor %}
-
-                        </div>
-                    </span>
-
-                {% endif %}
 
             {% endif %}
 

@@ -50,7 +50,20 @@
 
                 {#{ pa(sps) }#}
 
-                <table class="table table-bordered" >
+                <style>
+                    {#.t11, 
+                    .t11 tr, 
+                    .t11 td, 
+                    .t11 th, 
+                    .t11 thead,
+                    .t11 tbody
+                    { border:1px solid black; }#}
+                    .t11 thead{
+                        background-color: rgba(0,0,0,0.05);
+                    }
+                </style>
+                
+                <table class="table border-black table-bordered t11" >
 
                     <thead>
                         <tr>

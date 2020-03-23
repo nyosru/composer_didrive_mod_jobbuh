@@ -17,6 +17,8 @@
         {% endif %}
 
         {% set jobman = checks_man.user_id %}
+        
+        {#{ pa(jobman) }#}
 
         <div class="trow stick-top3 row_user" 
              {# style="background-color: lightgreen;" #}
@@ -39,7 +41,6 @@
             <div class="tcell" >&nbsp;</div>
 
         </div>
-
 
         {# список смен и начислений и взысканий #}
 
@@ -111,6 +112,8 @@
 
                         <div class="tcell bg-white stick-left" >
 
+                            {#{ pa(d) }#}
+                            
                             {% set sum_day = 0 %}
 
                             {% if d.type == 'check' %}
