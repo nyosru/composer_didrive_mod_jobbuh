@@ -171,8 +171,7 @@
 
             </div>
 
-
-            {% set sps = items__get( db, 'sale_point' )  %}
+            {% set sps = items__get( db, 'sale_point', 'show', 'sort' )  %}
             {#{ pa(sps) }#}
 
             {# если модератор то выводим исписок точек к оторым есть доступ #}    
