@@ -10,20 +10,174 @@
         <div class="tcell"  >&nbsp;</div>
         <div class="tcell nameuser" >
 
+
+            {% if 1 == 2 %}
+                {{ pa(session) }}
+                {# текущий пользователь #}
+                {{ pa(session.now_user_di.id) }}
+            {% endif %}
+
+
+            {#% set send_ar = [] %}
+            {% set send_ar = send_ar|merge([{ 'name':'jobman', 'value': ''~man_id , 'check_delete':'da' }]) %}
+            {% set send_ar = send_ar|merge([{'name':'date', 'value': get.d_fin ,'check_delete':'da'}]) %}
+            {% set send_ar = send_ar|merge([{'name':'sale_point', 'value': get.sp ,'xcheck_delete':'da'}]) %}
+            {% set send_ar = send_ar|merge([{'name':'aaa', 'value':'111','xcheck_delete':'da'}]) %}
+            {{ pa(send_ar) }#}
+
+            {#{ pa(getListJobsPeriodAll.data.job_on_sp) }#}
+
             <button class="btn-xs btn" 
                     onclick="$('.info_{{ man_id }}').toggle('slow');"
                     style="float:right;">показать/скрыть подробности</button>
 
-            <span title="#{{ man_id }}" >{{ man['fio'] }}</span> &nbsp; <sup style="color:gray;" title="отмечены точки продаж где сотрудник работает в этом месяце">
+            <span title="#{{ man_id }}" >{{ man['fio'] }}</span> &nbsp; 
 
+            {#{ pa(getListJobsPeriodAll.data.job_on_sp) }#}
+
+            <sup style="xfont-size:0.8em; color: black;" title="отмечены точки продаж где сотрудник работает в этом месяце">
+
+                {% set run_head = false %}
+                {% set run_head_other = false %}
+                {% set nn = 0 %}
+                
                 {% for k,v in getListJobsPeriodAll.data.job_on_sp if v[man_id] is defined %}
 
-                    <span style="background-color: rgba(0,255,0,0.2); margin-right:2px; padding:3px 5px;" >
-                        <span class="fa fa-circle-o"></span>
+                    {% set nn = nn + 1 %}
+                    
+                    {#{ pa(k) }}
+                    {{ pa(v) }#}
+
+                    {% set a_action = 'items__creat' %}
+                    {% set a_mod = '005_money_buh_head_sp' %}
+
+                    {% set send_ar = [] %}
+                    {% set send_ar = send_ar|merge([{ 
+                        'name':'jobman', 
+                        'value': man_id , 
+                        'check_delete':'da' 
+                        }]) %}
+                    {% set send_ar = send_ar|merge([{
+                        'name':'date', 
+                        'value': get.d_fin ,
+                        'check_delete':'da'
+                        }]) %}
+                    {% set send_ar = send_ar|merge([{
+                        'name':'sale_point', 
+                        'value': k ,
+                        'xcheck_delete':'da'
+                        }]) %}
+
+                    {#{ v[man_id]['head_sp'] ?? 'x' }#}
+
+                    <a                         
+                        href="#" 
+                        style="
+
+                        
+                        
+                        {% if head_sps__jobman_sp[man_id] is defined and head_sps__jobman_sp[man_id] == k %}
+                            
+                            {#% if k != %}
+                            {% set run_head_other = true %#}
+                            
+                            {% set run_head = true %}
+                            background-color: rgba(0,255,0,0.2);
+                            xborder: green solid 2px;
+
+                        {% else %}
+                            background-color: rgba(0,0,0,0.1); 
+                        {% endif %}
+
+                        color:gray;
+                        margin-right:2px; padding:3px 5px;" 
+
+                        {# подключаем обработку #}
+                        class="base__send_to_ajax"
+
+                        {# ссылка на обработчик ajax #}
+                        href_to_ajax="/vendor/didrive_mod/items/1/didrive/ajax.php" 
+
+                        {# id куда печатаем результат #}
+                        res_to_id="res{{ man_id }}" 
+
+                        {# действие после вопроса #}
+                        comit_answer="Установить главной точкой продаж на выбранный платёжный период ?"
+
+                        action="{{ a_action }}"
+
+                        {# модуль в котором item #}
+                        item_module="{{ a_mod }}"
+
+                        {% set ss = '' %}
+
+                        {% for k1,v1 in send_ar %}
+                            {% for k,v in v1 %}
+                                dop_item{{ k1 }}_{{ k }}="{{ v }}"
+
+                                {% if k == 'name' or k == 'value' %}
+                                    {% set ss = ss~'-' ~ v %}
+                                {% endif %}
+
+                            {% endfor %}
+                        {% endfor %}
+
+                        {# секрет #}
+                        s="{{ creatSecret( a_action~'-'~a_mod~ss ) }}" 
+
+                        {% if 1 == 2 %}
+
+                            {# замена доп параметра #}
+
+                            {# сообщение печатаем если всё ок #}
+                            msg_to_success="Окей!"
+
+                            {# модуль итемов #}
+                            xitemsmod="{{ a_mod }}"
+
+                            {# id итема #}
+                            xitem_id="{{ pay.id }}"
+
+                            {# название доп параметра #}
+                            {# dop_name="pay_check" #}
+                            {# новое значение параметра #}
+                            {# dop_new_value="no" #}
+
+                            {# секрет #}
+                            {# s3="{{ creatSecret( '050.chekin_checkout-'~item.id~'-pay_check-no' ) }}"  #}
+
+                            {# новое значение статуса записи #}
+                            xnew_status="{{ a_status }}" 
+
+                            {# скрыть ссылку после клика #}
+                            xhidethis="da" 
+
+                            {# сделать видимым блок по id #}
+                            xshow_id="res{{ man_id }}" 
+
+                        {% endif %}
+
+                        >
+                        
+                        {% if head_sps__jobman_sp[man_id] is defined and head_sps__jobman_sp[man_id] == k %}
+                            <span class="fa fa-check"></span>
+                        {% else %}
+                            <span class="fa fa-circle-thin"></span>
+                        {% endif %}
+                        
                         {{ sps[k]['head'] }}
-                    </span>
+
+                    </a>
 
                 {% endfor %}
+
+                <span id="res{{ man_id }}" >
+                
+                    {% if run_head == false and nn > 1 %}
+                        <span class="bg-warning" style="display:inline-block; padding:2px; line-height: 1.5em; height: 1.5em;" >Выберите главную точку продаж</span>
+                    {% endif %}
+                
+                </span>
 
             </sup>
 

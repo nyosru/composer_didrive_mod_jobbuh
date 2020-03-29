@@ -28,12 +28,28 @@ $function = new Twig_SimpleFunction('get_buh_PM_cfg', function () {
                 !empty(\Nyos\Nyos::$menu[\Nyos\mod\JobDesc::$mod_buh_pm]['type_' . $t]['item' . $w . 'val'])) {
             $return[$t][\Nyos\Nyos::$menu[\Nyos\mod\JobDesc::$mod_buh_pm]['type_' . $t]['item' . $w . 'val']] = \Nyos\Nyos::$menu[\Nyos\mod\JobDesc::$mod_buh_pm]['type_' . $t]['item' . $w];
         }
-
     }
 
     return $return;
 });
 $twig->addFunction($function);
+
+
+
+
+/**
+ * получаем список главных точек за дату сотрудникам
+ */
+$function = new Twig_SimpleFunction('job_buh__get_head_sp', function ( $db, $date_finish ) {
+
+    $ar__jobman_sp = \Nyos\mod\JobBuh::getHeadSps($db, $date_finish );
+    
+    return $ar__jobman_sp;
+});
+$twig->addFunction($function);
+
+
+
 
 $function = new Twig_SimpleFunction('job_buh__get_buh_PM', function ($db, $date, $user) {
 
@@ -44,7 +60,7 @@ $function = new Twig_SimpleFunction('job_buh__get_buh_PM', function ($db, $date,
     // если есть таймер то показываем таймер выполнения
     //$show_timer = rand(0, 9999);
 
-    if (!empty($cash_var) && !empty($cash_var) ) {
+    if (!empty($cash_var) && !empty($cash_var)) {
 
         if (!empty($show_timer)) {
             echo '<br/>#' . __LINE__ . ' var ' . $cash_var;
@@ -93,15 +109,13 @@ $function = new Twig_SimpleFunction('job_buh__get_buh_PM', function ($db, $date,
         // $df = date('Y-m-d', strtotime($ds . ' +1 month -1 day'));
 
         foreach ($ee as $k => $v) {
-            $return[$v['type_minus'] ?? $v['type_plus'] ?? '-'] = 
-                    [ 
-                        'id' => $v['id']
-                        ,'summa' => $v['summa'] 
-                    ];
+            $return[$v['type_minus'] ?? $v['type_plus'] ?? '-'] = [
+                'id' => $v['id']
+                , 'summa' => $v['summa']
+            ];
         }
 
         // \f\pa($return);
-        
 //    for ($er = 0; $er <= 32; $er++) {
 //        $nd = date('Y-m-d', strtotime($ds . ' +' . $er . 'day'));
 //
@@ -115,10 +129,10 @@ $function = new Twig_SimpleFunction('job_buh__get_buh_PM', function ($db, $date,
 
         if (!empty($return)) {
             if (!empty($cash_var))
-            \f\Cash::setVar($cash_var, $return, ( $cash_time_sec ?? 0));
+                \f\Cash::setVar($cash_var, $return, ( $cash_time_sec ?? 0));
         } else {
             if (!empty($cash_var))
-            \f\Cash::setVar($cash_var, [0 => 'mc_skip'], ( $cash_time_sec ?? 0));
+                \f\Cash::setVar($cash_var, [0 => 'mc_skip'], ( $cash_time_sec ?? 0));
             if (!empty($show_timer))
                 echo '<br/>#' . __LINE__ . ' нет данных ничего не пишем в кеш';
         }

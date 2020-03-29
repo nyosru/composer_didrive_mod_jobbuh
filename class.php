@@ -243,14 +243,14 @@ class JobBuh {
             }
 
             // \f\pa($v);
-            
+
             if (!empty($v['hour_on_job_hand'])) {
                 $v['hours_on_job'] = $v['hour_on_job_hand'];
-            } 
+            }
             //
             elseif (!empty($v['hour_on_job'])) {
                 $v['hours_on_job'] = $v['hour_on_job'];
-            } 
+            }
             //
             else {
                 $v['hours_on_job'] = 0;
@@ -328,7 +328,7 @@ class JobBuh {
      * @param type $module_send_jobman_to_sp
      * @return type
      */
-    public static function getChecksMinusPlus( $db, $date_start, $date_fin, $sp_on = 'all', $module_jobman = '070.jobman', $module_sp = 'sale_point', $module_send_jobman_to_sp = 'jobman_send_on_sp' ) {
+    public static function getChecksMinusPlus($db, $date_start, $date_fin, $sp_on = 'all', $module_jobman = '070.jobman', $module_sp = 'sale_point', $module_send_jobman_to_sp = 'jobman_send_on_sp') {
 
         //echo '<br/>' . $date_start . ', ' . $date_fin;
 
@@ -356,6 +356,41 @@ class JobBuh {
         }
 
         return self::$cash['ChecksMinusPlus'][$date_start][$date_fin] = $return;
+    }
+
+    public static function getHeadSps($db, $date_fin) {
+
+        $cash_var = 'list__' . \Nyos\mod\JobDesc::$mod_buh_head_sp . '__' . $date_fin;
+        // \f\timer_start(123);
+
+        if (!empty($cash_var))
+            $ar__head_sp__jobman_sp = \f\Cash::getVar($cash_var);
+
+        if (!empty($ar__head_sp__jobman_sp)) {
+            
+        } else {
+
+            // echo '<br/>' . $date_finish;
+            \Nyos\mod\items::$join_where = ' INNER JOIN `mitems-dops` mid '
+                    . ' ON mid.id_item = mi.id '
+                    . ' AND mid.name = \'date\' '
+                    . ' AND mid.value_date = :df '
+            ;
+            \Nyos\mod\items::$var_ar_for_1sql[':df'] = $date_fin;
+            $head_sp0 = \Nyos\mod\items::get($db, \Nyos\mod\JobDesc::$mod_buh_head_sp);
+            // \f\pa($head_sp0);
+            $ar__head_sp__jobman_sp = [];
+            foreach ($head_sp0 as $k => $v) {
+                $ar__head_sp__jobman_sp[$v['jobman']] = $v['sale_point'];
+            }
+
+            \f\Cash::setVar($cash_var, $ar__head_sp__jobman_sp);
+        }
+
+        // \f\pa($ar__head_sp__jobman_sp, '', '', '$ar__head_sp__jobman_sp');
+        // echo \f\timer_stop(123);
+
+        return $ar__head_sp__jobman_sp;
     }
 
 }

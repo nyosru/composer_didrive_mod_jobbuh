@@ -24,6 +24,13 @@
             {# список сотрудников работающих на точке в этом месяце #}
             {#{ pa(getListJobsPeriodAll.data.job_on_sp[get.sp],2) }#}
 
+
+            {# получаем список главных точек для сотрудников за дату (конец периода оплаты) #}
+            {% set head_sps__jobman_sp = job_buh__get_head_sp( db, date_finish ) %}
+            {#{ pa(head_sps__jobman_sp) }#}
+
+            {#{ pa(session) }#}
+
             {% if get.sp is defined and getListJobsPeriodAll.data.job_on_sp[get.sp] is defined %}
 
                 {% set buh_pm_cfg = get_buh_PM_cfg() %}
