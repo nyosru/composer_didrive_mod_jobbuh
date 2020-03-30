@@ -37,14 +37,31 @@
 
             <sup style="xfont-size:0.8em; color: black;" title="отмечены точки продаж где сотрудник работает в этом месяце">
 
+
+
+                {# считаем сколько точек было в работе у сотрудника #}
+                {% if 1 == 1 %}
+                    {% set kolvo_points = 0 %}
+                    {% for k,v in getListJobsPeriodAll.data.job_on_sp if v[man_id] is defined %}
+                        {% set kolvo_points = kolvo_points + 1 %}
+                    {% endfor %}
+                    {# если одна точка показываем типа она выбрана ... а если больше .. то просим выбрать #}
+                    {# условие #}
+                    {# {% if ( kolvo_points == 1 ) or ( head_sps__jobman_sp[man_id] is defined and head_sps__jobman_sp[man_id] == k ) %} #}
+                {% endif %}
+
+
+
+
+
                 {% set run_head = false %}
                 {% set run_head_other = false %}
                 {% set nn = 0 %}
-                
+
                 {% for k,v in getListJobsPeriodAll.data.job_on_sp if v[man_id] is defined %}
 
                     {% set nn = nn + 1 %}
-                    
+
                     {#{ pa(k) }}
                     {{ pa(v) }#}
 
@@ -70,114 +87,136 @@
 
                     {#{ v[man_id]['head_sp'] ?? 'x' }#}
 
-                    <a                         
+                    <{% if now_level.type2 is defined and now_level.type2 == 'buh' %}a{% else %}span{% endif %}
                         href="#" 
                         style="
 
-                        
-                        
-                        {% if head_sps__jobman_sp[man_id] is defined and head_sps__jobman_sp[man_id] == k %}
-                            
-                            {#% if k != %}
-                            {% set run_head_other = true %#}
-                            
-                            {% set run_head = true %}
-                            background-color: rgba(0,255,0,0.2);
-                            xborder: green solid 2px;
+                        {% if 1 == 1 %}
 
-                        {% else %}
-                            background-color: rgba(0,0,0,0.1); 
+                            {% if ( kolvo_points == 1 ) or ( head_sps__jobman_sp[man_id] is defined and head_sps__jobman_sp[man_id] == k ) %}
+
+                                {#% if k != %}
+                                {% set run_head_other = true %#}
+
+                                {% set run_head = true %}
+                                background-color: rgba(0,255,0,0.2);
+                                xborder: green solid 2px;
+
+                            {% else %}
+                                background-color: rgba(0,0,0,0.1); 
+                            {% endif %}
+
                         {% endif %}
 
                         color:gray;
-                        margin-right:2px; padding:3px 5px;" 
+                        margin-right:2px; 
+                        padding:3px 5px;
+                        "
 
-                        {# подключаем обработку #}
-                        class="base__send_to_ajax"
 
-                        {# ссылка на обработчик ajax #}
-                        href_to_ajax="/vendor/didrive_mod/items/1/didrive/ajax.php" 
+                        {% if now_level.type2 is defined and now_level.type2 == 'buh' %}
 
-                        {# id куда печатаем результат #}
-                        res_to_id="res{{ man_id }}" 
+                            xonclick="$(this).addClass('bg-success');"
 
-                        {# действие после вопроса #}
-                        comit_answer="Установить главной точкой продаж на выбранный платёжный период ?"
+                            {# подключаем обработку #}
+                            class="base__send_to_ajax
 
-                        action="{{ a_action }}"
+                            {#% if ( kolvo_points == 1 ) or ( head_sps__jobman_sp[man_id] is defined and head_sps__jobman_sp[man_id] == k ) %}
+                                bg-success
+                            {% else %}
+                                bg-light
+                            {% endif %#}
 
-                        {# модуль в котором item #}
-                        item_module="{{ a_mod }}"
+                            "
 
-                        {% set ss = '' %}
+                            {# ссылка на обработчик ajax #}
+                            href_to_ajax="/vendor/didrive_mod/items/1/didrive/ajax.php" 
 
-                        {% for k1,v1 in send_ar %}
-                            {% for k,v in v1 %}
-                                dop_item{{ k1 }}_{{ k }}="{{ v }}"
+                            {# id куда печатаем результат #}
+                            res_to_id="res{{ man_id }}" 
 
-                                {% if k == 'name' or k == 'value' %}
-                                    {% set ss = ss~'-' ~ v %}
-                                {% endif %}
+                            {# действие после вопроса #}
+                            comit_answer="Установить главной точкой продаж на выбранный платёжный период ?"
 
+                            action="{{ a_action }}"
+
+                            {# модуль в котором item #}
+                            item_module="{{ a_mod }}"
+
+                            {% set ss = '' %}
+
+                            {% for k1,v1 in send_ar %}
+                                {% for k,v in v1 %}
+                                    dop_item{{ k1 }}_{{ k }}="{{ v }}"
+
+                                    {% if k == 'name' or k == 'value' %}
+                                        {% set ss = ss~'-' ~ v %}
+                                    {% endif %}
+
+                                {% endfor %}
                             {% endfor %}
-                        {% endfor %}
-
-                        {# секрет #}
-                        s="{{ creatSecret( a_action~'-'~a_mod~ss ) }}" 
-
-                        {% if 1 == 2 %}
-
-                            {# замена доп параметра #}
-
-                            {# сообщение печатаем если всё ок #}
-                            msg_to_success="Окей!"
-
-                            {# модуль итемов #}
-                            xitemsmod="{{ a_mod }}"
-
-                            {# id итема #}
-                            xitem_id="{{ pay.id }}"
-
-                            {# название доп параметра #}
-                            {# dop_name="pay_check" #}
-                            {# новое значение параметра #}
-                            {# dop_new_value="no" #}
 
                             {# секрет #}
-                            {# s3="{{ creatSecret( '050.chekin_checkout-'~item.id~'-pay_check-no' ) }}"  #}
+                            s="{{ creatSecret( a_action~'-'~a_mod~ss ) }}" 
 
-                            {# новое значение статуса записи #}
-                            xnew_status="{{ a_status }}" 
+                            {% if 1 == 2 %}
 
-                            {# скрыть ссылку после клика #}
-                            xhidethis="da" 
+                                {# замена доп параметра #}
 
-                            {# сделать видимым блок по id #}
-                            xshow_id="res{{ man_id }}" 
+                                {# сообщение печатаем если всё ок #}
+                                msg_to_success="Окей!"
+
+                                {# модуль итемов #}
+                                xitemsmod="{{ a_mod }}"
+
+                                {# id итема #}
+                                xitem_id="{{ pay.id }}"
+
+                                {# название доп параметра #}
+                                {# dop_name="pay_check" #}
+                                {# новое значение параметра #}
+                                {# dop_new_value="no" #}
+
+                                {# секрет #}
+                                {# s3="{{ creatSecret( '050.chekin_checkout-'~item.id~'-pay_check-no' ) }}"  #}
+
+                                {# новое значение статуса записи #}
+                                xnew_status="{{ a_status }}" 
+
+                                {# скрыть ссылку после клика #}
+                                xhidethis="da" 
+
+                                {# сделать видимым блок по id #}
+                                xshow_id="res{{ man_id }}" 
+
+                            {% endif %}
 
                         {% endif %}
 
                         >
-                        
-                        {% if head_sps__jobman_sp[man_id] is defined and head_sps__jobman_sp[man_id] == k %}
+
+                        {% if ( kolvo_points == 1 ) or ( head_sps__jobman_sp[man_id] is defined and head_sps__jobman_sp[man_id] == k ) %}
                             <span class="fa fa-check"></span>
                         {% else %}
                             <span class="fa fa-circle-thin"></span>
                         {% endif %}
-                        
+
                         {{ sps[k]['head'] }}
 
-                    </a>
+                    </{% if now_level.type2 is defined and now_level.type2 == 'buh' %}a{% else %}span{% endif %}>
 
                 {% endfor %}
 
-                <span id="res{{ man_id }}" >
-                
-                    {% if run_head == false and nn > 1 %}
-                        <span class="bg-warning" style="display:inline-block; padding:2px; line-height: 1.5em; height: 1.5em;" >Выберите главную точку продаж</span>
-                    {% endif %}
-                
-                </span>
+
+                {% if now_level.type2 is defined and now_level.type2 == 'buh' %}
+                    <span id="res{{ man_id }}" >
+
+                        {% if run_head == false and nn > 1 %}
+                            <span class="bg-warning" style="display:inline-block; padding:2px 5px; line-height: 1.5em; xheight: 1.5em;" ><span class="fa fa-arrow-left"></span> Выберите главную точку продаж</span>
+                        {% endif %}
+
+                    </span>
+                {% endif %}
 
             </sup>
 
