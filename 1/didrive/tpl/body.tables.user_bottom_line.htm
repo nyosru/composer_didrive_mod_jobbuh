@@ -162,68 +162,120 @@
             {#{  pa(getListJobsPeriodAll.data.money_oplats[get.sp][man_id]) }#}
 
             {% for k51, pay in getListJobsPeriodAll.data.oplats if pay.jobman == man_id and pay.sale_point == get.sp %}
-                
+
                 {#{ pa(pay) }#}
-                
+
                 {{ pay.summa|number_format(0, '.', '`') }} 
                 <sup>{{ pay.date }}
 
-                    57
 
-                <a href="#" 
 
-                   xclass="xbtn3 edit_items_dop_values drop2_{{ pay.id }} xbtn xbtn-xs xbtn-light" 
-                   class="edit_items_dop_values2" 
-                   
-                   xstyle='display:none;'
-                   
-                   {# действие после вопроса #}
-                   comit_answer="Отменить выплату ?"
 
-                   {# замена доп параметра #}
-                   action="edit_dop_item"
 
-                   {# модуль итемов #}
-                   itemsmod="075.buh_oplats"
-                   
-                   {# id итема #}
-                   item_id="{{ pay.id }}"
+                    <a href="#" class="btn3 edit_items_dop_values drop2_{{ pay.id }} btn btn-xs btn-light" 
 
-                   {# название доп параметра #}
-                   {# dop_name="pay_check" #}
-                   {# новое значение параметра #}
-                   {# dop_new_value="no" #}
-                   {# секрет #}
-                   {# s3="{{ creatSecret( '050.chekin_checkout-'~item.id~'-pay_check-no' ) }}"  #}
+                       xstyle='display:none;'
 
-                   {# новое значение статуса записи #}
-                   new_status="hide"
-                   
-                   {# секрет #}
-                   s3="{{ creatSecret( '075.buh_oplats-'~pay.id~'-hide' ) }}" 
+                       {# действие после вопроса #}
+                       comit_answer="Отменить премию ?"
 
-                   {# скрыть ссылку после клика #}
-                   hidethis="da" 
-                   
-                   {# сделать видимым блок по id #}
-                   show_id="del_pay_{{ pay.id }}" 
-                   
-                   {# id куда печатаем результат #}
-                   res_to_id="del_pay_{{ pay.id }}" 
-                   
-                   {# сообщение печатаем если всё ок #}
-                   msg_to_success="Отменено"
+                       {# замена доп параметра #}
+                       action="edit_dop_item"
 
-                   {# print_res_to_id="ares{{ k1 }}" #}
+                       {# модуль итемов #}
+                       itemsmod="075.buh_oplats"
 
-                   >Х</a>
+                       {# id итема #}
+                       item_id="{{ pay.id }}"
 
-                   
-                </sup>
-                   
-                   <div style="display:none;" id="del_pay_{{ pay.id }}" ></div>
-                   
-                <br/>
+                       {# название доп параметра #}
+                       {# dop_name="pay_check" #}
+                       {# новое значение параметра #}
+                       {# dop_new_value="no" #}
+                       {# секрет #}
+                       {# s3="{{ creatSecret( '050.chekin_checkout-'~item.id~'-pay_check-no' ) }}"  #}
+
+                       {# новое значение статуса записи #}
+                       new_status="hide"
+
+                       {# секрет #}
+                       s3="{{ creatSecret( '075.buh_oplats-'~pay.id~'-hide' ) }}" 
+
+                       {# скрыть ссылку после клика #}
+                       hidethis="da" 
+
+                       {# сделать видимым блок по id #}
+                       show_id="del_pay_{{ pay.id }}" 
+
+                       {# id куда печатаем результат #}
+                       res_to_id="del_pay_{{ pay.id }}" 
+
+                       {# сообщение печатаем если всё ок #}
+                       msg_to_success="Отменено"
+
+                       >Х</a>
+
+                    <div style="display:none;" id="del_pay_{{ pay.id }}" ></div>
+
+                    {% if 1 == 2 %}
+
+                        57
+
+                        <a href="#" 
+
+                           xclass="xbtn3 edit_items_dop_values drop2_{{ pay.id }} xbtn xbtn-xs xbtn-light" 
+                           class="edit_items_dop_values2" 
+
+                           xstyle='display:none;'
+
+                           {# действие после вопроса #}
+                           comit_answer="Отменить выплату ?"
+
+                           {# замена доп параметра #}
+                           action="edit_dop_item"
+
+                           {# модуль итемов #}
+                           itemsmod="075.buh_oplats"
+
+                           {# id итема #}
+                           item_id="{{ pay.id }}"
+
+                           {# название доп параметра #}
+                           {# dop_name="pay_check" #}
+                           {# новое значение параметра #}
+                           {# dop_new_value="no" #}
+                           {# секрет #}
+                           {# s3="{{ creatSecret( '050.chekin_checkout-'~item.id~'-pay_check-no' ) }}"  #}
+
+                           {# новое значение статуса записи #}
+                           new_status="hide"
+
+                           {# секрет #}
+                           s3="{{ creatSecret( '075.buh_oplats-'~pay.id~'-hide' ) }}" 
+
+                           {# скрыть ссылку после клика #}
+                           hidethis="da" 
+
+                           {# сделать видимым блок по id #}
+                           show_id="del_pay_{{ pay.id }}" 
+
+                           {# id куда печатаем результат #}
+                           res_to_id="del_pay_{{ pay.id }}" 
+
+                           {# сообщение печатаем если всё ок #}
+                           msg_to_success="Отменено"
+
+                           {# print_res_to_id="ares{{ k1 }}" #}
+
+                           >Х</a>
+
+
+                    </sup>
+
+                    <div style="display:none;" id="del_pay_{{ pay.id }}" ></div>
+
+                    <br/>
+                {% endif %}
                 
                 {#% set ostatok = ostatok - pay.summa %#}
             {% endfor %}
@@ -268,12 +320,16 @@
                                     </div>
                                     <input type="date" class="form-control" xstyle="padding:3px;"
                                            name="date" 
+                                           
                                            {%  if "now"|date('Y-m-d') >= get.d_start|date('Y-m-d') and "now"|date('Y-m-d') <= get.d_fin|date('Y-m-d') %}
                                                value="{{ "now"|date('Y-m-d') }}" 
                                            {%  else %}
                                                value="{{ get.d_fin|date('Y-m-d') }}" 
                                            {% endif %}
-                                           min="{{ get.d_start|date('Y-m-d') }}" max="{{ get.d_fin|date('Y-m-d') }}" 
+                                           
+                                           xmin="{{ get.d_start|date('Y-m-d') }}" 
+                                           xmax="{{ get.d_fin|date('Y-m-d') }}" 
+                                           
                                            required="required"
                                            />
 
