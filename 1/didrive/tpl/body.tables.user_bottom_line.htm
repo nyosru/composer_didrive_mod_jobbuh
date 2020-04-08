@@ -6,12 +6,10 @@
         <div class="tcell summa1 text-left" >
 
             {% set pm_user = job_buh__get_buh_PM(db,get.d_start,man_id) %}
-            {#{ pa(pm_user) }#}
-
-            {#{ pa(buh_pm_cfg) }#}
+            {#{ pa(pm_user) }}
+            {{ pa(buh_pm_cfg) }#}
 
             {% set diff_summ = 0 %}
-
 
             <div class="container-fluid" >
                 <div class="row" >
@@ -21,7 +19,7 @@
                             <div xclass="bg-warning" style="background-color: rgba(0,255,0,0.2); padding:10px;" >
                                 плюс</div>
                             {% endif %}
-
+                            
                         {% for k,v in buh_pm_cfg.plus if k != 'skip' %}
 
                             {% set diff_summ = diff_summ + ( pm_user[k]['summa'] ?? 0 ) %}
@@ -29,31 +27,47 @@
                             {% if now_level.type2 is defined and now_level.type2 == 'buh' %}
 
                                 <div>
+
+                                    {% set action = 'didrive__items__new_edit' %}
+                                    {% set aj_module = '003_money_buh_pm' %}
+                                    {% set aj_value = ( pm_user[k]['summa'] ?? '' ) %}
+                                    {% set aj_edit_pole = 'summa' %}
+
+                                    {% set dops = { 'jobman' : man_id ,
+                                           "date" : get.d_start ,
+                                           "type_plus" :  k } %}
+
                                     <input type="number" 
-                                           class="items__newedit_dop_pole"
+                                           class="didrive__items__new_edit"
+                                           style="width: 80px;"
 
                                            step="0.01"
                                            min="1"
                                            max="99999"
-
                                            placeholder=""
-                                           value="{{ pm_user[k]['summa'] ?? '' }}"
 
-                                           items_module="003_money_buh_pm"
-                                           edit_item_id="{{ pm_user[k]['id'] ?? '' }}"
-                                           edit_dop_name="summa"
+                                           action="{{ action }}"
+                                           items_module="{{ aj_module }}"
+                                           
+                                           edit_dop_name="{{ aj_edit_pole }}"
+                                           value="{{ aj_value }}"
 
-                                           addpole1 = "jobman"
-                                           addpole1val = "{{ man_id }}"
-                                           addpole2 = "date"
-                                           addpole2val = "{{ get.d_start }}"
-                                           {# addpole3 = "type_minus" #}
-                                           addpole3 = "type_plus"
-                                           addpole3val = "{{ k }}"
+                                           {% set string_dop = '' %}
+                                           {% set nn = 1 %}
+                                           
+                                           {% for k,v in dops %}
 
-                                           s="{{ creatSecret( ( pm_user[k]['id'] ?? '' )~"summa"~( man_id ?? '' )~( get.d_start ?? '' )~( k ?? '' ) ) }}"
+                                               addpole{{ nn }} = "{{ k }}"
+                                               addpole{{ nn }}val = "{{ v }}"
 
-                                           style="xfloat:left; xmargin-bottom:10px; width: 80px;"
+                                               {% set string_dop = string_dop~'_'~k~'_'~v %}
+
+                                               {% set nn = nn+1 %}
+
+                                           {% endfor %}
+
+                                           aj_id="{{ action }}_{{ aj_module }}{{ string_dop }}"
+                                           aj_s="{{ creatSecret( action ~'_'~ aj_module ~ string_dop ) }}"
 
                                            >
                                     {{ v }}                                
@@ -86,31 +100,46 @@
 
                             {% if now_level.type2 is defined and now_level.type2 == 'buh' %}
                                 <div>
+                                    {% set action = 'didrive__items__new_edit' %}
+                                    {% set aj_module = '003_money_buh_pm' %}
+                                    {% set aj_value = ( pm_user[k]['summa'] ?? '' ) %}
+                                    {% set aj_edit_pole = 'summa' %}
+
+                                    {% set dops = { 'jobman' : man_id ,
+                                           "date" : get.d_start ,
+                                           "type_plus" :  k } %}
+
                                     <input type="number" 
-                                           class="items__newedit_dop_pole"
+                                           class="didrive__items__new_edit"
+                                           style="width: 80px;"
 
                                            step="0.01"
                                            min="1"
                                            max="99999"
-
                                            placeholder=""
-                                           value="{{ pm_user[k]['summa'] ?? '' }}"
 
-                                           items_module="003_money_buh_pm"
-                                           edit_item_id="{{ pm_user[k]['id'] ?? '' }}"
-                                           edit_dop_name="summa"
+                                           action="{{ action }}"
+                                           items_module="{{ aj_module }}"
+                                           
+                                           edit_dop_name="{{ aj_edit_pole }}"
+                                           value="{{ aj_value }}"
 
-                                           addpole1 = "jobman"
-                                           addpole1val = "{{ man_id }}"
-                                           addpole2 = "date"
-                                           addpole2val = "{{ get.d_start }}"
-                                           addpole3 = "type_minus"
-                                           {# addpole3 = "type_plus" #}
-                                           addpole3val = "{{ k }}"
+                                           {% set string_dop = '' %}
+                                           {% set nn = 1 %}
+                                           
+                                           {% for k,v in dops %}
 
-                                           s="{{ creatSecret( ( pm_user[k]['id'] ?? '' )~"summa"~( man_id ?? '' )~( get.d_start ?? '' )~( k ?? '' ) ) }}"
+                                               addpole{{ nn }} = "{{ k }}"
+                                               addpole{{ nn }}val = "{{ v }}"
 
-                                           style="xfloat:left; xmargin-bottom:10px; width: 80px;"
+                                               {% set string_dop = string_dop~'_'~k~'_'~v %}
+
+                                               {% set nn = nn+1 %}
+
+                                           {% endfor %}
+
+                                           aj_id="{{ action }}_{{ aj_module }}{{ string_dop }}"
+                                           aj_s="{{ creatSecret( action ~'_'~ aj_module ~ string_dop ) }}"
 
                                            >
                                     {{ v }}
@@ -167,10 +196,6 @@
 
                 {{ pay.summa|number_format(0, '.', '`') }} 
                 <sup>{{ pay.date }}
-
-
-
-
 
                     <a href="#" class="btn3 edit_items_dop_values drop2_{{ pay.id }} btn btn-xs btn-light" 
 
@@ -276,7 +301,7 @@
 
                     <br/>
                 {% endif %}
-                
+
                 {#% set ostatok = ostatok - pay.summa %#}
             {% endfor %}
 
@@ -320,16 +345,16 @@
                                     </div>
                                     <input type="date" class="form-control" xstyle="padding:3px;"
                                            name="date" 
-                                           
+
                                            {%  if "now"|date('Y-m-d') >= get.d_start|date('Y-m-d') and "now"|date('Y-m-d') <= get.d_fin|date('Y-m-d') %}
                                                value="{{ "now"|date('Y-m-d') }}" 
                                            {%  else %}
                                                value="{{ get.d_fin|date('Y-m-d') }}" 
                                            {% endif %}
-                                           
+
                                            xmin="{{ get.d_start|date('Y-m-d') }}" 
                                            xmax="{{ get.d_fin|date('Y-m-d') }}" 
-                                           
+
                                            required="required"
                                            />
 

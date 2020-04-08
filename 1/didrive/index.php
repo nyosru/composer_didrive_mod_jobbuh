@@ -1,8 +1,11 @@
 <?php
 
 if (isset($_REQUEST['type']) && $_REQUEST['type'] == 'print') {
+    
     $tpl_print_end = \f\like_tpl('body.print', dir_mods_mod_vers_didrive_tpl, dir_site_module_nowlev_tpldidr, DR);
+    
 // echo '<br/>#'.__LINE__.' '.$tpl_print_end;
+    
 } else {
 
     $vv['in_body_end'][] = '<script defer="defer" src="' . DS . 'vendor' . DS . 'didrive' . DS . 'base' . DS . 'js.lib' . DS . 'jquery.ba-throttle-debounce.min.js"></script>';
@@ -18,7 +21,7 @@ if (isset($_REQUEST['type']) && $_REQUEST['type'] == 'print') {
 
 
 
-
+//$vv['in_body_end'][] = '<script defer="defer" src="' . DS . 'vendor' . DS . 'didrive' . DS . 'base' . DS . 'js.lib' . DS . 'jquery.ba-throttle-debounce.min.js"></script>';
 
 
 

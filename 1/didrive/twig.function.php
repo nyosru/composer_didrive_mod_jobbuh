@@ -104,6 +104,8 @@ $function = new Twig_SimpleFunction('job_buh__get_buh_PM', function ($db, $date,
         // $ds = date('Y-m-01', strtotime($date));
         \Nyos\mod\items::$var_ar_for_1sql[':d'] = date('Y-m-01', strtotime($date));
 
+        // echo \Nyos\mod\JobDesc::$mod_buh_pm;
+        
         $ee = \Nyos\mod\items::get($db, \Nyos\mod\JobDesc::$mod_buh_pm);
         // \f\pa($ee);
         // $df = date('Y-m-d', strtotime($ds . ' +1 month -1 day'));
