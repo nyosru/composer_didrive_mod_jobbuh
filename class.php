@@ -26,32 +26,52 @@ class JobBuh {
 
         $d_month = date('Y-m', strtotime($str_date));
 
-        if (!empty(self::$cash['month'][$sp_id][$d_month]))
-            return self::$cash['month'][$sp_id][$d_month];
+        $cash_var = \Nyos\mod\JobDesc::$mod_oborots . '_sp' . $sp_id . '_date' . $d_month;
+        $cash_time = 60 * 60 * 20;
 
-        self::$cash['month'][$sp_id][$d_month] = 0;
+        // \f\timer_start(123);
 
-        $d_start = $d_month . '-01';
-        $d_finish = date('Y-m-d', strtotime($d_start . ' +1 month -1 day'));
+        $kk = false;
+
+        if (!empty($cash_var))
+            $kk = \f\Cash::getVar($cash_var);
+
+        if ($kk !== false) {
+            
+        } else {
+
+//        if (!empty(self::$cash['month'][$sp_id][$d_month]))
+//            return self::$cash['month'][$sp_id][$d_month];
+            // self::$cash['month'][$sp_id][$d_month] = 0;
+            $kk = 0;
+
+            $d_start = $d_month . '-01';
+            $d_finish = date('Y-m-d', strtotime($d_start . ' +1 month -1 day'));
 
 //        \Nyos\mod\items::$where2 = ' AND ( midop.name = \'date\' AND midop.value_date '
 //                . ' BETWEEN \''.date('Y-m-d',strtotime($d_start)).'\' '
 //                . ' AND \''.date('Y-m-d',strtotime($d_finish)).'\' ) ';
 //        $oborots = \Nyos\mod\items::getItemsSimple2($db, $module_oborot);
 
-        $oborots = \Nyos\mod\items::getItemsSimple3($db, $module_oborot);
-        // \f\pa($oborots);
+            $oborots = \Nyos\mod\items::getItemsSimple3($db, $module_oborot);
+            // \f\pa($oborots);
 
-        foreach ($oborots as $k => $v) {
-            if (isset($v['sale_point']) && $v['sale_point'] == $sp_id && $v['date'] >= $d_start && $v['date'] <= $d_finish) {
-                if (!empty($v['oborot_server'])) {
-                    self::$cash['month'][$sp_id][$d_month] += $v['oborot_server'];
-                    // $r[ $d_start .' + '. $d_finish .' ++ '. $v['dop']['date'] .' - '. $v['dop']['sale_point'] ] = $v['dop']['oborot_server'];
+            foreach ($oborots as $k => $v) {
+                if (isset($v['sale_point']) && $v['sale_point'] == $sp_id && $v['date'] >= $d_start && $v['date'] <= $d_finish) {
+                    if (!empty($v['oborot_server'])) {
+                        // self::$cash['month'][$sp_id][$d_month] += $v['oborot_server'];
+                        $kk += $v['oborot_server'];
+                        // $r[ $d_start .' + '. $d_finish .' ++ '. $v['dop']['date'] .' - '. $v['dop']['sale_point'] ] = $v['dop']['oborot_server'];
+                    }
                 }
             }
+
+            \f\Cash::setVar($cash_var, $kk, ( $cash_time ?? 0));
         }
 
-        return self::$cash['month'][$sp_id][$d_month];
+        // echo '<br/>' . \f\timer_stop(123);
+        // return self::$cash['month'][$sp_id][$d_month];
+        return $kk;
     }
 
     /**
