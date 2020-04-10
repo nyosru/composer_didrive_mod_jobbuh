@@ -60,14 +60,14 @@
                         background-color: rgba(0,0,0,0.05);
                     }
                 </style>
-                
+
                 <table class="table border-black table-bordered t11" >
 
                     <thead>
                         <tr>
                             <Th>ФИО</th>
-                            <th>Начислено</th>
-                            <th>Аванс на карту</th>
+                            <th>Начислено&nbsp;(₽)</th>
+                            <th>Аванс на&nbsp;карту&nbsp;(₽)</th>
                             <th>НДФЛ</th>
                             <th>Сумма к&nbsp;выдаче&nbsp;₽</th>
                             <th>Личная подпись</th>
@@ -127,24 +127,27 @@
 
                                     {% endfor %}
 
-                                    {% for id, item in getListJobsPeriodAll.data.money_bonus if item.jobman == man_id and item.date_now == run_date and item.sale_point == get.sp and get.sp is defined %}
 
-                                        {#{ pa(item) }#}
-                                        {## % include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.print.tables.user.bonus.htm' % #}
+                                    {% if 1 == 2 %}
+                                        {% for id, item in getListJobsPeriodAll.data.money_bonus if item.jobman == man_id and item.date_now == run_date and item.sale_point == get.sp and get.sp is defined %}
 
-                                    {% endfor %}
+                                            {#{ pa(item) }#}
+                                            {## % include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.print.tables.user.bonus.htm' % #}
 
-                                    {% for id, item in getListJobsPeriodAll.data.money_minus if item.jobman == man_id and item.date_now == run_date and item.sale_point == get.sp and get.sp is defined %}
+                                        {% endfor %}
 
-                                        {#{ pa(item) }#}
-                                        {## % include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.print.tables.user.minus.htm' % #}
+                                        {% for id, item in getListJobsPeriodAll.data.money_minus if item.jobman == man_id and item.date_now == run_date and item.sale_point == get.sp and get.sp is defined %}
 
-                                    {% endfor %}
+                                            {#{ pa(item) }#}
+                                            {## % include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.print.tables.user.minus.htm' % #}
+
+                                        {% endfor %}
+                                    {% endif %}
 
                                 {% endfor %}
 
-                                    {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.print.tables.user_bottom_line.htm' %}
-                                    
+                                {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.print.tables.user_bottom_line.htm' %}
+
                             </tr>
 
                         {% endfor %}
