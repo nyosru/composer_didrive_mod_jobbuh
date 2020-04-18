@@ -38,65 +38,11 @@
 
 
 
-
-
     <td class="text-right">
-        {{ summa_man|number_format(0, '.', '`') }}
+
+        {{ summa_man|number_format(2, '.', '`') }}
 
         {% set show_dop = 0 %}
-
-        {# плюсы минусы #}
-        {% if 1 == 1 %}
-
-            {% for k,v in buh_pm_cfg.plus if k != 'skip' %}
-
-                {% if pm_user[k]['summa'] is defined %}
-
-                    {% if show_dop == 0 %}
-                        {% set show_dop = 1 %}
-                        <small>
-                            <br/>Дополнительно:
-                        {% endif %}
-
-                        <br/>+{{ pm_user[k]['summa']|number_format(0,'.','`') }}
-
-                        {% set summa_man = summa_man + pm_user[k]['summa'] %}
-
-                        {% if 1 == 2 %}
-                        </small>
-                    {% endif %}
-
-                {% endif %}
-
-            {% endfor %}
-
-            {% for k,v in buh_pm_cfg.minus if k != 'skip' %}
-
-                {% if pm_user[k]['summa'] is defined %}
-
-                    {% if show_dop == 0 %}
-                        {% set show_dop = 1 %}
-                        <small>
-                            <br/>Дополнительно:
-                        {% endif %}
-
-                        <br/>-{{ pm_user[k]['summa']|number_format(0,'.','`') }}
-
-                        {% set summa_man = summa_man - pm_user[k]['summa'] %}
-
-                        {% if 1 == 2 %}
-                        </small>
-                    {% endif %}
-
-                {% endif %}
-
-            {% endfor %}
-
-        {% endif %}
-
-        {#% set ostatok = summa_man - getListJobsPeriodAll.data.money_oplats[get.sp][man_id] %#}
-
-        {#{  pa(getListJobsPeriodAll.data.money_oplats[get.sp][man_id]) }#}
 
         {% if 1 == 2 %}
             <div class="text-left" >
@@ -104,8 +50,6 @@
                 {{ pa(getListJobsPeriodAll.data.oplats) }}
             </div>
         {% endif %}
-
-
 
         {% set show_dop2 = 0 %}
 
@@ -129,7 +73,7 @@
 
             {#{ pa(pay) }#}
 
-            <br/>{{ pay.date ?? '' }} / {{ pay.summa|number_format(0,'.','`') }}
+            <br/>{{ pay.date ?? '' }} / {{ pay.summa|number_format(2,'.','`') }}
             {% set summa_man = summa_man - pay.summa %}
 
             {% endfor %}
@@ -140,26 +84,45 @@
 
         </td>
 
-        <td class="text-right">
-            {% if pm_user['avans_on_karta']['summa'] is defined %}
-                {{ pm_user['avans_on_karta']['summa']|number_format(0, '.', '`') }}
-            {% else %}
-                -
-            {% endif %}
+        {# плюсы #}
+        <td class="text-right" style="padding:0;">
 
-            {#
-            <div class="text-left" >
-                {{ pa(pm_user,2) }}
-            </div>
-            #}
+            <table class="table table-sm" >
+                {% for k,v in buh_pm_cfg.plus if k != 'skip' and pm_user[k]['summa'] is defined %}
+
+                    <tr>
+                        <td>
+                            {{ v }}
+                        </td>
+                        <td>
+                            {{ pm_user[k]['summa']|number_format(2,'.','`') }}
+                            {% set summa_man = summa_man + pm_user[k]['summa'] %}
+                        </td>
+                    </tr>
+
+                {% endfor %}
+            </table>            
+
+
         </td>
 
-        <td class="text-right">
-            {% if pm_user['ndfl']['summa'] is defined %}
-                {{ pm_user['ndfl']['summa']|number_format(0, '.', '`') }}
-            {% else %}
-                -
-            {% endif %}
+        {# взыскания #}
+        <td class="text-right" style="padding:0;">
+
+            <table class="table table-sm" >
+                {% for k,v in buh_pm_cfg.minus if k != 'skip' and pm_user[k]['summa'] is defined %}
+                    <tr>
+                        <td>
+                            {{ v }}
+                        </td>
+                        <td>
+                            {{ pm_user[k]['summa']|number_format(2,'.','`') }}
+                            {% set summa_man = summa_man - pm_user[k]['summa'] %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>            
+
         </td>
 
         <td class="text-right">
@@ -178,161 +141,14 @@
 
             {% endif %}
 
-            {{ a1|number_format(0, '.', '`') }}
+            {{ a1|number_format(2, '.', '`') }}
 
         </td>
 
-        <td></td>
-
-        {% if 1 == 2 %}
-
-            {#
-                        <br/>
-                        <br/>
-                        <button class="btn btn-xs btn-light send-pay-good" 
-                                val-summa="{{ ostatok }}" 
-                                val-checkin="{{ d.id_check }}"
-                                show_on_click="res{{ d.id_check }}"
-                                resto="res{{ d.id_check }}"
-                                >Оплатить остаток</button>
-                        <div id="res{{ d.id_check }}" ></div>
-            #}
-
-            {#
-                    </div>
-                    <div class="tcell plategi text-right" >
-            #}
-            {% set ostatok = summa_man - getListJobsPeriodAll.data.money_oplats[get.sp][man_id] %}
-
-            {#{  pa(getListJobsPeriodAll.data.money_oplats[get.sp][man_id]) }#}
-
-            {% for k51, pay in getListJobsPeriodAll.data.oplats if pay.jobman == man_id and pay.sale_point == get.sp %}
-                {#{ pa(pay) }#}
-
-                {{ pay.summa|number_format(0, '.', '`') }} <sup>{{ pay.date }}</sup><br/>
-
-                {#% set ostatok = ostatok - pay.summa %#}
-            {% endfor %}
-
-            {% if show_for_user_pay == true %}
-
-                {# форма фиксации оплаты #}
-                {% if 1 == 2 %}
-
-                    {% if get.sp is not defined or ( get.sp is defined and get.sp == 'all' ) %}
-
-                        для зачисления оплаты, выберите точку продаж
-
-                    {% else %}
-
-                        <br/>
-                        <a href="#" 
-                           id="nadpis_form_send_money_{{ man_id }}"
-                           onclick="$('#form_send_money_{{ man_id }}').show('slow');
-                                   $(this).hide('slow');
-                                   return false;"><span class="fa fa-plus" ></span> добавить выплату</a>
-                        <center>
-                            <form 
-                                action=""
-                                method="post"
-                                class="send-pay-form"
-                                id="form_send_money_{{ man_id }}" 
-                                style=" display:none; background-color:rgba(0,0,255,0.2);
-                                padding: 5px 10px; width:200px; border-radius:15px; text-align:center;"
-
-                                {# если есть "ajax" то передаётся в форму ajax_resto_id="res_form_add_{{ jobman }}" #}
-                                {# куда печатаем результат#}
-                                resto_id="res_form_add_{{ man_id }}"
-
-                                >
-
-                                добавить выплату
-
-                                <div class="input-group" >
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text" id="inputGroupPrepend">дата</span>
-                                    </div>
-                                    <input type="date" class="form-control" xstyle="padding:3px;"
-                                           name="date" 
-                                           {%  if "now"|date('Y-m-d') >= get.d_start|date('Y-m-d') and "now"|date('Y-m-d') <= get.d_fin|date('Y-m-d') %}
-                                               value="{{ "now"|date('Y-m-d') }}" 
-                                           {%  else %}
-                                               value="{{ get.d_fin|date('Y-m-d') }}" 
-                                           {% endif %}
-                                           min="{{ get.d_start|date('Y-m-d') }}" max="{{ get.d_fin|date('Y-m-d') }}" 
-                                           required="required"
-                                           />
-
-                                </div>
-
-                                <div class="input-group" >
-
-                                    <input 
-                                        type="number" min="1" max="{{ ostatok }}" 
-                                        name="summa"
-                                        value="{{ ostatok }}" class="form-control"  
-                                        required="required"
-                                        > 
-
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text" id="inputGroupPrepend">₽</span>
-                                    </div>
-
-                                </div>
-
-                                <input type="hidden" name="sale_point" value="{{ get.sp }}" />
-
-                                <input type="hidden" name="jobman" value="{{ man_id }}" />
-                                <input type="hidden" name="id" value="{{ man_id }}" />
-                                <input type="hidden" name="s" value="{{ creatSecret(man_id) }}" />
-
-                                <input type="submit" class="xform-control xbtn-xs btn btn-success" value="Выплачено" />
-
-                            </form>
-                        </center>
-                        <div id="res_form_add_{{ man_id }}-2"></div>
-                        <div id="res_form_add_{{ man_id }}"></div>
-
-                    {% endif %}
-
-                {% endif %}                                
-
-            {%  endif %}
-
-            {#
-        </div>
-        <div class="tcell ostatki {% if ostatok == 0 %} bg-success {% else %} bg-warning {% endif %}" >
-    #}
-
-
-            {% if ostatok == 0 %}
-
-                {#
-                <center title="всё оплачено" class="text-white" >
-                    оплачено
-                </center>
-                #}
-
-            {% else %}
-
-                {#% if show_for_user_pay == true %}
-                    <a href="#" 
-                       onclick="$('#nadpis_form_send_money_{{ man_id }}').hide();$('#form_send_money_{{ man_id }}').show('slow');$('#form_send_money_{{ man_id }} input[name=summa]').val('{{ ostatok }}');
-                               return false;">
-                        {{ ostatok|number_format(0, '.', '`') }}
-                    </a>
-                {% else %}
-                    {{ ostatok|number_format(0, '.', '`') }}
-                {% endif %#}
-
-            {% endif %}
-
-
-            {#
-                    </div>
-                </div>
-            #}
-
-        {% endif %}
+        <td>
+            &nbsp;
+        </td>
 
         {% endspaceless %}
+            
+            

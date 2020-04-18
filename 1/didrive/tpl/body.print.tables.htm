@@ -67,8 +67,12 @@
                         <tr>
                             <Th>ФИО</th>
                             <th>Начислено&nbsp;(₽)</th>
-                            <th>Аванс на&nbsp;карту&nbsp;(₽)</th>
-                            <th>НДФЛ</th>
+
+                            {# <th>Аванс на&nbsp;карту&nbsp;(₽)</th> #}
+                            <th>Вознаграждение&nbsp;(₽)</th>
+                                {# <th>НДФЛ</th> #}
+                            <th>Взыскания&nbsp;(₽)</th>
+
                             <th>Сумма к&nbsp;выдаче&nbsp;₽</th>
                             <th>Личная подпись</th>
                         </tr>
@@ -146,11 +150,132 @@
 
                                 {% endfor %}
 
-                                {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.print.tables.user_bottom_line.htm' %}
+                                {#% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.print.tables.user_bottom_line.htm' %#}
 
-                            </tr>
+                                {% set summa_man = getListJobsPeriodAll.data.money_to_pay[get.sp][man_id] %}
 
-                        {% endfor %}
+                                {#{ summa_man|number_format(0, '.', '`') }#}
+
+                                {% if 1 == 2 %}
+                            <div class="text-left" >
+                                {{ pa(summa_man,2) }}
+                            </div>
+                        {% endif %}
+
+                        {% set buh_pm_cfg = get_buh_PM_cfg() %}
+
+                        {% if 1 == 2 %}
+                            <div class="text-left" >
+                                {{ pa(buh_pm_cfg,2) }}
+                            </div>
+                        {% endif %}
+
+                        {% set pm_user = job_buh__get_buh_PM(db,get.d_start,man_id) %}
+
+                        {% if 1 == 2 %}
+                            <div class="text-left" >
+                                {{ pa(pm_user,2) }}
+                            </div>
+                        {% endif %}
+
+                        <td class="text-right">
+
+                            {{ summa_man|number_format(2, '.', '`') }}
+
+                            {% set show_dop = 0 %}
+                            {% set show_dop2 = 0 %}
+
+                            {% for k7, pay in getListJobsPeriodAll.data.oplats if pay.jobman == man_id and pay.sale_point == get.sp and pay.summa is defined and pay.date_end_period is defined and pay.date_end_period >= get.d_start  and pay.date_end_period <= get.d_fin %}
+
+                                {% if show_dop2 == 0 %}
+
+                                    {% set show_dop2 = 1 %}
+
+                                    {% if show_dop == 0 %}
+                                        <small>
+                                        {% endif %}
+                                        <br/>Произведённые выплаты:
+                                    {% endif %}
+
+                                    <br/>{{ pay.date ?? '' }} / {{ pay.summa|number_format(2,'.','`') }}
+                                    {% set summa_man = summa_man - pay.summa %}
+
+                                {% endfor %}
+
+                                {% if 1 == 2 %}
+                                </small>
+                            {% endif %}
+
+                        </td>
+
+                        {# плюсы #}
+                        <td class="text-right" style="padding:0;">
+
+                            <table class="table table-sm" >
+                                {% for k,v in buh_pm_cfg.plus if k != 'skip' and pm_user[k]['summa'] is defined %}
+
+                                    <tr>
+                                        <td>
+                                            {{ v }}
+                                        </td>
+                                        <td>
+                                            {{ pm_user[k]['summa']|number_format(2,'.','`') }}
+                                            {% set summa_man = summa_man + pm_user[k]['summa'] %}
+                                        </td>
+                                    </tr>
+
+                                {% endfor %}
+                            </table>            
+
+
+                        </td>
+
+                        {# взыскания #}
+                        <td class="text-right" style="padding:0;">
+
+                            <table class="table table-sm" >
+                                {% for k,v in buh_pm_cfg.minus if k != 'skip' and pm_user[k]['summa'] is defined %}
+                                    <tr>
+                                        <td>
+                                            {{ v }}
+                                        </td>
+                                        <td>
+                                            {{ pm_user[k]['summa']|number_format(2,'.','`') }}
+                                            {% set summa_man = summa_man - pm_user[k]['summa'] %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>            
+
+                        </td>
+
+                        <td class="text-right">
+
+                            {% if get.d_fin|date('d') == 20 %}
+
+                                {% set summa90 = summa_man/100*90 %}
+                                {#% set summa_all = summa90 - ( pm_user['avans_on_karta']['summa'] ?? 0 ) - ( pm_user['ndfl']['summa'] ?? 0 ) %#}
+                                {% set summa_all = summa90 %}
+                                {% set a22 = summa_all/100 %}
+                                {% set a1 = a22|round(0,'floor')*100 %}
+
+                            {% else %}
+
+                                {% set a1 = summa_man %}
+
+                            {% endif %}
+
+                            {{ a1|number_format(2, '.', '`') }}
+
+                        </td>
+
+                        <td>
+                            &nbsp;
+                        </td>
+
+                        </tr>
+
+                    {% endfor %}
 
                     </tbody>
                 </table>
