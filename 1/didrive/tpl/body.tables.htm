@@ -47,9 +47,16 @@
                     <span style="position: relative;">
 
                         {% set gets = get %}
+                        
                         {% set gets = gets|merge({ 'type':'print' }) %}
                         <a href="/i.didrive.php?{{ http_build_query(gets) }}" target="_blank" 
                            xclass="btn btn-xs btn-success" style="display:inline-block; margin-bottom:15px; xfloat:right;">бух.ведомость распечатать</a>
+                        
+                        {#
+                        {% set gets = gets|merge({ 'show_ras':'da' }) %}
+                        <a href="/i.didrive.php?{{ http_build_query(gets) }}" target="_blank" 
+                           xclass="btn btn-xs btn-success" style="display:inline-block; margin-bottom:15px; xfloat:right;">бух.ведомость распечатать (с расчётом)</a>
+                        #}
                         
                         <div class="ttable cell-padding5 list_otrezki2 cell-border">
 

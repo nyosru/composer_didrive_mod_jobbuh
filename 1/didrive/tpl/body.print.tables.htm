@@ -5,6 +5,22 @@
         div:HOVER > sup{ color: rgba(0,0,0,0.5); }
         .sup_hover_gray sup{ color: rgba(0,0,0,0.3); }
         .sup_hover_gray:HOVER > sup.gray{ color: rgba(0,0,0,0.7); }
+
+        @media print {
+            .raschets0{ display: none; }
+        }        
+
+        .raschets{ 
+            font-size:12px; 
+            border: 1px solid gray; 
+            padding: 10px; 
+        }
+        .raschets legend{ 
+            font-size:12px; 
+            text-align: center; 
+            background-color: rgba(0,255,0,0.05);
+        }
+
     </style>
 
     {% set sps = items__get( db, 'sale_point' )  %}    
@@ -78,7 +94,6 @@
                         </tr>
                     </thead>
                     <tbody>
-
 
                         {# спец назначения #}
                         {#{  pa(getListJobsPeriodAll.data.spec.data,2) }#}
@@ -180,6 +195,8 @@
 
                         <td class="text-right">
 
+                            {% set ras_start = summa_man %}
+
                             {{ summa_man|number_format(2, '.', '`') }}
 
                             {% set show_dop = 0 %}
@@ -205,6 +222,12 @@
                                 {% if 1 == 2 %}
                                 </small>
                             {% endif %}
+
+                            {% if get.d_fin|date('d') == 20 %}
+                                {% set summa_man = summa_man /100*90 %}
+                            {% endif %}
+
+
 
                         </td>
 
@@ -251,21 +274,120 @@
 
                         <td class="text-right">
 
+
                             {% if get.d_fin|date('d') == 20 %}
-
-                                {% set summa90 = summa_man/100*90 %}
-                                {#% set summa_all = summa90 - ( pm_user['avans_on_karta']['summa'] ?? 0 ) - ( pm_user['ndfl']['summa'] ?? 0 ) %#}
-                                {% set summa_all = summa90 %}
-                                {% set a22 = summa_all/100 %}
-                                {% set a1 = a22|round(0,'floor')*100 %}
-
-                            {% else %}
-
-                                {% set a1 = summa_man %}
-
+                                {% set summa_man = (summa_man/100)|round(0,'floor')*100 %}
                             {% endif %}
 
-                            {{ a1|number_format(2, '.', '`') }}
+                            {{ summa_man|number_format(2, '.', '`') }}
+
+                            <div class="raschets0" >
+
+                                <fieldset class="raschets" >
+                                    <legend><a href="#" onclick="$('#ras_{{ man_id }}').toggle('slow');
+                                            return false;" >расчеты</a></legend>
+
+                                    <div id="ras_{{ man_id }}" style="display:none;" >
+                                        {% set ras_itog = ras_start %}
+
+                                        старт {{ ras_start|number_format(2, '.', '`') }}
+                                        <br/>
+
+
+                                        {% for k7, pay in getListJobsPeriodAll.data.oplats if pay.jobman == man_id and pay.sale_point == get.sp and pay.summa is defined and pay.date_end_period is defined and pay.date_end_period >= get.d_start  and pay.date_end_period <= get.d_fin %}
+
+                                            <div style="background-color: rgba(0,0,255,0.1);padding: 5px;">
+                                                выплата от {{ pay.date ?? '' }} 
+                                                <Br/> 
+                                                -{{ pay.summa|number_format(2,'.','`') }}
+                                                {% set ras_itog = ( ras_itog - ( pay.summa ?? 0 ) ) %}
+                                                <br/>
+                                                = {{ ras_itog|number_format(2,'.','`') }}
+                                            </div>
+
+                                        {% endfor %}
+
+
+
+                                        {% if get.d_fin|date('d') == 20 %}
+                                            {% set ras_itog = ras_itog /100*90 %}
+                                            - 10% = {{ ras_itog|number_format(2, '.', '`') }}
+                                            <br/>
+                                        {% endif %}
+
+
+
+                                        {% for k,v in buh_pm_cfg.plus if k != 'skip' and pm_user[k]['summa'] is defined %}
+
+                                            <div style="background-color: rgba(255,255,0,0.1);padding: 5px; border-bottom: 1px solid rgba(255,255,0,1);">
+                                                {{ v }}
+                                                <br/>
+                                                + {{ pm_user[k]['summa']|number_format(2,'.','`') }}
+                                                {% set ras_itog = ( ras_itog + ( pm_user[k]['summa'] ?? 0 ) ) %}
+                                                <br/>
+                                                = {{ ras_itog|number_format(2,'.','`') }}
+                                            </div>
+
+                                            {#
+                                            <tr>
+                                                <td>
+                                                    {{ v }}
+                                                </td>
+                                                <td>
+                                                    {{ pm_user[k]['summa']|number_format(2,'.','`') }}
+                                                    {% set summa_man = summa_man + pm_user[k]['summa'] %}
+                                                </td>
+                                            </tr>
+                                            #}
+
+                                        {% endfor %}
+
+
+
+                                        {% for k,v in buh_pm_cfg.minus if k != 'skip' and pm_user[k]['summa'] is defined %}
+
+                                            <div style="background-color: rgba(255,0,0,0.1);padding: 5px; border-bottom: 1px solid red;">
+                                                {{ v }}
+                                                <br/>
+                                                - {{ pm_user[k]['summa']|number_format(2,'.','`') }}
+                                                {% set ras_itog = ( ras_itog - ( pm_user[k]['summa'] ?? 0 ) ) %}
+                                                <br/>
+
+                                                = {{ ras_itog|number_format(2,'.','`') }}
+                                            </div>
+
+                                            {#
+                                            <tr>
+                                                <td>
+                                                    {{ v }}
+                                                </td>
+                                                <td>
+                                                    {{ pm_user[k]['summa']|number_format(2,'.','`') }}
+                                                    {% set summa_man = summa_man + pm_user[k]['summa'] %}
+                                                </td>
+                                            </tr>
+                                            #}
+
+                                        {% endfor %}
+
+
+
+
+                                        {% if get.d_fin|date('d') == 20 %}
+
+                                            {% set summa_man = (summa_man/100)|round(0,'floor')*100 %}
+
+                                            <br/>
+                                            округлили до 100
+
+                                        {% endif %}
+
+                                        <br/>
+                                        итого = {{ summa_man|number_format(2, '.', '`') }}
+
+                                    </div>
+                                </fieldset>
+                            </div>
 
                         </td>
 
