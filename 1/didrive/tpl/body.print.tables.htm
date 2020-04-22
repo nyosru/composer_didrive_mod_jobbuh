@@ -200,6 +200,12 @@
 
                             {{ summa_man|number_format(2, '.', '`') }}
 
+
+                            {% if get.d_fin|date('d') == 20 %}
+                                {% set summa_man = summa_man /100*90 %}
+                            {% endif %}
+                            
+                            
                             {% set show_dop = 0 %}
                             {% set show_dop2 = 0 %}
 
@@ -222,10 +228,6 @@
 
                                 {% if 1 == 2 %}
                                 </small>
-                            {% endif %}
-
-                            {% if get.d_fin|date('d') == 20 %}
-                                {% set summa_man = summa_man /100*90 %}
                             {% endif %}
 
 
@@ -295,8 +297,15 @@
                                         <br/>
 
 
-                                        {% for k7, pay in getListJobsPeriodAll.data.oplats if pay.jobman == man_id and pay.sale_point == get.sp and pay.summa is defined and pay.date_end_period is defined and pay.date_end_period >= get.d_start  and pay.date_end_period <= get.d_fin %}
 
+                                        {% if get.d_fin|date('d') == 20 %}
+                                            {% set ras_itog = ras_itog /100*90 %}
+                                            - 10% = {{ ras_itog|number_format(2, '.', '`') }}
+                                            <br/>
+                                        {% endif %}
+
+
+                                        {% for k7, pay in getListJobsPeriodAll.data.oplats if pay.jobman == man_id and pay.sale_point == get.sp and pay.summa is defined and pay.date_end_period is defined and pay.date_end_period >= get.d_start  and pay.date_end_period <= get.d_fin %}
                                             <div style="background-color: rgba(0,0,255,0.1);padding: 5px;">
                                                 выплата от {{ pay.date ?? '' }} 
                                                 <Br/> 
@@ -305,16 +314,7 @@
                                                 <br/>
                                                 = {{ ras_itog|number_format(2,'.','`') }}
                                             </div>
-
                                         {% endfor %}
-
-
-
-                                        {% if get.d_fin|date('d') == 20 %}
-                                            {% set ras_itog = ras_itog /100*90 %}
-                                            - 10% = {{ ras_itog|number_format(2, '.', '`') }}
-                                            <br/>
-                                        {% endif %}
 
 
 
