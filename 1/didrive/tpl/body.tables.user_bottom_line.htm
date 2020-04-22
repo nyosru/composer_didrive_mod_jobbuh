@@ -24,7 +24,8 @@
 
                             {% set diff_summ = diff_summ + ( pm_user[k]['summa'] ?? 0 ) %}
 
-                            {% if now_level.type2 is defined and now_level.type2 == 'buh' %}
+                            {# формочка добавить выплату доступна всем #}
+                            {% if 1 == 1 or ( now_level.type2 is defined and now_level.type2 == 'buh' ) %}
 
                                 <div>
 
