@@ -50,7 +50,8 @@
                         
                         {% set gets = gets|merge({ 'type':'print' }) %}
                         <a href="/i.didrive.php?{{ http_build_query(gets) }}" target="_blank" 
-                           xclass="btn btn-xs btn-success" style="display:inline-block; margin-bottom:15px; xfloat:right;">бух.ведомость распечатать</a>
+                           xstyle="float:right;"
+                           xclass="btn btn-xs btn-success" style="display:inline-block; margin-bottom:15px; xfloat:right;"><i class="fa fa-print" ></i> Версия для печати</a>
                         
                         {#
                         {% set gets = gets|merge({ 'show_ras':'da' }) %}
