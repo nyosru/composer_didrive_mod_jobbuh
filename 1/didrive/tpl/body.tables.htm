@@ -91,6 +91,7 @@
                             {% for man_id, man in getListJobsPeriodAll.data.job_on_sp[get.sp] %}
 
                                 {% set summa_man = 0 %}
+                                {% set summa_man1 = 0 %}
 
                                 {# если в переменной не ноль то эта точка считается главной #}
                                 {% set now_sp_head = 0 %}                                
@@ -346,7 +347,7 @@
 
 
                                 {# если колво больше 1 и есть номер sp то это главная точка из всех #}                                
-                                {% if 1 == 1 %}
+                                {% if 1 == 2 %}
                                     ss - {{ now_sp_head }} / {{ kolvo_points }}
                                 {% endif %}
 
@@ -380,27 +381,191 @@ getListJobsPeriodAll.data.checks
                                         {#{ pa(item) }#}
                                         {%  set now_day_job = getListJobsPeriodAll.data.where_job__workman_date[man_id][run_date] %}
                                         {#%  set now_day_job = getListJobsPeriodAll.data.where_job__workman_date[man_id][item.start|date('Y-m-d')] %#}
-                                        {#{ pa(now_day_job) }#}
+
+                                        {#
+                                        <br/>
+                                        pa(now_day_job) 
+                                        <Br/>
+                                        {{ pa(now_day_job) }}
+                                        #}
 
                                         {%  if now_day_job.sale_point is defined and get.sp is defined and ( now_day_job.sale_point == get.sp or ( now_sp_head == get.sp and kolvo_points > 1 ) )%}
-                                            {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.user.smena.htm' %}
+
+                                            {#% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.user.smena.htm' %#}
+
+                                            {%  if 1 == 1 %}
+
+                                                {#% set summa_man = summa_man + 10 %#}
+
+                                                <div
+                                                    {% if 1 == 2 and ( item.ocenka is not defined or now.ocenka == 0 ) %}
+                                                        class="trow"
+                                                        {% set error_ruk = true %}
+                                                    {% else %}
+                                                        class="trow info_{{ man_id }}" style="display:none;"  
+                                                    {% endif %}
+                                                    >
+
+                                                    <div class="tcell" >
+
+                                                        {% if date_last != item.start|date('d.m.Y') %}
+
+                                                            {{ item.start|date('d.m.Y') }}
+                                                            {% set date_last = item.start|date('d.m.Y') %}
+
+                                                        {% endif %}
+
+                                                        {#{ pa(item) }#}
+
+                                                    </div>
+
+                                                    <div class="tcell bg-white stick-left" >
+
+                                                        {% set sum_day = 0 %}
+
+                                                        {% if sps[now_day_job.sale_point]['head'] is defined %}
+                                                            <span class="checks_item sp1" >{{ sps[now_day_job.sale_point]['head'] }}</span>
+                                                        {% endif %}
+
+                                                        {% if now_day_job.type is defined and now_day_job.type == 'spec' %}
+                                                            <span class="checks_item spec" >Спец. назначение</span>
+                                                        {% endif %}
+
+                                                        <span class="checks_item smena" >Трудовая смена</span>
+
+                                                        {% if dolgns.data[now_day_job.dolgnost]['head'] is defined %}
+                                                            <span class="checks_item dolgn sup_hover_gray" >{{ dolgns.data[now_day_job.dolgnost]['head'] }}
+                                                                {% if now_day_job.smoke is defined and now_day_job.smoke == 'da' %}
+                                                                    <sup>курит</sup>
+                                                                {% endif %}
+                                                            </span>
+                                                        {% endif %}
+
+                                                        c {{ item.start[11:5] }} до {% if item.start[11:2] < item.fin[11:2] %}{{ item.fin|date('H:i') }}{% else %}{{ item.fin|date('d.m.Y H:i') }}{% endif %}
+
+                                                        <br/>
+
+                                                        Часов: {{ item.hour_on_job_hand ?? item.hour_on_job ?? '-' }}
+                                                        Оценка: {{ item.ocenka ?? item.ocenka_auto ?? '-' }}
+                                                        Цена часа: {{ item.salary_hour ?? '-' }}
+
+                                                        {#{ pa(now_day_job) }#}
+                                                        {#{ pa(item) }#}
+
+                                                    </div>
+                                                    <div class="tcell text-right" >
+
+                                                        {% if item.summa is defined and item.summa > 0 %}
+
+                                                            {{ item.summa|number_format(0, '.', '`') }}
+                                                            {% set summa_man1 = summa_man1 + item.summa %}
+
+                                                        {% endif %}
+
+                                                    </div>
+                                                    <div class="tcell" >
+                                                    </div>
+                                                    <div class="tcell" >
+                                                    </div>
+
+                                                </div>
+
+
+
+                                            {% endif %}
+
                                         {% endif %}
 
                                     {% endfor %}
 
 
-
+                                    {#{ pa(getListJobsPeriodAll.data.money_bonus) }#}
                                     {% for id, item in getListJobsPeriodAll.data.money_bonus if item.jobman == man_id and item.date_now == run_date and item.sale_point == get.sp and get.sp is defined %}
-
                                         {#{ pa(item) }#}
-                                        {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.user.bonus.htm' %}
+                                        {#% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.user.bonus.htm' %#}
+                                        
+                                    {% if 1 == 1 %}
+                                        
 
+    {#% set summa_man = summa_man + 10 %#}
+
+    <div class="trow info_{{ man_id }}" style="display:none;" >
+
+        <div class="tcell" >
+            {{ run_date|date('d.m.Y') }}
+            {#{ pa(item) }#}
+        </div>
+
+        <div class="tcell bg-white stick-left" >
+            
+            {% if sps[item.sale_point]['head'] is defined %}
+                <span class="checks_item sp1" >{{ sps[item.sale_point]['head'] }}</span>
+            {% endif %}
+            
+            <span class="checks_item plus" >Бонус</span>
+            {{ item.text }}
+        </div>
+        <div class="tcell text-right" >
+            {% if item.summa > 0 %}
+                {{ item.summa|number_format(0, '.', '`') }}
+                
+                {% set summa_man1 = summa_man1 + item.summa %}
+                
+            {% else %}
+                -
+            {% endif %}
+        </div>
+        <div class="tcell" ></div>
+        <div class="tcell" ></div>
+    </div>
+                                        
+                                        
+                                    {% endif %}
+                                    
                                     {% endfor %}
-
+                                                
                                     {% for id, item in getListJobsPeriodAll.data.money_minus if item.jobman == man_id and item.date_now == run_date and item.sale_point == get.sp and get.sp is defined %}
 
                                         {#{ pa(item) }#}
-                                        {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.user.minus.htm' %}
+                                        {#% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.user.minus.htm' %#}
+
+                                        {% if 1 == 1 %}
+
+                                            {#% set summa_man = summa_man + 10 %#}
+
+                                            <div class="trow info_{{ man_id }}" style="display:none;" >
+
+                                                <div class="tcell" >
+                                                    {{ run_date|date('d.m.Y') }}
+                                                    {#{ pa(item) }#}
+                                                </div>
+
+                                                <div class="tcell bg-white stick-left" >
+
+                                                    {% if sps[item.sale_point]['head'] is defined %}
+                                                        <span class="checks_item sp1" >{{ sps[item.sale_point]['head'] }}</span>
+                                                    {% endif %}
+
+                                                    <span class="checks_item minus" >Взыскание</span>
+                                                    {{ item.text }}
+
+                                                </div>
+                                                <div class="tcell text-right" >
+                                                    {% if item.summa != 0 %}
+                                                        {{ item.summa|number_format(0, '.', '`') }}
+                                                        
+                                                        {% set summa_man1 = summa_man1 + item.summa %}
+                                                        
+                                                    {% else %}
+                                                        -
+                                                    {% endif %}
+                                                </div>
+                                                <div class="tcell" ></div>
+                                                <div class="tcell" ></div>
+                                            </div>
+
+
+                                        {% endif %}
 
                                     {% endfor %}
 

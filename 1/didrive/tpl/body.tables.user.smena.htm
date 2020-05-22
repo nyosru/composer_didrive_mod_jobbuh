@@ -169,6 +169,8 @@
             </div>
         {% endif %}
 
+        {% if 1 == 2 %}
+        
         {%  if money_dops[checks_man.user_id][date] is defined %}
             {%  for k1,v1 in money_dops[checks_man.user_id][date] %}
 
@@ -204,6 +206,8 @@
             {% endfor %}
         {% endif %}
 
+        {% endif %}
+        
     </div>
 
 {% endspaceless %}

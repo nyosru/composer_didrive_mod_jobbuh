@@ -159,6 +159,33 @@
 
         <div class="tcell summa1 text-right" >
 
+            {% if 1 == 2 %}
+
+            <small>
+                
+            payed_man 
+            
+            <br/>
+            {{ payed_man }}
+            
+            <br/>
+            <br/>
+
+            {{ summa_man1 }}
+            
+            {% endif %}
+            
+            {{ summa_man1|number_format(0, '.', '`') }}
+            {% set summa_man0 = getListJobsPeriodAll.data.money_to_pay[get.sp][man_id] %}
+            {% set summa_man = summa_man1 %}
+
+            {% if 1 == 2 %}
+            
+            <br/>
+            <br/>
+            
+            </small>
+            
             {% set summa_man0 = getListJobsPeriodAll.data.money_to_pay[get.sp][man_id] %}
             {% set summa_man = summa_man0 + diff_summ %}
 
@@ -183,6 +210,7 @@
                         <div id="res{{ d.id_check }}" ></div>
             #}
 
+            {% endif %}
 
         </div>
         <div class="tcell plategi text-right" >
