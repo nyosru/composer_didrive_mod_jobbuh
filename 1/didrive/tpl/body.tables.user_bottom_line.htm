@@ -187,260 +187,280 @@
         </div>
         <div class="tcell plategi text-right" >
 
-            {% set ostatok = summa_man - getListJobsPeriodAll.data.money_oplats[get.sp][man_id] %}
+            {#
+            {{ get.sp }} // ss - {{ now_sp_head }} / {{ kolvo_points }}
+              <br/>
+            #}
 
-            {#{  pa(getListJobsPeriodAll.data.money_oplats[get.sp][man_id]) }#}
+            {# если много точек и наша главная, то показываем ссылку #}
+            {% if kolvo_points == 1 or ( kolvo_points > 1 and now_sp_head is defined and get.sp is defined and now_sp_head == get.sp ) %}
+                {% set show_button_pay = true %}
+            {% else %}
+                {% set show_button_pay = false %}
+            {% endif %}
 
-            {% for k51, pay in getListJobsPeriodAll.data.oplats if pay.jobman == man_id and pay.sale_point == get.sp 
+
+            {% if show_button_pay == true %}
+
+                {% set ostatok = summa_man - getListJobsPeriodAll.data.money_oplats[get.sp][man_id] %}
+
+                {#{  pa(getListJobsPeriodAll.data.money_oplats[get.sp][man_id]) }#}
+
+                {% for k51, pay in getListJobsPeriodAll.data.oplats if pay.jobman == man_id and pay.sale_point == get.sp 
                 and pay.date_end_period <= get.d_fin 
                 and pay.date_end_period >= get.d_start 
-            %}
-
-            {#{ pa(pay) }#}
-
-            <div style="padding:3px; background-color: rgba(0,0,0,0.05); xborder: 1px solid gray; margin: 1px;">
+                %}
 
                 {#{ pa(pay) }#}
 
-                {{ pay.summa|number_format(0, '.', '`') }} 
-                <br/>
-                <sup>{{ pay.date }}
+                <div style="padding:3px; background-color: rgba(0,0,0,0.05); xborder: 1px solid gray; margin: 1px;">
 
-                    <a href="#" 
+                    {#{ pa(pay) }#}
 
-                       class="btn3 edit_items_dop_values drop2_{{ pay.id }} xbtn xbtn-xs xbtn-light" 
+                    {{ pay.summa|number_format(0, '.', '`') }} 
+                    <br/>
+                    <sup>{{ pay.date }}
 
-                       xstyle='display:none;'
+                        <a href="#" 
 
-                       {# действие после вопроса #}
-                       comit_answer="Отменить премию ?"
+                           class="btn3 edit_items_dop_values drop2_{{ pay.id }} xbtn xbtn-xs xbtn-light" 
 
-                       {# замена доп параметра #}
-                       action="edit_dop_item"
+                           xstyle='display:none;'
 
-                       {# модуль итемов #}
-                       itemsmod="075.buh_oplats"
+                           {# действие после вопроса #}
+                           comit_answer="Отменить премию ?"
 
-                       {# id итема #}
-                       item_id="{{ pay.id }}"
+                           {# замена доп параметра #}
+                           action="edit_dop_item"
 
-                       {# название доп параметра #}
-                       {# dop_name="pay_check" #}
-                       {# новое значение параметра #}
-                       {# dop_new_value="no" #}
-                       {# секрет #}
-                       {# s3="{{ creatSecret( '050.chekin_checkout-'~item.id~'-pay_check-no' ) }}"  #}
+                           {# модуль итемов #}
+                           itemsmod="075.buh_oplats"
 
-                       {# новое значение статуса записи #}
-                       new_status="hide"
+                           {# id итема #}
+                           item_id="{{ pay.id }}"
 
-                       {# секрет #}
-                       s3="{{ creatSecret( '075.buh_oplats-'~pay.id~'-hide' ) }}" 
+                           {# название доп параметра #}
+                           {# dop_name="pay_check" #}
+                           {# новое значение параметра #}
+                           {# dop_new_value="no" #}
+                           {# секрет #}
+                           {# s3="{{ creatSecret( '050.chekin_checkout-'~item.id~'-pay_check-no' ) }}"  #}
 
-                       {# скрыть ссылку после клика #}
-                       hidethis="da" 
+                           {# новое значение статуса записи #}
+                           new_status="hide"
 
-                       {# сделать видимым блок по id #}
-                       show_id="del_pay_{{ pay.id }}" 
+                           {# секрет #}
+                           s3="{{ creatSecret( '075.buh_oplats-'~pay.id~'-hide' ) }}" 
 
-                       {# id куда печатаем результат #}
-                       res_to_id="del_pay_{{ pay.id }}" 
+                           {# скрыть ссылку после клика #}
+                           hidethis="da" 
 
-                       {# сообщение печатаем если всё ок #}
-                       msg_to_success="Отменено"
+                           {# сделать видимым блок по id #}
+                           show_id="del_pay_{{ pay.id }}" 
 
-                       >Х</a>
-                </sup>
+                           {# id куда печатаем результат #}
+                           res_to_id="del_pay_{{ pay.id }}" 
 
-                <div style="display:none;" id="del_pay_{{ pay.id }}" ></div>
+                           {# сообщение печатаем если всё ок #}
+                           msg_to_success="Отменено"
 
-                {% if 1 == 2 %}
-
-                    57
-
-                    <a href="#" 
-
-                       xclass="xbtn3 edit_items_dop_values drop2_{{ pay.id }} xbtn xbtn-xs xbtn-light" 
-                       class="edit_items_dop_values2" 
-
-                       xstyle='display:none;'
-
-                       {# действие после вопроса #}
-                       comit_answer="Отменить выплату ?"
-
-                       {# замена доп параметра #}
-                       action="edit_dop_item"
-
-                       {# модуль итемов #}
-                       itemsmod="075.buh_oplats"
-
-                       {# id итема #}
-                       item_id="{{ pay.id }}"
-
-                       {# название доп параметра #}
-                       {# dop_name="pay_check" #}
-                       {# новое значение параметра #}
-                       {# dop_new_value="no" #}
-                       {# секрет #}
-                       {# s3="{{ creatSecret( '050.chekin_checkout-'~item.id~'-pay_check-no' ) }}"  #}
-
-                       {# новое значение статуса записи #}
-                       new_status="hide"
-
-                       {# секрет #}
-                       s3="{{ creatSecret( '075.buh_oplats-'~pay.id~'-hide' ) }}" 
-
-                       {# скрыть ссылку после клика #}
-                       hidethis="da" 
-
-                       {# сделать видимым блок по id #}
-                       show_id="del_pay_{{ pay.id }}" 
-
-                       {# id куда печатаем результат #}
-                       res_to_id="del_pay_{{ pay.id }}" 
-
-                       {# сообщение печатаем если всё ок #}
-                       msg_to_success="Отменено"
-
-                       {# print_res_to_id="ares{{ k1 }}" #}
-
-                       >Х</a>
-
-
+                           >Х</a>
                     </sup>
 
                     <div style="display:none;" id="del_pay_{{ pay.id }}" ></div>
 
-                    <br/>
-                {% endif %}
+                    {% if 1 == 2 %}
 
-            </div>
+                        57
 
-            {#% set ostatok = ostatok - pay.summa %#}
-            {% endfor %}
+                        <a href="#" 
 
-                
-                
-                
-                {% set show_for_user_pay = true %}
-                
-                {% if show_for_user_pay == true %}
+                           xclass="xbtn3 edit_items_dop_values drop2_{{ pay.id }} xbtn xbtn-xs xbtn-light" 
+                           class="edit_items_dop_values2" 
 
-                    {# форма фиксации оплаты #}
-                    {% if 1 == 1 %}
+                           xstyle='display:none;'
 
-                        {% if get.sp is not defined or ( get.sp is defined and get.sp == 'all' ) %}
+                           {# действие после вопроса #}
+                           comit_answer="Отменить выплату ?"
 
-                            для зачисления оплаты, выберите точку продаж
+                           {# замена доп параметра #}
+                           action="edit_dop_item"
 
-                        {% else %}
+                           {# модуль итемов #}
+                           itemsmod="075.buh_oplats"
 
-                            <br/>
-                            <a href="#" 
-                               id="nadpis_form_send_money_{{ man_id }}"
-                               onclick="$('#form_send_money_{{ man_id }}').show('slow');
-                                   $(this).hide('slow');
-                                   return false;"><span class="fa fa-plus" ></span> добавить выплату</a>
-                            <center>
-                                <form 
-                                    action=""
-                                    method="post"
-                                    class="send-pay-form"
-                                    id="form_send_money_{{ man_id }}" 
-                                    style=" display:none; background-color:rgba(0,0,255,0.2);
-                                    padding: 5px 10px; width:200px; border-radius:15px; text-align:center;"
+                           {# id итема #}
+                           item_id="{{ pay.id }}"
 
-                                    {# если есть "ajax" то передаётся в форму ajax_resto_id="res_form_add_{{ jobman }}" #}
-                                    {# куда печатаем результат#}
-                                    resto_id="res_form_add_{{ man_id }}"
+                           {# название доп параметра #}
+                           {# dop_name="pay_check" #}
+                           {# новое значение параметра #}
+                           {# dop_new_value="no" #}
+                           {# секрет #}
+                           {# s3="{{ creatSecret( '050.chekin_checkout-'~item.id~'-pay_check-no' ) }}"  #}
 
-                                    >
+                           {# новое значение статуса записи #}
+                           new_status="hide"
 
-                                    добавить выплату
+                           {# секрет #}
+                           s3="{{ creatSecret( '075.buh_oplats-'~pay.id~'-hide' ) }}" 
 
-                                    <div class="input-group" >
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="inputGroupPrepend">дата</span>
+                           {# скрыть ссылку после клика #}
+                           hidethis="da" 
+
+                           {# сделать видимым блок по id #}
+                           show_id="del_pay_{{ pay.id }}" 
+
+                           {# id куда печатаем результат #}
+                           res_to_id="del_pay_{{ pay.id }}" 
+
+                           {# сообщение печатаем если всё ок #}
+                           msg_to_success="Отменено"
+
+                           {# print_res_to_id="ares{{ k1 }}" #}
+
+                           >Х</a>
+
+
+                        </sup>
+
+                        <div style="display:none;" id="del_pay_{{ pay.id }}" ></div>
+
+                        <br/>
+                    {% endif %}
+
+                </div>
+
+                {#% set ostatok = ostatok - pay.summa %#}
+                {% endfor %}
+
+
+
+
+                    {% set show_for_user_pay = true %}
+
+                    {% if show_for_user_pay == true %}
+
+                        {# форма фиксации оплаты #}
+                        {% if 1 == 1 %}
+
+                            {% if get.sp is not defined or ( get.sp is defined and get.sp == 'all' ) %}
+
+                                для зачисления оплаты, выберите точку продаж
+
+                            {% else %}
+
+                                <br/>
+                                <a href="#" 
+                                   id="nadpis_form_send_money_{{ man_id }}"
+                                   onclick="$('#form_send_money_{{ man_id }}').show('slow');
+                                           $(this).hide('slow');
+                                           return false;"><span class="fa fa-plus" ></span> добавить выплату</a>
+                                <center>
+                                    <form 
+                                        action=""
+                                        method="post"
+                                        class="send-pay-form"
+                                        id="form_send_money_{{ man_id }}" 
+                                        style=" display:none; background-color:rgba(0,0,255,0.2);
+                                        padding: 5px 10px; width:200px; border-radius:15px; text-align:center;"
+
+                                        {# если есть "ajax" то передаётся в форму ajax_resto_id="res_form_add_{{ jobman }}" #}
+                                        {# куда печатаем результат#}
+                                        resto_id="res_form_add_{{ man_id }}"
+
+                                        >
+
+                                        добавить выплату
+
+                                        <div class="input-group" >
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="inputGroupPrepend">дата</span>
+                                            </div>
+                                            <input type="date" class="form-control" xstyle="padding:3px;"
+                                                   name="date" 
+
+                                                   {%  if "now"|date('Y-m-d') >= get.d_start|date('Y-m-d') and "now"|date('Y-m-d') <= get.d_fin|date('Y-m-d') %}
+                                                       value="{{ "now"|date('Y-m-d') }}" 
+                                                   {%  else %}
+                                                       value="{{ get.d_fin|date('Y-m-d') }}" 
+                                                   {% endif %}
+
+                                                   xmin="{{ get.d_start|date('Y-m-d') }}" 
+                                                   xmax="{{ get.d_fin|date('Y-m-d') }}" 
+
+                                                   required="required"
+                                                   />
+
                                         </div>
-                                        <input type="date" class="form-control" xstyle="padding:3px;"
-                                               name="date" 
 
-                                               {%  if "now"|date('Y-m-d') >= get.d_start|date('Y-m-d') and "now"|date('Y-m-d') <= get.d_fin|date('Y-m-d') %}
-                                                   value="{{ "now"|date('Y-m-d') }}" 
-                                               {%  else %}
-                                                   value="{{ get.d_fin|date('Y-m-d') }}" 
-                                               {% endif %}
+                                        <div class="input-group" >
 
-                                               xmin="{{ get.d_start|date('Y-m-d') }}" 
-                                               xmax="{{ get.d_fin|date('Y-m-d') }}" 
+                                            <input 
+                                                type="number" min="1" max="{{ ostatok }}" 
+                                                name="summa"
+                                                value="{{ ostatok }}" class="form-control"  
+                                                required="required"
+                                                > 
 
-                                               required="required"
-                                               />
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="inputGroupPrepend">₽</span>
+                                            </div>
 
-                                    </div>
-
-                                    <div class="input-group" >
-
-                                        <input 
-                                            type="number" min="1" max="{{ ostatok }}" 
-                                            name="summa"
-                                            value="{{ ostatok }}" class="form-control"  
-                                            required="required"
-                                            > 
-
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="inputGroupPrepend">₽</span>
                                         </div>
 
-                                    </div>
+                                        <input type="hidden" name="sale_point" value="{{ get.sp }}" />
 
-                                    <input type="hidden" name="sale_point" value="{{ get.sp }}" />
+                                        <input type="hidden" name="date_end_period" value="{{ get.d_fin }}" />
 
-                                    <input type="hidden" name="date_end_period" value="{{ get.d_fin }}" />
+                                        <input type="hidden" name="jobman" value="{{ man_id }}" />
+                                        <input type="hidden" name="id" value="{{ man_id }}" />
+                                        <input type="hidden" name="s" value="{{ creatSecret(man_id) }}" />
 
-                                    <input type="hidden" name="jobman" value="{{ man_id }}" />
-                                    <input type="hidden" name="id" value="{{ man_id }}" />
-                                    <input type="hidden" name="s" value="{{ creatSecret(man_id) }}" />
+                                        <input type="submit" class="xform-control xbtn-xs btn btn-success" value="Выплачено" onclick="$('#nadpis_form_send_money_{{ man_id }}').show('slow');" />
 
-                                    <input type="submit" class="xform-control xbtn-xs btn btn-success" value="Выплачено" onclick="$('#nadpis_form_send_money_{{ man_id }}').show('slow');" />
+                                    </form>
+                                </center>
+                                <div id="res_form_add_{{ man_id }}-2"></div>
+                                <div id="res_form_add_{{ man_id }}"></div>
 
-                                </form>
-                            </center>
-                            <div id="res_form_add_{{ man_id }}-2"></div>
-                            <div id="res_form_add_{{ man_id }}"></div>
+                            {% endif %}
+
+                        {% endif %}                                
+
+                    {%  endif %}
+                    {%  endif %}
+
+                    </div>
+
+                    <div class="tcell ostatki {% if show_button_pay == true %} {% if ostatok == 0 %} bg-success {% else %} bg-warning {% endif %} {% endif %}" >
+
+                        {% if show_button_pay == true %}
+
+                            {% if ostatok == 0 %}
+
+                                <center title="всё оплачено" class="text-white" >
+                                    оплачено
+                                </center>
+
+                            {% else %}
+
+                                {% if show_for_user_pay == true %}
+                                    <a href="#" 
+                                       onclick="$('#nadpis_form_send_money_{{ man_id }}').hide();$('#form_send_money_{{ man_id }}').show('slow');$('#form_send_money_{{ man_id }} input[name=summa]').val('{{ ostatok }}');
+                                           return false;">
+                                        {{ ostatok|number_format(0, '.', '`') }}
+                                    </a>
+                                {% else %}
+                                    {{ ostatok|number_format(0, '.', '`') }}
+                                {% endif %}
+
+                            {% endif %}
 
                         {% endif %}
 
-                    {% endif %}                                
+                    </div>
 
-                {%  endif %}
+                </div>
 
-            </div>
-
-            <div class="tcell ostatki {% if ostatok == 0 %} bg-success {% else %} bg-warning {% endif %}" >
-
-                {% if ostatok == 0 %}
-
-                    <center title="всё оплачено" class="text-white" >
-                        оплачено
-                    </center>
-
-                {% else %}
-
-                    {% if show_for_user_pay == true %}
-                        <a href="#" 
-                           onclick="$('#nadpis_form_send_money_{{ man_id }}').hide();$('#form_send_money_{{ man_id }}').show('slow');$('#form_send_money_{{ man_id }} input[name=summa]').val('{{ ostatok }}');
-                               return false;">
-                            {{ ostatok|number_format(0, '.', '`') }}
-                        </a>
-                    {% else %}
-                        {{ ostatok|number_format(0, '.', '`') }}
-                    {% endif %}
-
-                {% endif %}
-
-            </div>
-
-        </div>
-
-        {% endspaceless %}
+                {% endspaceless %}
