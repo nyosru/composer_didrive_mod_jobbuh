@@ -127,7 +127,7 @@
                         {% for man_id, man in getListJobsPeriodAll.data.job_on_sp[get.sp] %}
 
                             
-                            
+                            {% if head_sps__jobman_sp[man_id] == k %}
                             
                             
                             
@@ -492,6 +492,8 @@
                         </td>
 
                         </tr>
+
+                    {% endif %}
 
                     {% endfor %}
 
