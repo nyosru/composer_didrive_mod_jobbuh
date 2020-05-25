@@ -127,20 +127,7 @@
                         {% for man_id, man in getListJobsPeriodAll.data.job_on_sp[get.sp] %}
 
                             
-                            {% if head_sps__jobman_sp[man_id] == k %}
                             
-                            
-                            
-                            
-                            
-                            {% set summa_man = 0 %}
-
-                            <tr>
-
-                                <td>
-
-                                    
-                                    
 
             {# считаем сколько точек было в работе у сотрудника #}
             {% if 1 == 1 %}
@@ -175,15 +162,33 @@
 
             {% endif %}
 
+                                                        
+                            
+                            {% if 1 == 2 or ( kolvo_points == 1 or ( kolvo_points > 1 and head_sps__jobman_sp[man_id] == get.sp ) ) %}
+                            
+                            
+                            
+                            
+                            
+                            {% set summa_man = 0 %}
+
+                            <tr>
+
+                                <td>
+
                                     
+                                    
+        
                                     
                                     
                                     
                                     {## % include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.print.tables.user_line.htm' %#}
                                     {{ man['fio2'] ?? man['fio'] }}
                                     {#{ pa(man) }#}
+                                    {#
                                     <br/>
                                     <small style="color:gray;" class="print-hide" >{{ kpoints }}</small>
+                                    #}
 
                                 </td>
 
@@ -243,19 +248,30 @@
 
                                 {#% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.print.tables.user_bottom_line.htm' %#}
 
+                                
+                                
+                                
+                                
+                                
                                 {% if 1 == 2 %}
                                 {% set summa_man = getListJobsPeriodAll.data.money_to_pay[get.sp][man_id] %}
                                 {% endif %}
 
+                                {% set print_pays = '' %}
                                 
-                                
-
-
-
-
-                                {% for k,v in getListJobsPeriodAll.data.job_on_sp if v[man_id] is defined %}
-                                    {% set summa_man = summa_man + getListJobsPeriodAll.data.money_to_pay[k][man_id] %}
-                                {% endfor %}
+                                {% if kolvo_points > 1 %}
+                                    
+                                    {% for k,v in getListJobsPeriodAll.data.job_on_sp if v[man_id] is defined %}
+                                        {% set summa47 = getListJobsPeriodAll.data.money_to_pay[k][man_id] %}
+                                        {% set summa_man = summa_man + summa47 %}
+                                        {% set print_pays = print_pays ~ sps[k]['head'] ~ ': '~ summa47|number_format(2,'.','`') ~ "<br/>" %}
+                                    {% endfor %}
+                                    
+                                {% else %}
+                                    
+                                    {% set summa_man = getListJobsPeriodAll.data.money_to_pay[get.sp][man_id] %}
+                                    
+                                {% endif %}
 
 
 
@@ -270,6 +286,7 @@
                                 {% if 1 == 2 %}
                             <div class="text-left" >
                                 {{ pa(summa_man,2) }}
+                                
                             </div>
                         {% endif %}
 
@@ -326,7 +343,12 @@
                             {% endif %}
 
 
+                                <br/>
+                                <small style="color:gray;" class="print-hide" >
+                                {{ print_pays|raw }}
+                                </small>
 
+                            
                         </td>
 
                         {# плюсы #}
