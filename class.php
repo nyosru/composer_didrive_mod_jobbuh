@@ -12,7 +12,41 @@ if (!defined('IN_NYOS_PROJECT'))
 class JobBuh {
 
     public static $cash = [];
+    
+    public static $cash_var_oborot_day = 'oborot_day_';
+    
+    
 
+    /**
+     * получаем сумму оборота за месяц по точке продаж
+     * @param type $db
+     * @param type $sp
+     * @param type $str_date
+     * @param type $module_sp
+     * @param type $module_oborot
+     * @return type
+     */
+    public static function getOborotSpDay($db, $sp, $date) {
+        
+        $mod_sp = \Nyos\mod\JobDesc::$mod_sale_point ?? '';
+        $mod_oborot = \Nyos\mod\JobDesc::$mod_oborots ?? '';
+        // $module_sp = 'sale_point', $module_oborot = 'sale_point_oborot'
+        if( empty($mod_sp) || empty($mod_oborot) ){
+            throw new \Exception('не важных переменных, не подгружен класс jobdesc');
+        }
+        
+        $var_cash_day = self::$cash_var_oborot_day.'sp'.$sp.'_d'.$date;
+        
+        $r = \f\Cash::getVar($var_cash_day);
+        if( $r ){
+            return $r;
+        }else{
+            self::getOborotSpMonth($db, $sp, $date);
+            return false;
+        }
+        
+        
+    }
     /**
      * получаем сумму оборота за месяц по точке продаж
      * @param type $db
@@ -59,8 +93,13 @@ class JobBuh {
             foreach ($oborots as $k => $v) {
                 if (isset($v['sale_point']) && $v['sale_point'] == $sp_id && $v['date'] >= $d_start && $v['date'] <= $d_finish) {
                     if (!empty($v['oborot_server'])) {
+                        
+                        $oborot = $v['oborot_hand'] ?? $v['oborot_server'] ?? 0;
+                        
                         // self::$cash['month'][$sp_id][$d_month] += $v['oborot_server'];
-                        $kk += $v['oborot_server'];
+                        \f\Cash::setVar( self::$cash_var_oborot_day.'sp'.$sp_id.'_d'.$v['date'], $oborot );
+                        //$kk += $v['oborot_server'];
+                        $kk += $oborot;
                         // $r[ $d_start .' + '. $d_finish .' ++ '. $v['dop']['date'] .' - '. $v['dop']['sale_point'] ] = $v['dop']['oborot_server'];
                     }
                 }

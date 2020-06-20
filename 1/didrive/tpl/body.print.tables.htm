@@ -149,7 +149,6 @@
                     {% if head_sps__jobman_sp[man_id] == k %}{% set kpoints = kpoints ~ ']' %}{% endif %}
                     
                 {% endfor %}
-
                 
                 {% if 1 == 2 %}
                     kolvo_points
@@ -162,25 +161,13 @@
 
             {% endif %}
 
-                                                        
-                            
                             {% if 1 == 2 or ( kolvo_points == 1 or ( kolvo_points > 1 and head_sps__jobman_sp[man_id] == get.sp ) ) %}
-                            
-                            
-                            
-                            
                             
                             {% set summa_man = 0 %}
 
                             <tr>
 
                                 <td>
-
-                                    
-                                    
-        
-                                    
-                                    
                                     
                                     {## % include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.print.tables.user_line.htm' %#}
                                     {{ man['fio2'] ?? man['fio'] }}
@@ -376,6 +363,14 @@
                         {# взыскания #}
                         <td class="text-right" style="padding:0;">
 
+                            {# ключ - описание что за взыскание #}
+                            {#{ pa(buh_pm_cfg.minus) }#}
+                            
+                            {#  #}
+                            {{ pa(pm_user) }}
+                            
+                            
+                            
                             <table class="table table-sm" >
                                 {% for k,v in buh_pm_cfg.minus if k != 'skip' and pm_user[k]['summa'] is defined %}
                                     <tr>
@@ -401,6 +396,8 @@
 
                             {{ summa_man|number_format(2, '.', '`') }}
 
+                            
+                            {# вывод описания почему такая сумма #}
                             <div class="raschets0" >
 
                                 <fieldset class="raschets" >
