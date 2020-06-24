@@ -99,6 +99,10 @@ class JobBuh {
                         // self::$cash['month'][$sp_id][$d_month] += $v['oborot_server'];
                         \f\Cash::setVar( self::$cash_var_oborot_day.'sp'.$sp_id.'_d'.$v['date'], $oborot );
                         //$kk += $v['oborot_server'];
+                        
+                        if( !isset($kk) )
+                        $kk = 0;
+                        
                         $kk += $oborot;
                         // $r[ $d_start .' + '. $d_finish .' ++ '. $v['dop']['date'] .' - '. $v['dop']['sale_point'] ] = $v['dop']['oborot_server'];
                     }
