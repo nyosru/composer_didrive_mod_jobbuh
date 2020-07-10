@@ -9,6 +9,25 @@
 // });
 // $twig->addFunction($function);
 
+// creatSecret
+ $function = new Twig_SimpleFunction('jobdesc__newGetSmensFullMonth', function ( $db, $user, $date ) {
+    
+     $res = \Nyos\mod\JobDesc::newGetSmensFullMonth($db, $user, $date);
+     // \f\pa($res);
+     
+     return $res;
+ });
+ $twig->addFunction($function);
+
+ $function = new Twig_SimpleFunction('jobdesc__newGetPaysDopFullMonth', function ( $db, $user, $date ) {
+    
+     $res = \Nyos\mod\JobDesc::newGetPaysDopFullMonth($db, $user, $date);
+     // \f\pa($res);
+     
+     return $res;
+ });
+ $twig->addFunction($function);
+
 $function = new Twig_SimpleFunction('get_buh_PM_cfg', function () {
 
     $return = [];
@@ -45,6 +64,31 @@ $function = new Twig_SimpleFunction('job_buh__get_head_sp', function ( $db, $dat
     $ar__jobman_sp = \Nyos\mod\JobBuh::getHeadSps($db, $date_finish );
     
     return $ar__jobman_sp;
+});
+$twig->addFunction($function);
+
+
+
+
+$function = new Twig_SimpleFunction('job_buh__get_buh_PM2', function ($db, $date, $user) {
+
+    $sql = 'SELECT * FROM mod_003_money_buh_pm WHERE date = :date and jobman = :jm ';
+                $ff = $db->prepare($sql);
+                $sql_vars = [
+                    ':date' => $date,
+                    ':jm' => $user
+                ];
+                $ff->execute($sql_vars);
+
+// $return = [];
+                return $ff->fetchAll();
+                // echo '<div style="padding:10px; border: 1px solid green;" >';
+//
+//                $return = $return1 = [];
+//
+//                while ($v = $ff->fetch()) {
+//    
+//    return $ar__jobman_sp;
 });
 $twig->addFunction($function);
 

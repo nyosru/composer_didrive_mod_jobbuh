@@ -93,6 +93,20 @@
 .tcell.ostatki{
    font-size: 1.3rem;
 }
+.tcell.summa1 small{
+    color:gray;
+    font-size: 0.8rem;
+    line-height: 0.8rem;
+    display: block;
+}
+
+.tcell.summa1 small font{
+    color: #bababa;
+}
+.tcell.summa1:HOVER small font{
+    color: gray;
+}
+
 .tcell.ostatki{
     text-align: center;
 }

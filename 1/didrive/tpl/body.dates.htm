@@ -229,7 +229,7 @@
             {% set d_now = "now"|date("Y-m-d") %}
             
             {#% set d_start = "2019-11-01" %#}
-            {% set d_start = "2020-02-01" %}
+            {% set d_start = "2020-04-01" %}
 
             {% for k in 0..50 %}
 
@@ -246,8 +246,9 @@
                         {% endif %}
                         
                         <br/>
-                        <div class="btn-group" role="group" aria-label="Basic example" style="margin-bottom: 0.2em; margin-top: 0.2em;">
-                        <button type="button" class="btn-date-pick btn btn-xs btn-light"><b>{{ now_y }}</b>:</button>
+
+                        {#<button type="button" class="btn-date-pick btn btn-xs btn-light"><b>{{ now_y }}</b>:</button>#}
+                        <b>{{ now_y }}</b>:
 
                         {% set last_y = now_y %}
 
@@ -262,6 +263,35 @@
 
                         {% set gets = gets|merge({ 'd_start0':d1, 'd_start':d1, 'd_fin':d2 , 'd_stop':'' }) %}
                         
+                        <div class="btn-group" role="group" aria-label="Basic example" style="margin-bottom: 0.2em; margin-top: 0.2em; margin-right: 5px;">
+                        <button type="button" class="btn-date-pick btn btn-xs btn-light"><b>
+                            {% if d2[5:2]|round == 1 %}
+                                Январь
+                            {% elseif d2[5:2]|round == 2 %}
+                                Февраль
+                            {% elseif d2[5:2]|round == 3 %}
+                                Март
+                            {% elseif d2[5:2|round] == 4 %}
+                                Апрель
+                            {% elseif d2[5:2]|round == 5 %}
+                                Май
+                            {% elseif d2[5:2]|round == 6 %}
+                                Июнь
+                            {% elseif d2[5:2]|round == 7 %}
+                                Июль
+                            {% elseif d2[5:2]|round == 8 %}
+                                Август
+                            {% elseif d2[5:2]|round == 9 %}
+                                Сентябрь
+                            {% elseif d2[5:2]|round == 10 %}
+                                Октябрь
+                            {% elseif d2[5:2]|round == 11 %}
+                                Ноябрь
+                            {% elseif d2[5:2]|round == 12 %}
+                                Декабрь
+                            {% endif %}
+                            </b></button>
+                            
                         <a href="?{{ http_build_query(gets) }}"
                            class="btn-date-pick btn btn-xs 
 
@@ -271,7 +301,7 @@
                                btn-light
                            {% endif %}
 
-                           " >{{ d1[5:2] }}.{{ d1[8:2] }} - {{ d2[5:2] }}.{{ d2[8:2] }}</a>
+                           " >{#{{ d1[5:2] }}.#}{{ d1[8:2] }} - {#{{ d2[5:2] }}.#}{{ d2[8:2] }}</a>
 
                         {% set d3 = date1|date('Y-m-21') %}
                         {% set d4 = date1|date('Y-m-01')|date_modify("+1 month -1 day")|date("Y-m-d") %}
@@ -287,15 +317,15 @@
                                btn-light
                            {% endif %}
 
-                           " >{{ d1[5:2] }}.{{ d1[8:2] }} - {{ d4[5:2] }}.{{ d4[8:2] }}</a>
+                           " >{#{{ d1[5:2] }}.#}{{ d1[8:2] }} - {#{{ d4[5:2] }}.#}{{ d4[8:2] }}</a>
 
-                    {# </div> #}
+                     </div> 
 
                 {% endif %}
 
             {% endfor %}
             {# закрываем блок что держит год #}
-            </div>
+            {#</div>#}
 
         </div>
     </div>

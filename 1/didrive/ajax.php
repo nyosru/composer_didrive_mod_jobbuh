@@ -12,16 +12,26 @@ if ($_SERVER['HTTP_HOST'] == 'photo.uralweb.info' || $_SERVER['HTTP_HOST'] == 'y
 
 define('IN_NYOS_PROJECT', true);
 
+header("Access-Control-Allow-Origin: *");
+
 require $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
 require( $_SERVER['DOCUMENT_ROOT'] . '/all/ajax.start.php' );
+
+$input = json_decode(file_get_contents('php://input'), true);
+
+if (!empty($input) && empty($_REQUEST))
+    $_REQUEST = $input;
+
+
+
+
+
 
 if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'scan_new_datafile') {
 
     scanNewData($db);
     //cron_scan_new_datafile();
-}
-
-elseif (isset($_REQUEST['action']) && $_REQUEST['action'] == 'send-pay-good') {
+} elseif (isset($_REQUEST['action']) && $_REQUEST['action'] == 'send-pay-good') {
 
     // \f\pa($_REQUEST);
 //    [val-summ] => 1842
@@ -41,7 +51,53 @@ elseif (isset($_REQUEST['action']) && $_REQUEST['action'] == 'send-pay-good') {
     \Nyos\mod\items::addNewSimple($db, '075.buh_oplats', $in);
 
     \f\end2('отмечено', true);
+} 
+/**
+ * универсальный переходник для запуска функций из vue
+ */
+elseif (isset($_REQUEST['action']) && $_REQUEST['action'] == 'startFunctionClass') {
+
+    if (!empty($_REQUEST['getDateMonth'])) {
+        $date_start = date('Y-m-01', strtotime($_REQUEST['getDateMonth']));
+        $date_finish = date('Y-m-d', strtotime($date_start . ' +1 month -1 day'));
+    }
+
+    try {
+
+        if (!empty($_REQUEST['function']) && $_REQUEST['function'] == 'getMonthOperationOnSp') {
+            $return = \Nyos\mod\JobBuh::getMonthOperationOnSp($db, $_REQUEST);
+        }
+
+        $return['request'] = ( $_REQUEST ?? [] );
+        \f\end2($_REQUEST['action'] . ' ' . $_REQUEST['function'], true, $return);
+        
+    } catch (\Exception $ex) {
+
+        echo $ex->getTraceAsString();
+
+        \f\end2($_REQUEST['action'] . ' ' . $_REQUEST['function'], false, [
+            'excaption' => $ex,
+            'in' => ( $_REQUEST ?? [] )
+        ]);
+    }
+
+    \f\end2($_REQUEST['action'] . ' ' . $_REQUEST['function'] . ' что то пошло не так #' . __LINE__, false, [
+        'excaption' => $ex,
+        'in' => ( $_REQUEST ?? [] )
+    ]);
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 // проверяем секрет
 if (
@@ -61,31 +117,30 @@ if (
 }
 //
 else {
-    \f\end2('Произошла неописуемая ситуация #' . __LINE__ . ' обратитесь к администратору ' , false );
+    \f\end2('Произошла неописуемая ситуация #' . __LINE__ . ' обратитесь к администратору ', false);
 }
 
 //require_once( $_SERVER['DOCUMENT_ROOT'] . '/0.all/sql.start.php');
 //require( $_SERVER['DOCUMENT_ROOT'] . '/0.site/0.cfg.start.php');
 //require( $_SERVER['DOCUMENT_ROOT'] . DS . '0.all' . DS . 'class' . DS . 'mysql.php' );
 //require( $_SERVER['DOCUMENT_ROOT'] . DS . '0.all' . DS . 'db.connector.php' );
-
-
-
+// vue тащим разные функции
+//
 if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'send-pay-form') {
 
     $in = $_REQUEST;
     // $in['date'] = date( 'Y-m-d', $_SERVER['REQUEST_TIME'] );
 
-    if( !empty($_SESSION['now_user_di']['id']) )
-    $in['pay_buh_who'] = $_SESSION['now_user_di']['id'];
+    if (!empty($_SESSION['now_user_di']['id']))
+        $in['pay_buh_who'] = $_SESSION['now_user_di']['id'];
 
-    $in['pay_buh_dt'] = date( 'Y-m-d H:I:s', $_SERVER['REQUEST_TIME'] );
+    $in['pay_buh_dt'] = date('Y-m-d H:I:s', $_SERVER['REQUEST_TIME']);
 
-    $e = \Nyos\mod\items::addNewSimple($db, '075.buh_oplats', $in );
-    
+    $e = \Nyos\mod\items::addNewSimple($db, '075.buh_oplats', $in);
+
     // \f\end2('sdf',false, $_SESSION );
-    \f\end2('Оплата '.$in['summa'].' зафиксирована',true, $e );
-    \f\end2('sdf',false, $e );
+    \f\end2('Оплата ' . $in['summa'] . ' зафиксирована', true, $e);
+    \f\end2('sdf', false, $e);
 }
 //
 elseif (isset($_POST['action']) && $_POST['action'] == 'show_info_strings') {
@@ -236,7 +291,7 @@ elseif (isset($_POST['action']) && $_POST['action'] == 'edit_dop_pole') {
 }
 
 
-f\end2('Произошла неописуемая ситуация #' . __LINE__ . ' обратитесь к администратору', false );
+f\end2('Произошла неописуемая ситуация #' . __LINE__ . ' обратитесь к администратору', false);
 
 
 

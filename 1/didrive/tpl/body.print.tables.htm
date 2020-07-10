@@ -10,7 +10,7 @@
             .print-hide,
             .raschets0,
             .alert-warning{ display: none; }
-        }        
+        }
 
         .raschets{ 
             font-size:12px; 
@@ -125,9 +125,6 @@
                         {#{ pa(getListJobsPeriodAll.data.where_job__workman_date,2) }#}
 
                         {% for man_id, man in getListJobsPeriodAll.data.job_on_sp[get.sp] %}
-
-                            
-                            
 
             {# считаем сколько точек было в работе у сотрудника #}
             {% if 1 == 1 %}
@@ -286,8 +283,10 @@
                         {% endif %}
 
                         {% set pm_user = job_buh__get_buh_PM(db,get.d_start,man_id) %}
+                        {#{% set pm_user = job_buh__get_buh_PM2(db,get.d_start,man_id) %}#}
 
                         {% if 1 == 2 %}
+                            2222
                             <div class="text-left" >
                                 {{ pa(pm_user,2) }}
                             </div>
@@ -367,7 +366,7 @@
                             {#{ pa(buh_pm_cfg.minus) }#}
                             
                             {#  #}
-                            {{ pa(pm_user) }}
+                            {#{{ pa(pm_user) }}#}
                             
                             
                             

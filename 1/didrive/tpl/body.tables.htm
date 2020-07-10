@@ -89,6 +89,35 @@
 
                             {% for man_id, man in getListJobsPeriodAll.data.job_on_sp[get.sp] %}
 
+                                {% if 1 == 2 %}
+                                    <div class="trow" >
+
+                                        <div class="tcell" >
+                                            111111111
+                                        </div>
+
+                                        <div class="tcell" >
+
+                                            {#
+                                            {% set new_list_smens = jobdesc__newGetSmensFullMonth(db,man_id,get.d_fin) %}
+                                            {{ pa(new_list_smens,2) }}
+                                            #}                                        
+                                            
+                                            {% set new_pays = jobdesc__newGetPaysDopFullMonth(db,man_id,get.d_fin) %}
+                                            {{ pa( new_pays ,2) }}
+
+                                        </div>                        
+                                    </div>                        
+                                {% endif %}
+                                
+                                {% set new_list_smens = jobdesc__newGetSmensFullMonth(db,man_id,get.d_fin) %}
+                                {#new_list_smens#}
+                                {#{{  pa(new_list_smens,2) }}#}
+                                
+                                {% set new_pays = jobdesc__newGetPaysDopFullMonth(db,man_id,get.d_fin) %}
+                                {#new_pays#}
+                                {#{{ pa(new_pays) }}#}
+
                                 {# старая версия #}
                                 {% if 1 == 2 %}
 

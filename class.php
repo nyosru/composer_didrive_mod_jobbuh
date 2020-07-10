@@ -12,10 +12,189 @@ if (!defined('IN_NYOS_PROJECT'))
 class JobBuh {
 
     public static $cash = [];
-    
     public static $cash_var_oborot_day = 'oborot_day_';
-    
-    
+
+    /**
+     * кто в какой должности работал в укаанный период и 1 должность до него
+     * @param type $db
+     * @param type $op
+     * @return type
+     */
+    public static function getMonthOperationOnSp($db, $op = ['sp' => '', 'date' => '']) {
+
+        // \f\pa($op);
+            // throw new \Exception('нет даты');
+
+        if( empty($op['date']) )
+            throw new \Exception('нет даты');
+        
+        if (!empty($op['date'])) {
+            $date_start = date('Y-m-01', strtotime($op['date']));
+            // $date_finish = date('Y-m-d', strtotime($date_start . ' +1 month -1 day'));
+            $date_finish = date('Y-m-d', strtotime($op['date']) );
+        }
+
+        /**
+         * кто где работает
+         */
+        $where_job__ar_sp_jm = [];
+        $where_job__ar_jm_sp = [];
+
+        \Nyos\mod\items::$between_date['date'] = [date('Y-m-d', strtotime($date_start . ' -6 month')), $date_finish];
+        $send_jm0 = \Nyos\mod\items::get($db, \Nyos\mod\JobDesc::$mod_man_job_on_sp);
+        usort($send_jm0, "\\f\\sort_ar_date");
+        foreach ($send_jm0 as $k => $v) {
+
+            // если дата меньше даты старта .. переписываем весь массив
+            if ($v['date'] < $date_start) {
+
+                // если финиш этой работы ранее даты старта .. то удаляем если есть
+                if (!empty($v['date_finish']) && $v['date_finish'] < $date_start) {
+
+                    if (isset($send_jm[$v['jobman']]))
+                        unset($send_jm[$v['jobman']]);
+                }
+                // если финиш в нашем промежутке, то добавляем эту смену 
+                else {
+                    $send_jm[$v['jobman']] = [$v['date'] => [0 => $v]];
+                    $where_job__ar_sp_jm[$v['sale_point']][$v['jobman']] = 1;
+                    $where_job__ar_sp_jm[$v['jobman']][$v['sale_point']] = 1;
+                }
+            }
+            // если дата больше даты старта .. добавляем запись в массив
+            else {
+                $send_jm[$v['jobman']][$v['date']][] = $v;
+                $where_job__ar_sp_jm[$v['sale_point']][$v['jobman']] = 1;
+                $where_job__ar_sp_jm[$v['jobman']][$v['sale_point']] = 1;
+            }
+        }
+        // unset($send_jm0);
+
+        \Nyos\mod\items::$between_date['date'] = [$date_start, $date_finish];
+        // $send_jm['spec'] =
+        $send_jm0 = \Nyos\mod\items::get($db, \Nyos\mod\JobDesc::$mod_spec_jobday);
+        // usort($send_jm0, "\\f\\sort_ar_date"); 
+        foreach ($send_jm0 as $k => $v) {
+            if (empty($v['jobman']) || empty($v['date']))
+                continue;
+            $v['type'] = 'spec';
+            $send_jm[$v['jobman']][$v['date']][] = $v;
+            if (!empty($v['sale_point'])) {
+                $where_job__ar_sp_jm[$v['sale_point']][$v['jobman']] = 1;
+                $where_job__ar_sp_jm[$v['jobman']][$v['sale_point']] = 1;
+            }
+        }
+        unset($send_jm0);
+
+
+
+        if (!empty($op['sp']) && isset($where_job__ar_sp_jm[$op['sp']])) {
+
+            $sends_on_job__ar_jm_date_ar = [];
+
+            foreach ($where_job__ar_sp_jm[$op['sp']] as $user => $v) {
+                if (isset($send_jm[$user]))
+                    $sends_on_job__ar_jm_date_ar[$user] = $send_jm[$user];
+            }
+
+            \Nyos\mod\items::$search['id'] = array_keys($sends_on_job__ar_jm_date_ar);
+            $names = \Nyos\mod\items::get($db, \Nyos\mod\JobDesc::$mod_jobman);
+
+            $fio = [];
+            foreach ($names as $k => $v) {
+                $fio[$v['id']] = ( $v['lastName'] ?? '-' ) . ' ' . ( $v['firstName'] ?? '-' ) . ' ' . ( $v['middleName'] ?? '-' );
+            }
+
+            \Nyos\mod\items::$search['jobman'] = array_keys($sends_on_job__ar_jm_date_ar);
+            \Nyos\mod\items::$between_datetime['start'] = [$date_start . ' 03:00:00', date('Y-m-d 03:00:00', strtotime($date_finish . ' +1 day'))];
+            // \Nyos\mod\items::$show_sql = true;
+            $cheki0 = \Nyos\mod\items::get($db, \Nyos\mod\JobDesc::$mod_checks);
+            $cheki_jm_ar = [];
+            foreach ($cheki0 as $k => $v) {
+                $v['date'] = substr($v['start'], 0, 10);
+                $v['type'] = 'check';
+
+                // \Nyos\mod\JobDesc::a_whyPositionJobManNow($db, $user, $date_now);
+                $v['salary'] = \Nyos\mod\JobDesc::whatJobDate($db, $user, $v['date']);
+
+                // $a = check
+                // $a['salary-now']
+
+                
+                $v['salaryNow'] = [];
+                
+                if( $v['salary']['norm']['dolgnost'] ){
+                $v['salaryNow'] = \Nyos\mod\JobDesc::getSalarisNow($db, $op['sp'], $v['salary']['norm']['dolgnost'], $v['date']);
+                }
+
+                $v['salaryPay'] = \Nyos\mod\JobDesc::calcSizePay($v, $v['salaryNow']);
+
+                // $v['salaryPay'] = \Nyos\mod\JobDesc::calcSummaDay($v);
+
+                $cheki_jm_ar[$v['jobman']][] = $v;
+                // echo '<br/>'.( $v['start'] ?? 0 );
+            }
+            unset($cheki0);
+
+            // bonus
+            if (1 == 1) {
+                \Nyos\mod\items::$search['jobman'] = array_keys($sends_on_job__ar_jm_date_ar);
+                \Nyos\mod\items::$between_date['date_now'] = [$date_start, $date_finish];
+                $b0 = \Nyos\mod\items::get($db, \Nyos\mod\JobDesc::$mod_bonus);
+                // $cheki_jm_ar = [];
+                foreach ($b0 as $k => $v) {
+                    $v['date'] = $v['date_now'];
+                    $v['type'] = 'bonus';
+                    $cheki_jm_ar[$v['jobman']][] = $v;
+                    // $cheki_jm_ar[$v['jobman']][]=$v;
+                }
+                unset($b0);
+            }
+
+            // minus
+            if (1 == 1) {
+                \Nyos\mod\items::$search['jobman'] = array_keys($sends_on_job__ar_jm_date_ar);
+                \Nyos\mod\items::$between_date['date_now'] = [$date_start, $date_finish];
+                $m0 = \Nyos\mod\items::get($db, \Nyos\mod\JobDesc::$mod_minus);
+                // $cheki_jm_ar = [];
+                foreach ($m0 as $k => $v) {
+                    $v['date'] = $v['date_now'];
+                    $v['type'] = 'minus';
+                    $cheki_jm_ar[$v['jobman']][$v['id']] = $v;
+                }
+                unset($m0);
+            }
+
+            foreach ($cheki_jm_ar as $k => $v) {
+                usort($cheki_jm_ar[$k], "\\f\\sort_ar_date");
+            }
+
+            return [
+            'fio' => $fio,
+            'job_on' => $sends_on_job__ar_jm_date_ar,
+            'cheki' => $cheki_jm_ar,
+            'date_start' => $date_start,
+            'date_finish' => $date_finish,
+            // 'where_sp' => $where_job__ar_sp_jm[$op['sp']]
+            ];
+        }
+
+        return \f\end3('получили список работ сотрудников', true, [
+            'fio' => $fio,
+            'jobsmens' => $send_jm,
+            'job_on_sp_jm' => $where_job__ar_sp_jm,
+            'job_on_jm_sp' => $where_job__ar_sp_jm
+        ]);
+
+        // $return = self::getChecksMinusPlus($db, $date_start, $date_finish, $op['sp']);
+
+        return \f\end3('ок', true, [
+            're' => ( $return ?? [] ),
+            'fio' => $fio,
+            'fio_names' => $names,
+            'user' => \Nyos\mod\JobDesc::$WhereJobMans['data']['ar_jm']]
+        );
+    }
 
     /**
      * получаем сумму оборота за месяц по точке продаж
@@ -27,26 +206,25 @@ class JobBuh {
      * @return type
      */
     public static function getOborotSpDay($db, $sp, $date) {
-        
+
         $mod_sp = \Nyos\mod\JobDesc::$mod_sale_point ?? '';
         $mod_oborot = \Nyos\mod\JobDesc::$mod_oborots ?? '';
         // $module_sp = 'sale_point', $module_oborot = 'sale_point_oborot'
-        if( empty($mod_sp) || empty($mod_oborot) ){
+        if (empty($mod_sp) || empty($mod_oborot)) {
             throw new \Exception('не важных переменных, не подгружен класс jobdesc');
         }
-        
-        $var_cash_day = self::$cash_var_oborot_day.'sp'.$sp.'_d'.$date;
-        
+
+        $var_cash_day = self::$cash_var_oborot_day . 'sp' . $sp . '_d' . $date;
+
         $r = \f\Cash::getVar($var_cash_day);
-        if( $r ){
+        if ($r) {
             return $r;
-        }else{
+        } else {
             self::getOborotSpMonth($db, $sp, $date);
             return false;
         }
-        
-        
     }
+
     /**
      * получаем сумму оборота за месяц по точке продаж
      * @param type $db
@@ -93,16 +271,16 @@ class JobBuh {
             foreach ($oborots as $k => $v) {
                 if (isset($v['sale_point']) && $v['sale_point'] == $sp_id && $v['date'] >= $d_start && $v['date'] <= $d_finish) {
                     if (!empty($v['oborot_server'])) {
-                        
+
                         $oborot = $v['oborot_hand'] ?? $v['oborot_server'] ?? 0;
-                        
+
                         // self::$cash['month'][$sp_id][$d_month] += $v['oborot_server'];
-                        \f\Cash::setVar( self::$cash_var_oborot_day.'sp'.$sp_id.'_d'.$v['date'], $oborot );
+                        \f\Cash::setVar(self::$cash_var_oborot_day . 'sp' . $sp_id . '_d' . $v['date'], $oborot);
                         //$kk += $v['oborot_server'];
-                        
-                        if( !isset($kk) )
-                        $kk = 0;
-                        
+
+                        if (!isset($kk))
+                            $kk = 0;
+
                         $kk += $oborot;
                         // $r[ $d_start .' + '. $d_finish .' ++ '. $v['dop']['date'] .' - '. $v['dop']['sale_point'] ] = $v['dop']['oborot_server'];
                     }

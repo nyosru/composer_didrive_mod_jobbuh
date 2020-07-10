@@ -1,5 +1,8 @@
 {% spaceless %}
 
+    {% set minus = 0 %}
+    {% set plus = 0 %}
+    
     <div class="trow xstick-top3" >
 
         <div class="tcell" >&nbsp;</div>
@@ -23,6 +26,7 @@
                         {% for k,v in buh_pm_cfg.plus if k != 'skip' %}
 
                             {% set diff_summ = diff_summ + ( pm_user[k]['summa'] ?? 0 ) %}
+                            {% set plus = plus + ( pm_user[k]['summa'] ?? 0 ) %}
 
                             {# формочка добавить выплату доступна всем #}
                             {% if now_level.type2 is defined and now_level.type2 == 'buh' %}
@@ -97,6 +101,7 @@
                         {% for k,v in buh_pm_cfg.minus if k != 'skip' %}
 
                             {% set diff_summ = diff_summ - ( pm_user[k]['summa'] ?? 0 ) %}
+                            {% set minus = minus - ( pm_user[k]['summa'] ?? 0 ) %}
 
 
                             {% if now_level.type2 is defined and now_level.type2 == 'buh' %}
@@ -169,15 +174,28 @@
             {{ payed_man }}
             
             <br/>
-            <br/>
 
             {{ summa_man1 }}
             
             {% endif %}
             
-            {{ summa_man1|number_format(0, '.', '`') }}
-            {% set summa_man0 = getListJobsPeriodAll.data.money_to_pay[get.sp][man_id] %}
-            {% set summa_man = summa_man1 %}
+            <small >
+                <nobr>
+                <font>За смены:</font>&nbsp;{{ money_job }}<br/>
+                <font>Бонусы:</font>&nbsp;{{ money_bonus }}<br/>
+                <font>Минусы:</font>&nbsp;{{ money_minus }}<br/>
+                {#{{ summa_man1 }}<br/>#}
+                <font>Бонусы:</font>&nbsp;{{ plus }}<br/>
+                <font>Взыскания:</font>&nbsp;{{ minus }}
+                </nobr>
+                <br/>
+            </small>
+            
+            {% set summa_man = summa_man1 + minus + plus %}
+            {{ summa_man|number_format(0, '.', '`') }}
+            
+            {#{% set summa_man0 = getListJobsPeriodAll.data.money_to_pay[get.sp][man_id] %}#}
+            
 
             {% if 1 == 2 %}
             
@@ -227,7 +245,6 @@
                 {% set show_button_pay = false %}
             {% endif %}
 
-
             {% if show_button_pay == true %}
 
                 {% set ostatok = summa_man - getListJobsPeriodAll.data.money_oplats[get.sp][man_id] %}
@@ -244,9 +261,10 @@
                 <div style="padding:3px; background-color: rgba(0,0,0,0.05); xborder: 1px solid gray; margin: 1px;">
 
                     {#{ pa(pay) }#}
-
                     {{ pay.summa|number_format(0, '.', '`') }} 
+                    
                     <br/>
+                    
                     <sup>{{ pay.date }}
 
                         <a href="#" 
@@ -425,7 +443,7 @@
                                         <div class="input-group" >
 
                                             <input 
-                                                type="number" min="1" max="{{ ostatok }}" 
+                                                type="number" min="1" xmax="{{ ostatok }}" 
                                                 name="summa"
                                                 value="{{ ostatok }}" class="form-control"  
                                                 required="required"

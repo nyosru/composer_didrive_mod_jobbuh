@@ -1,289 +1,256 @@
 {% spaceless %}
 
+
+
+    {% set money_job = 0 %}
+    {% set money_bonus = 0 %}
+    {% set money_minus = 0 %}
+
     {% set summa_man = 0 %}
     {% set summa_man1 = 0 %}
 
     {# если в переменной не ноль то эта точка считается главной #}
     {% set now_sp_head = 0 %}                                
 
-    
-    
-    
+
+    {# ---------------------------- #}
+    {# верхняя строка сотрудника #}
+    {# ---------------------------- #}
+
+    {# старая версия #}
+    {#{% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.user_line.htm' %}#}
 
     {# верхняя строка сотрудника #}
     {% if 1 == 1 %}
 
-        {# старая версия #}
-        {% if 1 == 2 %}
-            {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.user_line.htm' %}
-        {% endif %}
+        <div class="trow stick-top3 row_user" 
+             {# style="background-color: lightgreen;" #}
+             >
 
-        {# новая версия #}
-        {% if 1 == 1 %}
-
-
-            {# user id = workman_id, user array = man #}
-            {#{ pa(man) }#}
-
-            <div class="trow stick-top3 row_user" 
-                 {# style="background-color: lightgreen;" #}
-                 >
-
-                <div class="tcell"  >&nbsp;</div>
-                <div class="tcell nameuser" >
+            <div class="tcell"  >&nbsp;</div>
+            <div class="tcell nameuser" >
 
 
-                    {% if 1 == 2 %}
-                        {{ pa(session) }}
-                        {# текущий пользователь #}
-                        {{ pa(session.now_user_di.id) }}
+                {% if 1 == 2 %}
+                    {{ pa(session) }}
+                    {# текущий пользователь #}
+                    {{ pa(session.now_user_di.id) }}
+                {% endif %}
+
+                <button class="btn-xs btn" 
+                        onclick="$('.info_{{ man_id }}').toggle('slow');"
+                        style="float:right;">показать/скрыть подробности</button>
+
+                <span title="#{{ man_id }}" >{{ man['fio'] }}</span> &nbsp; 
+
+                {#{ pa(getListJobsPeriodAll.data.job_on_sp) }#}
+
+                <sup style="xfont-size:0.8em; color: black;" title="отмечены точки продаж где сотрудник работает в этом месяце">
+
+                    {# считаем сколько точек было в работе у сотрудника #}
+                    {% if 1 == 1 %}
+                        {% set kolvo_points = 0 %}
+                        {% for k,v in getListJobsPeriodAll.data.job_on_sp if v[man_id] is defined %}
+                            {% set kolvo_points = kolvo_points + 1 %}
+                        {% endfor %}
+                        {# если одна точка показываем типа она выбрана ... а если больше .. то просим выбрать #}
+                        {# условие #}
+                        {# {% if ( kolvo_points == 1 ) or ( head_sps__jobman_sp[man_id] is defined and head_sps__jobman_sp[man_id] == k ) %} #}
                     {% endif %}
 
 
-                    {#% set send_ar = [] %}
-                    {% set send_ar = send_ar|merge([{ 'name':'jobman', 'value': ''~man_id , 'check_delete':'da' }]) %}
-                    {% set send_ar = send_ar|merge([{'name':'date', 'value': get.d_fin ,'check_delete':'da'}]) %}
-                    {% set send_ar = send_ar|merge([{'name':'sale_point', 'value': get.sp ,'xcheck_delete':'da'}]) %}
-                    {% set send_ar = send_ar|merge([{'name':'aaa', 'value':'111','xcheck_delete':'da'}]) %}
-                    {{ pa(send_ar) }#}
-
-                    {#{ pa(getListJobsPeriodAll.data.job_on_sp) }#}
-
-                    <button class="btn-xs btn" 
-                            onclick="$('.info_{{ man_id }}').toggle('slow');"
-                            style="float:right;">показать/скрыть подробности</button>
-
-                    <span title="#{{ man_id }}" >{{ man['fio'] }}</span> &nbsp; 
-
-                    {#{ pa(getListJobsPeriodAll.data.job_on_sp) }#}
-
-                    <sup style="xfont-size:0.8em; color: black;" title="отмечены точки продаж где сотрудник работает в этом месяце">
-
-                        {# считаем сколько точек было в работе у сотрудника #}
-                        {% if 1 == 1 %}
-                            {% set kolvo_points = 0 %}
-                            {% for k,v in getListJobsPeriodAll.data.job_on_sp if v[man_id] is defined %}
-                                {% set kolvo_points = kolvo_points + 1 %}
-                            {% endfor %}
-                            {# если одна точка показываем типа она выбрана ... а если больше .. то просим выбрать #}
-                            {# условие #}
-                            {# {% if ( kolvo_points == 1 ) or ( head_sps__jobman_sp[man_id] is defined and head_sps__jobman_sp[man_id] == k ) %} #}
-                        {% endif %}
 
 
 
+                    {% set run_head = false %}
+                    {% set run_head_other = false %}
+                    {% set nn = 0 %}
 
+                    {#{% for k,v in getListJobsPeriodAll.data.job_on_sp if v[man_id] is defined %}#}
+                    {% for k,v in getListJobsPeriodAll.data.job_on_sp if v[man_id] is defined %}
 
-                        {% set run_head = false %}
-                        {% set run_head_other = false %}
-                        {% set nn = 0 %}
+                        {% set nn = nn + 1 %}
 
-                        {% for k,v in getListJobsPeriodAll.data.job_on_sp if v[man_id] is defined %}
+                        {#{ pa(k) }}
+                        {{ pa(v) }#}
 
-                            {% set nn = nn + 1 %}
+                        {% set a_action = 'items__creat' %}
+                        {% set a_mod = '005_money_buh_head_sp' %}
 
-                            {#{ pa(k) }}
-                            {{ pa(v) }#}
-
-                            {% set a_action = 'items__creat' %}
-                            {% set a_mod = '005_money_buh_head_sp' %}
-
-                            {% set send_ar = [] %}
-                            {% set send_ar = send_ar|merge([{ 
+                        {% set send_ar = [] %}
+                        {% set send_ar = send_ar|merge([{ 
                         'name':'jobman', 
                         'value': man_id , 
                         'check_delete':'da' 
                         }]) %}
-                            {% set send_ar = send_ar|merge([{
+                        {% set send_ar = send_ar|merge([{
                         'name':'date', 
                         'value': get.d_fin ,
                         'check_delete':'da'
                         }]) %}
-                            {% set send_ar = send_ar|merge([{
+                        {% set send_ar = send_ar|merge([{
                         'name':'sale_point', 
                         'value': k ,
                         'xcheck_delete':'da'
                         }]) %}
 
-                            {#{ v[man_id]['head_sp'] ?? 'x' }#}
+                        {#{ v[man_id]['head_sp'] ?? 'x' }#}
 
-                            <{% if 1 == 1 or ( now_level.type2 is defined and now_level.type2 == 'buh' ) %}a{% else %}span{% endif %}
-                                    href="#" 
-                                    style="
+                        <{% if 1 == 1 or ( now_level.type2 is defined and now_level.type2 == 'buh' ) %}a{% else %}span{% endif %}
+                                href="#" 
+                                style="
 
-                                    {% if 1 == 1 %}
-
-                                        {% if ( kolvo_points == 1 ) or ( head_sps__jobman_sp[man_id] is defined and head_sps__jobman_sp[man_id] == k ) %}
-
-                                            {#% if k != %}
-                                            {% set run_head_other = true %#}
-
-                                            {% set run_head = true %}
-                                            background-color: rgba(0,255,0,0.2);
-                                            xborder: green solid 2px;
-
-                                        {% else %}
-                                            background-color: rgba(0,0,0,0.1); 
-                                        {% endif %}
-
-                                    {% endif %}
-
-                                    color:gray;
-                                    margin-right:2px; 
-                                    padding:3px 5px;
-                                    "
-
-
-                                    {% if 1 == 1 or ( now_level.type2 is defined and now_level.type2 == 'buh' ) %}
-
-                                        xonclick="$(this).addClass('bg-success');"
-
-                                        {# подключаем обработку #}
-                                        class="base__send_to_ajax
-
-                                        {#% if ( kolvo_points == 1 ) or ( head_sps__jobman_sp[man_id] is defined and head_sps__jobman_sp[man_id] == k ) %}
-                                            bg-success
-                                        {% else %}
-                                            bg-light
-                                        {% endif %#}
-
-                                        "
-
-                                        {# ссылка на обработчик ajax #}
-                                        href_to_ajax="/vendor/didrive_mod/items/1/didrive/ajax.php" 
-
-                                        {# id куда печатаем результат #}
-                                        res_to_id="res{{ man_id }}" 
-
-                                        {# действие после вопроса #}
-                                        comit_answer="Установить главной точкой продаж на выбранный платёжный период ?"
-
-                                        action="{{ a_action }}"
-
-                                        {# модуль в котором item #}
-                                        item_module="{{ a_mod }}"
-
-                                        {% set ss = '' %}
-
-                                        {% for k1,v1 in send_ar %}
-                                            {% for k,v in v1 %}
-                                                dop_item{{ k1 }}_{{ k }}="{{ v }}"
-
-                                                {% if k == 'name' or k == 'value' %}
-                                                    {% set ss = ss~'-' ~ v %}
-                                                {% endif %}
-
-                                            {% endfor %}
-                                        {% endfor %}
-
-                                        {# секрет #}
-                                        s="{{ creatSecret( a_action~'-'~a_mod~ss ) }}" 
-
-                                        {% if 1 == 2 %}
-
-                                            {# замена доп параметра #}
-
-                                            {# сообщение печатаем если всё ок #}
-                                            msg_to_success="Окей!"
-
-                                            {# модуль итемов #}
-                                            xitemsmod="{{ a_mod }}"
-
-                                            {# id итема #}
-                                            xitem_id="{{ pay.id }}"
-
-                                            {# название доп параметра #}
-                                            {# dop_name="pay_check" #}
-                                            {# новое значение параметра #}
-                                            {# dop_new_value="no" #}
-
-                                            {# секрет #}
-                                            {# s3="{{ creatSecret( '050.chekin_checkout-'~item.id~'-pay_check-no' ) }}"  #}
-
-                                            {# новое значение статуса записи #}
-                                            xnew_status="{{ a_status }}" 
-
-                                            {# скрыть ссылку после клика #}
-                                            xhidethis="da" 
-
-                                            {# сделать видимым блок по id #}
-                                            xshow_id="res{{ man_id }}" 
-
-                                        {% endif %}
-
-                                    {% endif %}
-
-                                    >
+                                {% if 1 == 1 %}
 
                                     {% if ( kolvo_points == 1 ) or ( head_sps__jobman_sp[man_id] is defined and head_sps__jobman_sp[man_id] == k ) %}
 
-                                        {% set now_sp_head = k %}
+                                        {#% if k != %}
+                                        {% set run_head_other = true %#}
 
-                                        <span class="fa fa-check"></span>
+                                        {% set run_head = true %}
+                                        background-color: rgba(0,255,0,0.2);
+                                        xborder: green solid 2px;
+
                                     {% else %}
-                                        <span class="fa fa-circle-thin"></span>
+                                        background-color: rgba(0,0,0,0.1); 
                                     {% endif %}
 
-                                    {{ sps[k]['head'] }}
-
-                            </{% if 1 == 1 or ( now_level.type2 is defined and now_level.type2 == 'buh' ) %}a{% else %}span{% endif %}>
-
-                        {% endfor %}
-
-
-                        {% if 1 == 1 or ( now_level.type2 is defined and now_level.type2 == 'buh' ) %}
-                            <span id="res{{ man_id }}" >
-
-                                {% if run_head == false and nn > 1 %}
-                                    <span class="bg-warning" style="display:inline-block; padding:2px 5px; line-height: 1.5em; xheight: 1.5em;" ><span class="fa fa-arrow-left"></span> Выберите главную точку продаж</span>
                                 {% endif %}
 
-                            </span>
-                        {% endif %}
+                                color:gray;
+                                margin-right:2px; 
+                                padding:3px 5px;
+                                "
 
-                    </sup>
 
-                </div>
+                                {% if 1 == 1 or ( now_level.type2 is defined and now_level.type2 == 'buh' ) %}
 
-                <div class="tcell" >&nbsp;</div>
-                <div class="tcell" >&nbsp;</div>
-                <div class="tcell" >&nbsp;</div>
+                                    xonclick="$(this).addClass('bg-success');"
+
+                                    {# подключаем обработку #}
+                                    class="base__send_to_ajax
+
+                                    {#% if ( kolvo_points == 1 ) or ( head_sps__jobman_sp[man_id] is defined and head_sps__jobman_sp[man_id] == k ) %}
+                                        bg-success
+                                    {% else %}
+                                        bg-light
+                                    {% endif %#}
+
+                                    "
+
+                                    {# ссылка на обработчик ajax #}
+                                    href_to_ajax="/vendor/didrive_mod/items/1/didrive/ajax.php" 
+
+                                    {# id куда печатаем результат #}
+                                    res_to_id="res{{ man_id }}" 
+
+                                    {# действие после вопроса #}
+                                    comit_answer="Установить главной точкой продаж на выбранный платёжный период ?"
+
+                                    action="{{ a_action }}"
+
+                                    {# модуль в котором item #}
+                                    item_module="{{ a_mod }}"
+
+                                    {% set ss = '' %}
+
+                                    {% for k1,v1 in send_ar %}
+                                        {% for k,v in v1 %}
+                                            dop_item{{ k1 }}_{{ k }}="{{ v }}"
+
+                                            {% if k == 'name' or k == 'value' %}
+                                                {% set ss = ss~'-' ~ v %}
+                                            {% endif %}
+
+                                        {% endfor %}
+                                    {% endfor %}
+
+                                    {# секрет #}
+                                    s="{{ creatSecret( a_action~'-'~a_mod~ss ) }}" 
+
+                                    {% if 1 == 2 %}
+
+                                        {# замена доп параметра #}
+
+                                        {# сообщение печатаем если всё ок #}
+                                        msg_to_success="Окей!"
+
+                                        {# модуль итемов #}
+                                        xitemsmod="{{ a_mod }}"
+
+                                        {# id итема #}
+                                        xitem_id="{{ pay.id }}"
+
+                                        {# название доп параметра #}
+                                        {# dop_name="pay_check" #}
+                                        {# новое значение параметра #}
+                                        {# dop_new_value="no" #}
+
+                                        {# секрет #}
+                                        {# s3="{{ creatSecret( '050.chekin_checkout-'~item.id~'-pay_check-no' ) }}"  #}
+
+                                        {# новое значение статуса записи #}
+                                        xnew_status="{{ a_status }}" 
+
+                                        {# скрыть ссылку после клика #}
+                                        xhidethis="da" 
+
+                                        {# сделать видимым блок по id #}
+                                        xshow_id="res{{ man_id }}" 
+
+                                    {% endif %}
+
+                                {% endif %}
+
+                                >
+
+                                <nobr>
+                                {% if ( kolvo_points == 1 ) or ( head_sps__jobman_sp[man_id] is defined and head_sps__jobman_sp[man_id] == k ) %}
+                                    {% set now_sp_head = k %}
+                                    <span class="fa fa-check"></span>
+                                {% else %}
+                                    <span class="fa fa-circle-thin"></span>
+                                {% endif %}
+                                {{ sps[k]['head'] }}
+                                </nobr>
+                                
+                        </{% if 1 == 1 or ( now_level.type2 is defined and now_level.type2 == 'buh' ) %}a{% else %}span{% endif %}>
+
+                    {% endfor %}
+
+
+                    {% if 1 == 1 or ( now_level.type2 is defined and now_level.type2 == 'buh' ) %}
+                        <span id="res{{ man_id }}" >
+
+                            {% if run_head == false and nn > 1 %}
+                                <span class="bg-warning" style="display:inline-block; padding:2px 5px; line-height: 1.5em; xheight: 1.5em;" ><span class="fa fa-arrow-left"></span> Выберите главную точку продаж</span>
+                            {% endif %}
+
+                        </span>
+                    {% endif %}
+
+                </sup>
 
             </div>
 
-        {% endif %}
-    {% endif %}
+            <div class="tcell" >&nbsp;</div>
+            <div class="tcell" >&nbsp;</div>
+            <div class="tcell" >&nbsp;</div>
 
-    {# верхняя строка сотрудника - результат #}
-    {# если колво больше 1 и есть номер sp то это главная точка из всех #}                                
-    {% if 1 == 2 %}
-        ss - {{ now_sp_head }} / {{ kolvo_points }}
-    {% endif %}
-
-
-
-
-
-
-
-
-    {% if 1 == 7 %}
-        {#% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.user.htm' %#}
-        {#{ pa(getListJobsPeriodAll.data.checks,2) }#}
-
-        {#
-        getListJobsPeriodAll.data.checks
-        {{ pa(getListJobsPeriodAll.data.checks) }}
-        #}
+        </div>
     {% endif %}
 
 
-    {# собираем все смены сотрудника #}
+
+
+    {# ---------------------------- #}
+    {# проходимся по датам и показываем смены бонусы минусы #}
+    {# ---------------------------- #}
+
     {% for dd in range(0,32) %}
 
-        {#{ date_start|date_modify('+'~dd~' day')|date('Y-m-d') }#}
         {% set run_date = date_start|date_modify('+'~dd~' day')|date('Y-m-d') %}
-        {# + {{ run_date }} #}
+        {#{{ run_date }}#}
 
         {# список смен и начислений и взысканий #}
         {% set date_last = '' %}
@@ -292,149 +259,137 @@
         {% set stopline = false %}
         {#{ pa(checks['days']) }#}
 
-        
         {% set now_day_spec_jobs = false %}
-        
+
         {# проходимся по чекам #}
-        {% for check_id, item in getListJobsPeriodAll.data.checks if item.jobman == man_id and item.start|date('Y-m-d') == run_date %}
+        {#{% for check_id, item in getListJobsPeriodAll.data.checks if item.jobman == man_id and item.start|date('Y-m-d') == run_date %}#}
 
-            {#{ pa(item) }#}
-            {%  set now_day_job = getListJobsPeriodAll.data.where_job__workman_date[man_id][run_date] %}
-            {#%  set now_day_job = getListJobsPeriodAll.data.where_job__workman_date[man_id][item.start|date('Y-m-d')] %#}
 
-            {#
-            <br/>
-            pa(now_day_job) 
-            <Br/>
-            {{ pa(now_day_job) }}
-            #}
 
-            {% if now_day_job.sale_point is defined and get.sp is defined and 
-                ( 
-                    now_day_job.sale_point == get.sp 
-                    or ( now_sp_head == get.sp and kolvo_points > 1 ) 
-                )
-            %}
+        {% for k, item in new_list_smens.data if item.date == run_date and item.today_hours > 0 %}
 
-                {#% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.user.smena.htm' %#}
+            {# если тру то пропускаем сумму для калькуляции #}
+            {% set skip_calc = false %}
 
-                {%  if 1 == 1 %}
+            {% if item.job_finish == '' or item.job_finish >= item.date %}
+            {% else %}
+                не учитывается, нет назначения
+                {% set skip_calc = true %}
+            {% endif %}
 
-                    {#% set summa_man = summa_man + 10 %#}
+            {% set item_sp = item.sale_point ?? 0 %}
 
-                    <div
-                        {% if 1 == 2 and ( item.ocenka is not defined or now.ocenka == 0 ) %}
-                            class="trow"
-                            {% set error_ruk = true %}
-                        {% else %}
-                            class="trow info_{{ man_id }}" style="display:none;"  
+            {% if item.spec1_sp is not null  %}
+                {% set item_sp = item.spec1_sp %}
+            {% elseif item.job_sp is not null  %}
+                {% set item_sp = item.job_sp %}
+            {% endif %}
+
+            {#sp{{ item_sp }}#}
+
+            {% set check_id = item.id %}
+            {#{%  set now_day_job = getListJobsPeriodAll.data.where_job__workman_date[man_id][run_date] %}#}
+
+
+            {# показываем смену если катит точка продаж #}
+            {#{% if item_sp is not null and get.sp is defined and ( item_sp == get.sp or ( now_sp_head == get.sp and kolvo_points > 1 ) ) %}#}
+            {% if item_sp is not null and get.sp is defined and ( item_sp == get.sp or ( now_sp_head == get.sp and kolvo_points > 1 ) ) %}
+
+                {#<br/> / {{ get.sp }} / {{ now_sp_head }} / {{ kolvo_points }} /#}
+
+                {#{% if 1 == 1 %}#}
+
+                <div
+                    {% if 1 == 2 and ( item.ocenka is not defined or now.ocenka == 0 ) %}
+                        class="trow"
+                        {% set error_ruk = true %}
+                    {% else %}
+                        class="trow info_{{ man_id }}" style="display:none;"  
+                    {% endif %}
+                    >
+
+                    <div class="tcell" title="#{{ item.id }}" >
+
+                        {#                        {% if date_last != item.date|date('d.m.Y') %}#}
+                        {{ item.date|date('d.m.Y') }}
+                        {#                            {% set date_last = item.date|date('d.m.Y') %}
+                                                {% endif %}
+                        #}
+                    </div>
+
+                    <div class="tcell bg-white stick-left" >
+
+                        {% set sum_day = 0 %}
+
+                        {% if sps[item.money.sale_point]['head'] is not null %}
+                            <span class="checks_item sp1" >{{ sps[item.money.sale_point]['head'] }}</span>
                         {% endif %}
-                        >
 
-                        <div class="tcell" >
+                        {% if now_day_job.type is defined and now_day_job.type == 'spec' %}
+                            <span class="checks_item spec" >Спец. назначение</span>
+                            {% set now_day_spec_jobs = true %}
+                        {% endif %}
 
-                            {% if date_last != item.start|date('d.m.Y') %}
+                        <span class="checks_item smena" >Трудовая смена</span>
 
-                                {{ item.start|date('d.m.Y') }}
-                                {% set date_last = item.start|date('d.m.Y') %}
+                        {% if dolgns.data[now_day_job.dolgnost]['head'] is defined %}
+                            <span class="checks_item dolgn sup_hover_gray" >{{ dolgns.data[now_day_job.dolgnost]['head'] }}
+                                {% if now_day_job.smoke is defined and now_day_job.smoke == 'da' %}
+                                    <sup>курит</sup>
+                                {% endif %}
+                            </span>
+                        {% endif %}
 
-                            {% endif %}
+                        c {{ item.start[11:5] }} до {% if item.start[11:2] < item.fin[11:2] %}{{ item.fin|date('H:i') }}{% else %}{{ item.fin|date('d.m.Y H:i') }}{% endif %}
 
-                        </div>
+                        <br/>
 
-                        <div class="tcell bg-white stick-left" >
-                            
-                            {% if 1 == 2 %}
-                                item
-                            {{ pa(item) }}
-                            {% endif %}
-                            
-                            {% if 1 == 2 %}
-                                now_day_job
-                            {{ pa(now_day_job) }}
-                            {% endif %}
+                        Часов: {{ item.today_hours ?? '-' }}
+                        Оценка: {{ item.today_ocenka ?? '-' }}
+                        {%  if item.money.oborot_day_now is defined %}
+                            Оборот дня: {{ (item.money.oborot_day_now/1000)|number_format(1, '.', '`') }}тр
+                        {%  endif %}
+                        Цена часа: {{ item.salary_hour ?? '-' }}
 
-                            {% set sum_day = 0 %}
+                            {#{% if 1 == 1 or item.id == 121515 %} item {{ pa(item,2) }} {% endif %}#}
+                            {% if 1 == 2 or item.id == 109409 %} item {{ pa(item,2) }} {% endif %}
+                            {% if 1 == 2 %} now_day_job {{ pa(now_day_job) }} {% endif %}
 
-                            {% if sps[now_day_job.sale_point]['head'] is defined %}
-                                <span class="checks_item sp1" >{{ sps[( item.sale_point ?? now_day_job.sale_point )]['head'] }}</span>
-                            {% endif %}
+                    </div>
+                    <div class="tcell text-right" >
 
-                            {% if now_day_job.type is defined and now_day_job.type == 'spec' %}
-                                <span class="checks_item spec" >Спец. назначение</span>
-                                {% set now_day_spec_jobs = true %}
-                            {% endif %}
-
-                            <span class="checks_item smena" >Трудовая смена</span>
-
-                            {% if dolgns.data[now_day_job.dolgnost]['head'] is defined %}
-                                <span class="checks_item dolgn sup_hover_gray" >{{ dolgns.data[now_day_job.dolgnost]['head'] }}
-                                    {% if now_day_job.smoke is defined and now_day_job.smoke == 'da' %}
-                                        <sup>курит</sup>
-                                    {% endif %}
-                                </span>
-                            {% endif %}
-
-                            c {{ item.start[11:5] }} до {% if item.start[11:2] < item.fin[11:2] %}{{ item.fin|date('H:i') }}{% else %}{{ item.fin|date('d.m.Y H:i') }}{% endif %}
-
-                            <br/>
-
-                            Часов: {{ item.hour_on_job_hand ?? item.hour_on_job ?? '-' }}
-                            Оценка: {{ item.ocenka ?? item.ocenka_auto ?? '-' }}
-                            Цена часа: {{ item.salary_hour ?? '-' }}
-
-                            {#{ pa(now_day_job) }#}
-                            {#{ pa(item) }#}
-
-                        </div>
-                        <div class="tcell text-right" >
-
+                        {% if skip_calc != true %}
                             {% if item.summa is defined and item.summa > 0 %}
 
                                 {{ item.summa|number_format(0, '.', '`') }}
                                 {% set summa_man1 = summa_man1 + item.summa %}
 
-                            {% endif %}
+                                {% set money_job = money_job + item.summa %}
 
-                        </div>
-                        <div class="tcell" >
-                        </div>
-                        <div class="tcell" >
-                        </div>
+                            {% endif %}
+                        {% endif %}
 
                     </div>
+                    <div class="tcell" >
+                    </div>
+                    <div class="tcell" >
+                    </div>
 
-
-
-                {% endif %}
+                </div>
 
             {% endif %}
 
         {% endfor %}
 
-
         {# проходимся по бонусам #}
-        {#{ pa(getListJobsPeriodAll.data.money_bonus) }#}
-        {% for id, item in getListJobsPeriodAll.data.money_bonus 
-            if 
-            item.jobman == man_id 
-            and item.date_now == run_date 
-            and 
-                ( 
-                    ( item.sale_point == get.sp and get.sp is defined )
-                    or
-                    ( now_day_spec_jobs == true )
-                )
-        %}
-        
-            {#{ pa(item) }#}
-            {#% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.user.bonus.htm' %#}
+        {% for item in new_pays.data if item.date == run_date %}
 
-            {% if 1 == 1 %}
+            {#{{ pa(item) }}#}
 
+            {# показываем смену если катит точка продаж #}
+            {% if item.sale_point is defined and get.sp is defined and ( item.sale_point == get.sp or ( now_sp_head == get.sp and kolvo_points > 1 ) ) %}
 
                 {#% set summa_man = summa_man + 10 %#}
-
                 <div class="trow info_{{ man_id }}" style="display:none;" >
 
                     <div class="tcell" >
@@ -444,18 +399,20 @@
 
                     <div class="tcell bg-white stick-left" >
 
-                        {% if sps[item.sale_point]['head'] is defined %}
-                            <span class="checks_item sp1" >{{ sps[item.sale_point]['head'] }}</span>
+                        {% if item.sp is defined %}
+                            <span class="checks_item sp1" >{{ item.sp }}</span>
                         {% endif %}
 
                         <span class="checks_item plus" >Бонус</span>
                         {{ item.text }}
+                        {#<a style="float:right;" href="">удалить</a>#}
                     </div>
                     <div class="tcell text-right" >
                         {% if item.summa > 0 %}
                             {{ item.summa|number_format(0, '.', '`') }}
 
                             {% set summa_man1 = summa_man1 + item.summa %}
+                            {% set money_bonus = money_bonus + item.summa %}
 
                         {% else %}
                             -
@@ -465,10 +422,11 @@
                     <div class="tcell" ></div>
                 </div>
 
-
             {% endif %}
-
         {% endfor %}
+
+
+
 
         {# проходимся по минусам #}
         {% for id, item in getListJobsPeriodAll.data.money_minus 
@@ -483,51 +441,54 @@
                 )
         %}
 
-            {#{ pa(item) }#}
-            {#% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.user.minus.htm' %#}
+        {#{ pa(item) }#}
+        {#% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.user.minus.htm' %#}
 
-            {% if 1 == 1 %}
+        {% if 1 == 1 %}
 
-                {#% set summa_man = summa_man + 10 %#}
+            {#% set summa_man = summa_man + 10 %#}
 
-                <div class="trow info_{{ man_id }}" style="display:none;" >
+            <div class="trow info_{{ man_id }}" style="display:none;" >
 
-                    <div class="tcell" >
-                        {{ run_date|date('d.m.Y') }}
-                        {#{ pa(item) }#}
-                    </div>
-
-                    <div class="tcell bg-white stick-left" >
-
-                        {% if sps[item.sale_point]['head'] is defined %}
-                            <span class="checks_item sp1" >{{ sps[item.sale_point]['head'] }}</span>
-                        {% endif %}
-
-                        <span class="checks_item minus" >Взыскание</span>
-                        {{ item.text }}
-
-                    </div>
-                    <div class="tcell text-right" >
-                        {% if item.summa != 0 %}
-                            {{ item.summa|number_format(0, '.', '`') }}
-
-                            {% set summa_man1 = summa_man1 + item.summa %}
-
-                        {% else %}
-                            -
-                        {% endif %}
-                    </div>
-                    <div class="tcell" ></div>
-                    <div class="tcell" ></div>
+                <div class="tcell" >
+                    {{ run_date|date('d.m.Y') }}
+                    {#{ pa(item) }#}
                 </div>
 
+                <div class="tcell bg-white stick-left" >
 
-            {% endif %}
+                    {% if sps[item.sale_point]['head'] is defined %}
+                        <span class="checks_item sp1" >{{ sps[item.sale_point]['head'] }}</span>
+                    {% endif %}
 
-        {% endfor %}
+                    <span class="checks_item minus" >Взыскание</span>
+                    {{ item.text }}
+
+                </div>
+                <div class="tcell text-right" >
+                    {% if item.summa != 0 %}
+
+                        {{ item.summa|number_format(0, '.', '`') }}
+                        {% set summa_man1 = summa_man1 + item.summa %}
+
+                        {% set money_minus = money_minus + item.summa %}
+
+
+                    {% else %}
+                        -
+                    {% endif %}
+                </div>
+                <div class="tcell" ></div>
+                <div class="tcell" ></div>
+            </div>
+
+
+        {% endif %}
 
     {% endfor %}
 
-    {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.user_bottom_line.htm' %}
+    {% endfor %}
 
-{% endspaceless %}
+        {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.user_bottom_line.htm' %}
+
+        {% endspaceless %}
