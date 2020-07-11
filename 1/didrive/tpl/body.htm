@@ -1,42 +1,120 @@
 {% spaceless %}
 
+    {% if 1 == 2 %}
+        <span style="position: fixed; top: 30px; left: 120px; z-index: 99999;" >
 
 
-    <div class="container-fluid">
-        <div class="grid">
-
-            {% set t = didrive_f__timer_start(99) %}
-
-            {% if 1 == 2 %}            
-                <div class="row">
-                    <div class="col-xs-12 col-xl-12">
-
-                        {# Выберите сотрудника #}
-                        <br/>
-
-                    </div>
-                </div>
-            {% endif %}
-
-            {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.dates.htm' %}
-
-            {% if get.d_start is defined and get.d_fin is defined %}
-
-                {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.htm' %}
-
+            {% if session.new_buh is defined and session.new_buh == 20 %}
+                <a href="?level={{ get.level }}&new_buh=0" class="btn btn-xs btn-light" >текущий вид</a>
+                <a href="?level={{ get.level }}&new_buh=20" class="btn btn-xs btn-success" >текущий вид 2</a>
+                <a href="?level={{ get.level }}&new_buh=2" class="btn btn-xs btn-light" >новый вид</a>
+            {% elseif session.new_buh is defined and session.new_buh == 2 %}
+                <a href="?level={{ get.level }}&new_buh=0" class="btn btn-xs btn-light" >текущий вид</a>
+                <a href="?level={{ get.level }}&new_buh=20" class="btn btn-xs btn-light" >текущий вид 2</a>
+                <a href="?level={{ get.level }}&new_buh=2" class="btn btn-xs btn-success" >новый вид</a>
             {% else %}
-
-                <div class="alert-warning text-center" style="padding: 5px 10px;">
-                    Выберите расчётный период
-                </div>
-
+                <a href="?level={{ get.level }}&new_buh=0" class="btn btn-xs btn-success" >текущий вид</a>
+                <a href="?level={{ get.level }}&new_buh=20" class="btn btn-xs btn-light" >текущий вид 2</a>
+                <a href="?level={{ get.level }}&new_buh=2" class="btn btn-xs btn-light" >новый вид</a>
             {% endif %}
 
-            {% set t = didrive_f__timer_stop(99) %}
-            <div class="alert-warning" style="position: fixed; bottom: 10px; right: 10px; padding: 3px 10px;">обработка всего шаблона {{ t }} сек</div>
+            {% if 1 == 2 %}
+                <a href="?level={{ get.level }}&new_buh=0" class="btn btn-xs {% if session.new_buh is defined and session.new_buh == 2 %}btn-light{% else %}btn-success{% endif %}" >текущий вид</a>
+                <a href="?level={{ get.level }}&new_buh=20" class="btn btn-xs {% if session.new_buh is defined and session.new_buh == 20 %}btn-success{% else %}btn-light{% endif %}" >текущий вид 2</a>
+                {#<a href="?level={{ get.level }}&new_buh=1" class="btn btn-xs {% if session.new_buh is defined and session.new_buh == 1 %}btn-success{% else %}btn-light{% endif %}" >устаревший вид</a>#}
+                <a href="?level={{ get.level }}&new_buh=2" class="btn btn-xs {% if session.new_buh is defined and session.new_buh == 2 %}btn-success{% else %}btn-light{% endif %}" >новый вариант</a>
+                {#{ pa(session) }#}
+            {% endif %}
 
+        </span>
+    {% endif %}
+
+
+
+    {% if session.new_buh is defined and session.new_buh == 201 %}
+
+        {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/v2/body.htm' %}
+
+    {% elseif session.new_buh is defined and session.new_buh == 2 %}
+
+        <div class="alert alert-warning" style="padding: 20px;" >
+            <h3>Старт обновлённого интерфейса планируется к обеду, отпишусь в чате</h3>
+        </div>
+
+        <div class="container-fluid">
+            <div class="grid">
+                <div id="for_vue" >
+                    <br/>
+                    <br/>
+                    <br/>
+                    <center>
+                        <h4>.. загружаю, пару сек пожалуйста</h4>
+                    </center>
+                </div>        
+            </div>        
+        </div>        
+
+    {% else %}
+
+        {% if session['now_user_di']['access'] is defined and session['now_user_di']['access'] == 'admin' %}
+            {% set show_for_user_pay = true %}
+        {% else %}
+            {% set show_for_user_pay = false %}
+        {% endif %}
+
+        <div class="container-fluid">
+            <div class="grid">
+
+                {% set t = didrive_f__timer_start(99) %}
+
+                {% if 1 == 2 %}            
+                    <div class="row">
+                        <div class="col-xs-12 col-xl-12">
+
+                            {# Выберите сотрудника #}
+                            <br/>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.dates.htm' %}
+
+
+                {% if get.sp is not defined %}
+
+                    <div class="alert-warning text-center" style="padding: 5px 10px; max-width: 50%; margin: 0 auto; border-radius: 5px;">
+                        Выберите точку продаж
+                        <br/>
+                        <br/>
+                        <h3>В бух интерфейсе загружаются обновления из графика в 55 и 25 минут каждого часа</h3>
+                        <br/>
+                    </div>
+
+                {% else %}
+
+
+                    {% if get.d_start is defined and get.d_fin is defined %}
+
+                        {#% set sps = readItems( 'sale_point', null )  %#}
+                        {#{ pa(sps.data,2) }#}
+                        {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.htm' %}
+
+                    {% else %}
+
+                        <div class="alert-warning text-center" style="padding: 5px 10px; max-width: 300px; border-radius: 5px;">
+                            Выберите расчётный период
+                        </div>
+
+                    {% endif %}
+
+                {% endif %}
+
+                {% set t = didrive_f__timer_stop(99) %}
+                <div class="alert-warning" style="position: fixed; bottom: 10px; right: 10px; padding: 3px 10px;">обработка {{ t }} сек</div>
+
+            </div>
 
         </div>
-    </div>
+    {% endif %}
 
 {% endspaceless %}

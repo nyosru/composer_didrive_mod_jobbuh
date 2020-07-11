@@ -1,3 +1,4 @@
+
 .ttable{ display: table; width: 100%; }
 .ttable .trow{ display: table-row; }
 .ttable .tcell{ display: table-cell; }
@@ -30,7 +31,8 @@
 .stick-top3{
     xposition: static; 
     xposition: sticky; 
-    top:140px;
+    xtop:140px;
+    top:9.2em;
     position: -webkit-sticky;
     position: -moz-sticky;
     position: -ms-sticky;
@@ -60,6 +62,9 @@
 .checks_item.smena{
     background-color: rgba(0,255,0,0.3);
 }
+.checks_item.spec{
+    background-color: rgba(255,0,0,0.3);
+}
 .checks_item.plus{
     background-color: lawngreen;
 }
@@ -67,3 +72,45 @@
     background-color: hotpink;
 }
 
+.checks_item.sp1{
+    background-color: rgba(0,0,0,0.05);
+}
+
+.checks_item.dolgn{
+    background-color: rgba(0,200,200,0.15);
+}
+
+.row_user .tcell{
+    background-color: #efefef; 
+    border: none;
+}
+
+
+
+.trow.user_head .tcell span,
+.tcell.nameuser > span,
+.tcell.summa1,
+.tcell.ostatki{
+   font-size: 1.3rem;
+}
+.tcell.summa1 small{
+    color:gray;
+    font-size: 0.8rem;
+    line-height: 0.8rem;
+    display: block;
+}
+
+.tcell.summa1 small font{
+    color: #bababa;
+}
+.tcell.summa1:HOVER small font{
+    color: gray;
+}
+
+.tcell.ostatki{
+    text-align: center;
+}
+
+.tcell.plategi{
+    font-size: 1rem;
+}

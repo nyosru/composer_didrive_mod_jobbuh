@@ -1,0 +1,523 @@
+{% spaceless %}
+
+    <style>
+        div sup{ color: rgba(0,0,0,0.05); }
+        div:HOVER > sup{ color: rgba(0,0,0,0.5); }
+        .sup_hover_gray sup{ color: rgba(0,0,0,0.3); }
+        .sup_hover_gray:HOVER > sup.gray{ color: rgba(0,0,0,0.7); }
+
+        @media print {
+            .print-hide,
+            .raschets0,
+            .alert-warning{ display: none; }
+        }
+
+        .raschets{ 
+            font-size:12px; 
+            border: 1px solid gray; 
+            padding: 10px; 
+        }
+        .raschets legend{ 
+            font-size:12px; 
+            text-align: center; 
+            background-color: rgba(0,255,0,0.05);
+        }
+
+    </style>
+
+    {% set sps = items__get( db, 'sale_point' )  %}    
+    {#{ pa(sps) }#} 
+
+    {% set dolgns = readItems( '061.dolgnost', null )  %}
+    {#{ pa(dolgns.data,2) }#}
+
+    {% set date_start = get.d_start %}
+    {% set date_finish = get.d_fin %}
+
+    {% set getListJobsPeriodAll = jobdesc__getListJobsPeriodAll( db, date_start, date_finish ) %}
+    {# весь массив данных по этому месяцу #}
+    {#{ pa(getListJobsPeriodAll,2) }#}
+    {# список сотрудников работающих на точках в этом месяце #}
+    {#{ pa(getListJobsPeriodAll.data.job_on_sp) }#}
+    {# список сотрудников работающих на точке в этом месяце #}
+    {#{ pa(getListJobsPeriodAll.data.job_on_sp[get.sp],2) }#}
+
+    
+    
+    
+    
+    
+    
+    
+            {# получаем список главных точек для сотрудников за дату (конец периода оплаты) #}
+            {% set head_sps__jobman_sp = job_buh__get_head_sp( db, date_finish ) %}
+            {% if 1 == 2 %}
+            {{ pa(head_sps__jobman_sp) }}
+            {% endif %}
+    
+
+    
+    
+    
+    
+    
+    
+    
+    {% if get.sp is defined and getListJobsPeriodAll.data.job_on_sp[get.sp] is defined %}
+
+        {# показ таблицы с данными #}
+
+        {# таблицы если выбрана дата показа #}
+
+        <div class="row" style="margin-top:20px; margin-bottom:20px;">
+
+            <div class="col-xs-12 col-xl-12 text-center">
+                <h3>Зарплатная ведомость №{{get.sp}}/{{ "now"|date('ymd') }}</h3>
+                <p>
+                    Точка продаж: {{ sps[get.sp]['head'] }}
+                    <br/>Расчётный период: {{ get.d_start|date('d.m.Y') }} - {{ get.d_fin|date('d.m.Y') }}
+                    <br/>Дата составления: {{ "now"|date('d.m.Y H:i') }}
+                </p>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12 col-xl-12">
+
+                {#{ pa(sps) }#}
+
+                <style>
+                    {#.t11, 
+                    .t11 tr, 
+                    .t11 td, 
+                    .t11 th, 
+                    .t11 thead,
+                    .t11 tbody
+                    { border:1px solid black; }#}
+                    .t11 thead{
+                        background-color: rgba(0,0,0,0.05);
+                    }
+                </style>
+
+                <table class="table border-black table-bordered t11" >
+
+                    <thead>
+                        <tr>
+                            <Th>ФИО</th>
+                            <th>Начислено&nbsp;(₽)</th>
+
+                            {# <th>Аванс на&nbsp;карту&nbsp;(₽)</th> #}
+                            <th>Вознаграждение&nbsp;(₽)</th>
+                                {# <th>НДФЛ</th> #}
+                            <th>Взыскания&nbsp;(₽)</th>
+
+                            <th>Сумма к&nbsp;выдаче&nbsp;₽</th>
+                            <th>Личная подпись</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {# спец назначения #}
+                        {#{  pa(getListJobsPeriodAll.data.spec.data,2) }#}
+
+                        {# расклад по работе сотрудников кто где #}
+                        {#{ pa(getListJobsPeriodAll.data.where_job__workman_date,2) }#}
+
+                        {% for man_id, man in getListJobsPeriodAll.data.job_on_sp[get.sp] %}
+
+            {# считаем сколько точек было в работе у сотрудника #}
+            {% if 1 == 1 %}
+                
+                {% if 1 == 2 %}
+                    pa(getListJobsPeriodAll.data.job_on_sp)
+                    {{ pa(getListJobsPeriodAll.data.job_on_sp,2) }}
+                {% endif %}
+
+                {% set kolvo_points = 0 %}
+                {% set kpoints = '' %}
+
+                {% for k,v in getListJobsPeriodAll.data.job_on_sp if v[man_id] is defined %}
+                    {% set kolvo_points = kolvo_points + 1 %}
+                    
+                    {% set kpoints = kpoints ~ ' ' %}
+                    {% if head_sps__jobman_sp[man_id] == k %}{% set kpoints = kpoints ~ '[' %}{% endif %}
+                    {% set kpoints = kpoints ~ sps[k]['head'] %}
+                    {% if head_sps__jobman_sp[man_id] == k %}{% set kpoints = kpoints ~ ']' %}{% endif %}
+                    
+                {% endfor %}
+                
+                {% if 1 == 2 %}
+                    kolvo_points
+                    {{ pa(kolvo_points) }}
+                {% endif %}
+                
+                {# если одна точка показываем типа она выбрана ... а если больше .. то просим выбрать #}
+                {# условие #}
+                {# {% if ( kolvo_points == 1 ) or ( head_sps__jobman_sp[man_id] is defined and head_sps__jobman_sp[man_id] == k ) %} #}
+
+            {% endif %}
+
+                            {% if 1 == 2 or ( kolvo_points == 1 or ( kolvo_points > 1 and head_sps__jobman_sp[man_id] == get.sp ) ) %}
+                            
+                            {% set summa_man = 0 %}
+
+                            <tr>
+
+                                <td>
+                                    
+                                    {## % include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.print.tables.user_line.htm' %#}
+                                    {{ man['fio2'] ?? man['fio'] }}
+                                    {#{ pa(man) }#}
+                                    {#
+                                    <br/>
+                                    <small style="color:gray;" class="print-hide" >{{ kpoints }}</small>
+                                    #}
+
+                                </td>
+
+                                {#% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.user.htm' %#}
+                                {#{ pa(getListJobsPeriodAll.data.checks,2) }#}
+
+                                {# getListJobsPeriodAll.data.checks {{ pa(getListJobsPeriodAll.data.checks) }} #}
+
+                                {% for dd in range(0,32) %}
+
+                                    {#{ date_start|date_modify('+'~dd~' day')|date('Y-m-d') }#}
+                                    {% set run_date = date_start|date_modify('+'~dd~' day')|date('Y-m-d') %}
+                                    {# + {{ run_date }} #}
+
+                                    {# список смен и начислений и взысканий #}
+                                    {% set date_last = '' %}
+
+                                    {% set payed_man = 0 %}
+                                    {% set stopline = false %}
+                                    {#{ pa(checks['days']) }#}
+
+                                    
+                                    {% for check_id, item in getListJobsPeriodAll.data.checks if item.jobman == man_id and item.start|date('Y-m-d') == run_date %}
+
+                                        {#{ pa(item) }#}
+                                        {%  set now_day_job = getListJobsPeriodAll.data.where_job__workman_date[man_id][run_date] %}
+                                        {#%  set now_day_job = getListJobsPeriodAll.data.where_job__workman_date[man_id][item.start|date('Y-m-d')] %#}
+                                        {#{ pa(now_day_job) }#}
+{#
+                                        {%  if now_day_job.sale_point is defined and get.sp is defined and now_day_job.sale_point == get.sp %}
+                                            {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.print.tables.user.smena.htm' %}
+                                        {% endif %}
+#}
+                                    {% endfor %}
+
+
+                                    {# бонусы выключили #}
+                                    {% if 1 == 2 %}
+                                        
+                                        {% for id, item in getListJobsPeriodAll.data.money_bonus if item.jobman == man_id and item.date_now == run_date and item.sale_point == get.sp and get.sp is defined %}
+
+                                            {#{ pa(item) }#}
+                                            {## % include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.print.tables.user.bonus.htm' % #}
+
+                                        {% endfor %}
+
+                                        {% for id, item in getListJobsPeriodAll.data.money_minus if item.jobman == man_id and item.date_now == run_date and item.sale_point == get.sp and get.sp is defined %}
+
+                                            {#{ pa(item) }#}
+                                            {## % include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.print.tables.user.minus.htm' % #}
+
+                                        {% endfor %}
+                                        
+                                    {% endif %}
+                                    
+                                {% endfor %}
+
+                                {#% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.print.tables.user_bottom_line.htm' %#}
+
+                                
+                                
+                                
+                                
+                                
+                                {% if 1 == 2 %}
+                                {% set summa_man = getListJobsPeriodAll.data.money_to_pay[get.sp][man_id] %}
+                                {% endif %}
+
+                                {% set print_pays = '' %}
+                                
+                                {% if kolvo_points > 1 %}
+                                    
+                                    {% for k,v in getListJobsPeriodAll.data.job_on_sp if v[man_id] is defined %}
+                                        {% set summa47 = getListJobsPeriodAll.data.money_to_pay[k][man_id] %}
+                                        {% set summa_man = summa_man + summa47 %}
+                                        {% set print_pays = print_pays ~ sps[k]['head'] ~ ': '~ summa47|number_format(2,'.','`') ~ "<br/>" %}
+                                    {% endfor %}
+                                    
+                                {% else %}
+                                    
+                                    {% set summa_man = getListJobsPeriodAll.data.money_to_pay[get.sp][man_id] %}
+                                    
+                                {% endif %}
+
+
+
+                                
+                                
+                                
+                                
+                                
+                                
+                                {#{ summa_man|number_format(0, '.', '`') }#}
+
+                                {% if 1 == 2 %}
+                            <div class="text-left" >
+                                {{ pa(summa_man,2) }}
+                                
+                            </div>
+                        {% endif %}
+
+                        {% set buh_pm_cfg = get_buh_PM_cfg() %}
+
+                        {% if 1 == 2 %}
+                            <div class="text-left" >
+                                {{ pa(buh_pm_cfg,2) }}
+                            </div>
+                        {% endif %}
+
+                        {% set pm_user = job_buh__get_buh_PM(db,get.d_start,man_id) %}
+                        {#{% set pm_user = job_buh__get_buh_PM2(db,get.d_start,man_id) %}#}
+
+                        {% if 1 == 2 %}
+                            2222
+                            <div class="text-left" >
+                                {{ pa(pm_user,2) }}
+                            </div>
+                        {% endif %}
+
+                        <td class="text-right">
+
+                            {% set ras_start = summa_man %}
+
+                            {{ summa_man|number_format(2, '.', '`') }}
+
+
+                            {% if get.d_fin|date('d') == 20 %}
+                                {% set summa_man = summa_man /100*90 %}
+                            {% endif %}
+                            
+                            
+                            {% set show_dop = 0 %}
+                            {% set show_dop2 = 0 %}
+
+                            {% for k7, pay in getListJobsPeriodAll.data.oplats if pay.jobman == man_id and pay.sale_point == get.sp and pay.summa is defined and pay.date_end_period is defined and pay.date_end_period >= get.d_start  and pay.date_end_period <= get.d_fin %}
+
+                                {% if show_dop2 == 0 %}
+
+                                    {% set show_dop2 = 1 %}
+
+                                    {% if show_dop == 0 %}
+                                        <small>
+                                        {% endif %}
+                                        <br/>Произведённые выплаты:
+                                    {% endif %}
+
+                                    <br/>{{ pay.date ?? '' }} / {{ pay.summa|number_format(2,'.','`') }}
+                                    {% set summa_man = summa_man - pay.summa %}
+
+                                {% endfor %}
+
+                                {% if 1 == 2 %}
+                                </small>
+                            {% endif %}
+
+
+                                <br/>
+                                <small style="color:gray;" class="print-hide" >
+                                {{ print_pays|raw }}
+                                </small>
+
+                            
+                        </td>
+
+                        {# плюсы #}
+                        <td class="text-right" style="padding:0;">
+
+                            <table class="table table-sm" >
+                                {% for k,v in buh_pm_cfg.plus if k != 'skip' and pm_user[k]['summa'] is defined %}
+
+                                    <tr>
+                                        <td>
+                                            {{ v }}
+                                        </td>
+                                        <td>
+                                            {{ pm_user[k]['summa']|number_format(2,'.','`') }}
+                                            {% set summa_man = summa_man + pm_user[k]['summa'] %}
+                                        </td>
+                                    </tr>
+
+                                {% endfor %}
+                            </table>            
+
+
+                        </td>
+
+                        {# взыскания #}
+                        <td class="text-right" style="padding:0;">
+
+                            {# ключ - описание что за взыскание #}
+                            {#{ pa(buh_pm_cfg.minus) }#}
+                            
+                            {#  #}
+                            {#{{ pa(pm_user) }}#}
+                            
+                            
+                            
+                            <table class="table table-sm" >
+                                {% for k,v in buh_pm_cfg.minus if k != 'skip' and pm_user[k]['summa'] is defined %}
+                                    <tr>
+                                        <td>
+                                            {{ v }}
+                                        </td>
+                                        <td>
+                                            {{ pm_user[k]['summa']|number_format(2,'.','`') }}
+                                            {% set summa_man = summa_man - pm_user[k]['summa'] %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>            
+
+                        </td>
+
+                        <td class="text-right">
+
+
+                            {% if get.d_fin|date('d') == 20 %}
+                                {% set summa_man = (summa_man/100)|round(0,'floor')*100 %}
+                            {% endif %}
+
+                            {{ summa_man|number_format(2, '.', '`') }}
+
+                            
+                            {# вывод описания почему такая сумма #}
+                            <div class="raschets0" >
+
+                                <fieldset class="raschets" >
+                                    <legend><a href="#" onclick="$('#ras_{{ man_id }}').toggle('slow');
+                                            return false;" >расчеты</a></legend>
+
+                                    <div id="ras_{{ man_id }}" style="display:none;" >
+                                        {% set ras_itog = ras_start %}
+
+                                        старт {{ ras_start|number_format(2, '.', '`') }}
+                                        <br/>
+
+
+
+                                        {% if get.d_fin|date('d') == 20 %}
+                                            {% set ras_itog = ras_itog /100*90 %}
+                                            - 10% = {{ ras_itog|number_format(2, '.', '`') }}
+                                            <br/>
+                                        {% endif %}
+
+
+                                        {% for k7, pay in getListJobsPeriodAll.data.oplats if pay.jobman == man_id and pay.sale_point == get.sp and pay.summa is defined and pay.date_end_period is defined and pay.date_end_period >= get.d_start  and pay.date_end_period <= get.d_fin %}
+                                            <div style="background-color: rgba(0,0,255,0.1);padding: 5px;">
+                                                выплата от {{ pay.date ?? '' }} 
+                                                <Br/> 
+                                                -{{ pay.summa|number_format(2,'.','`') }}
+                                                {% set ras_itog = ( ras_itog - ( pay.summa ?? 0 ) ) %}
+                                                <br/>
+                                                = {{ ras_itog|number_format(2,'.','`') }}
+                                            </div>
+                                        {% endfor %}
+
+
+
+                                        {% for k,v in buh_pm_cfg.plus if k != 'skip' and pm_user[k]['summa'] is defined %}
+
+                                            <div style="background-color: rgba(255,255,0,0.1);padding: 5px; border-bottom: 1px solid rgba(255,255,0,1);">
+                                                {{ v }}
+                                                <br/>
+                                                + {{ pm_user[k]['summa']|number_format(2,'.','`') }}
+                                                {% set ras_itog = ( ras_itog + ( pm_user[k]['summa'] ?? 0 ) ) %}
+                                                <br/>
+                                                = {{ ras_itog|number_format(2,'.','`') }}
+                                            </div>
+
+                                            {#
+                                            <tr>
+                                                <td>
+                                                    {{ v }}
+                                                </td>
+                                                <td>
+                                                    {{ pm_user[k]['summa']|number_format(2,'.','`') }}
+                                                    {% set summa_man = summa_man + pm_user[k]['summa'] %}
+                                                </td>
+                                            </tr>
+                                            #}
+
+                                        {% endfor %}
+
+
+
+                                        {% for k,v in buh_pm_cfg.minus if k != 'skip' and pm_user[k]['summa'] is defined %}
+
+                                            <div style="background-color: rgba(255,0,0,0.1);padding: 5px; border-bottom: 1px solid red;">
+                                                {{ v }}
+                                                <br/>
+                                                - {{ pm_user[k]['summa']|number_format(2,'.','`') }}
+                                                {% set ras_itog = ( ras_itog - ( pm_user[k]['summa'] ?? 0 ) ) %}
+                                                <br/>
+
+                                                = {{ ras_itog|number_format(2,'.','`') }}
+                                            </div>
+
+                                            {#
+                                            <tr>
+                                                <td>
+                                                    {{ v }}
+                                                </td>
+                                                <td>
+                                                    {{ pm_user[k]['summa']|number_format(2,'.','`') }}
+                                                    {% set summa_man = summa_man + pm_user[k]['summa'] %}
+                                                </td>
+                                            </tr>
+                                            #}
+
+                                        {% endfor %}
+
+
+
+
+                                        {% if get.d_fin|date('d') == 20 %}
+
+                                            {% set summa_man = (summa_man/100)|round(0,'floor')*100 %}
+
+                                            <br/>
+                                            округлили до 100
+
+                                        {% endif %}
+
+                                        <br/>
+                                        итого = {{ summa_man|number_format(2, '.', '`') }}
+
+                                    </div>
+                                </fieldset>
+                            </div>
+
+                        </td>
+
+                        <td>
+                            &nbsp;
+                        </td>
+
+                        </tr>
+
+                    {% endif %}
+
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+
+            {% endif %}
+
+        {% endspaceless %}

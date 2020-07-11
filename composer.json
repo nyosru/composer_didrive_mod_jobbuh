@@ -1,11 +1,12 @@
 {
     "name": "didrive_mod/job_buh",
     "description": "расчёт денег по учёту работы",
-    "version": "0.0.3",
-    
+    "version": "1.3.0",
+
     "keywords": [
         "didrive", "module", "nyos", "uralweb.info"
     ],
+    
     "authors": [
         {
             "name": "Sergey Baklanov",
@@ -14,25 +15,20 @@
             "role": "Developer"
         }
     ],
-    
+
     "homepage": "https://uralweb.info/php/#classes",
     "license": "MIT",
+
     "require": {
-        
-        "php": ">=7.1.0"
-        ,
-        "twig/twig": ">=2.10.0"
-        ,
-        "didrive_mod/jobdesc": ">=0.0.1"
-        ,
+        "php": ">=7.1.0",
+        "twig/twig": ">=2.10.0",
+        "didrive_mod/jobdesc": ">=0.0.1",
         "didrive_mod/iiko_checks": ">=0.0.8"
-        
     }
     ,
     "autoload": {
-        "files": [ 
+        "files": [
             "class.php"
-        ]    
+        ]
     }
-    
 }
