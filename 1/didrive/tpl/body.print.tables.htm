@@ -162,7 +162,7 @@
                             
                             {% set summa_man = 0 %}
 
-                            <tr>
+                            <tr id="man{{ man_id }}" >
 
                                 <td>
                                     
@@ -395,7 +395,11 @@
 
                             {{ summa_man|number_format(2, '.', '`') }}
 
-                            
+                            {% if summa_man == 0 %}
+                                <br/><small>( будет скрыто при печати )</small>
+                                <style> @media print { #man{{ man_id }}{ display: none; } }</style>
+                            {% endif %}
+
                             {# вывод описания почему такая сумма #}
                             <div class="raschets0" >
 
