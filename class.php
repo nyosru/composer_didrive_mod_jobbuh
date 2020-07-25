@@ -15,6 +15,231 @@ class JobBuh {
     public static $cash_var_oborot_day = 'oborot_day_';
 
     /**
+     * массив для оборот за день
+     * @var type 
+     */
+    public static $cash_ar__sp_date_oborot = [];
+
+    /**
+     * массив для сумм за месяц
+     * @var type 
+     */
+    public static $cash_ar__sp_date_monthoborot = [];
+    
+    public static $ar_salaris_sp_dolgn_date = [];
+
+    /**
+     * получаем массив по датам когда кто сколько получает
+     * на выходе только должности что катят под вход параметры
+     * creatAutoBonusMonth 200615
+     * @param type $db
+     * @param int $sp
+     * @param int $dolgn
+     * @param string $date
+     * @return type
+     */
+    public static function getSalarisNow($db, $sp = null, $dolgn = null, $date = null) {
+
+        // \f\pa(__FUNCTION__);
+
+        if (empty($sp) || empty($dolgn) || empty($date))
+            return false;
+
+        //salarys
+        if (1 == 1 && empty(self::$ar_salaris_sp_dolgn_date)) {
+
+            $salaris0 = \Nyos\mod\items::get($db, \Nyos\mod\JobDesc::$mod_salary, 'show', 'date_asc');
+            $salaris0_kolvo = sizeof($salaris0);
+
+            foreach ($salaris0 as $k => $v) {
+                if (!empty($v['sale_point']) && !empty($v['dolgnost']) && !empty($v['date']))
+                    self::$ar_salaris_sp_dolgn_date[$v['sale_point']][$v['dolgnost']][$v['date']][] = $v;
+            }
+
+            unset($salaris0);
+        }
+
+        $salary = [];
+
+        if (!isset(self::$ar_salaris_sp_dolgn_date[$sp][$dolgn]))
+            return false;
+
+        foreach (self::$ar_salaris_sp_dolgn_date[$sp][$dolgn] as $k => $v) {
+            if ($k <= $date)
+                $salary = $v;
+        }
+
+        if (sizeof($salary) > 0) {
+
+            $uslovie_oborot_month = false;
+            $uslovie_oborot_day = false;
+
+            foreach ($salary as $v) {
+                if (!empty($v['oborot_sp_last_monht_bolee'])) {
+                    $uslovie_oborot_month = true;
+                }
+                if (!empty($v['pay_from_day_oborot_bolee'])) {
+                    $uslovie_oborot_day = true;
+                }
+            }
+
+            // если есть условия по обороту месяца на зп
+            // ищем 
+            if ($uslovie_oborot_month === true) {
+
+                $oborot = \Nyos\mod\IikoOborot::getOborotMonth($db, $sp, $date);
+
+                foreach ($salary as $v) {
+                    if (!empty($v['oborot_sp_last_monht_bolee']) && $v['oborot_sp_last_monht_bolee'] <= $oborot) {
+                        return $v;
+                    }
+                }
+
+                foreach ($salary as $v) {
+                    if (empty($v['oborot_sp_last_monht_bolee'])) {
+                        return $v;
+                    }
+                }
+            } elseif ($uslovie_oborot_day === true) {
+
+                if (empty(\Nyos\mod\IikoOborot::$cash_oborot_day_ar_sp_date[$sp][$date]))
+                    \Nyos\mod\IikoOborot::getOborotMonth($db, $sp, $date);
+
+                foreach ($salary as $v) {
+                    if (
+                            !empty($v['pay_from_day_oborot_bolee']) &&
+                            $v['pay_from_day_oborot_bolee'] <= ( \Nyos\mod\IikoOborot::$cash_oborot_day_ar_sp_date[$sp][$date] ?? 0 )) {
+                        // \f\pa($v);
+                        $v['oborot_day_now'] = \Nyos\mod\IikoOborot::$cash_oborot_day_ar_sp_date[$sp][$date] ?? 0;
+                        return $v;
+                    }
+                }
+
+                foreach ($salary as $v) {
+                    if (empty($v['pay_from_day_oborot_bolee'])) {
+                        // \f\pa($v);
+                        $v['oborot_day_now'] = \Nyos\mod\IikoOborot::$cash_oborot_day_ar_sp_date[$sp][$date] ?? 0;
+                        return $v;
+                    }
+                }
+            }
+
+            foreach ($salary as $v) {
+                return $v;
+            }
+        }
+
+        return $salary;
+    }
+
+    public static function newGetSmensFullMonth($db, $user, $date) {
+
+        try {
+
+            $date_start = date('Y-m-01', strtotime($date));
+            $date_finish = date('Y-m-d', strtotime($date_start . ' +1 month -1 day'));
+
+            $dt_start = date('Y-m-01 07:00:00', strtotime($date_start));
+            $dt_finish = date('Y-m-d 02:00:00', strtotime($date_finish . ' +1 day'));
+
+            $sql = 'SELECT '
+                    . ' c.* , '
+                    . ' job_in.date job_date '
+                    . ' ,'
+                    . ' job_in.sale_point job_sp '
+                    . ' ,'
+                    . ' job_in.dolgnost job_dolgn '
+                    . ' ,'
+                    . ' job_in.date_finish job_finish '
+                    . ' ,'
+                    . ' spec1.sale_point spec1_sp '
+                    . ' ,'
+                    . ' spec1.dolgnost spec1_dolgn '
+                    . PHP_EOL
+// текущая тп                    
+                    . ' , ( CASE 
+                        WHEN c.sale_point > 0 THEN c.sale_point
+                        WHEN spec1.sale_point > 0 THEN spec1.sale_point '
+                    . ' WHEN job_in.sale_point > 0 THEN job_in.sale_point '
+                    . ' ELSE NULL 
+                        END ) as now_sale_point '
+                    . PHP_EOL
+// текущая должность
+                    . ' , ( CASE '
+                    . ' WHEN c.sale_point > 0 AND c.sale_point = job_in.sale_point THEN job_in.dolgnost '
+                    . ' WHEN c.sale_point > 0 AND c.sale_point = spec1.sale_point THEN spec1.dolgnost '
+                    . ' WHEN spec1.sale_point > 0 AND spec1.dolgnost > 0 THEN spec1.dolgnost '
+                    . ' WHEN job_in.sale_point > 0 AND job_in.dolgnost > 0 THEN job_in.dolgnost '
+                    . ' ELSE NULL 
+                        END ) as now_dolgnost '
+                    . PHP_EOL
+                    . ' FROM '
+                    . ' `mod_050_chekin_checkout` as `c`  '
+
+// ищем что за основная точка продаж
+                    . ' LEFT JOIN `mod_jobman_send_on_sp` job_in ON job_in.jobman = c.jobman AND job_in.date <= DATE( c.`start` ) '
+
+// тащим спец назначение
+                    . PHP_EOL
+                    . ' LEFT JOIN `mod_050_job_in_sp` spec1 ON spec1.jobman = c.jobman AND spec1.date = DATE( c.`start` ) '
+                    . PHP_EOL
+                    . ' WHERE '
+                    . PHP_EOL . ' c.`start` BETWEEN :dt_start AND :dt_finish '
+                    . ( $user == 'all' ? '' : PHP_EOL . ' AND `c`.`jobman` = :user ' )
+                    . PHP_EOL . ' AND c.status = \'show\' '
+                    . ' ORDER BY c.start ASC, job_in.date DESC '
+                    . ';';
+            $ff = $db->prepare($sql);
+
+            $vars = [];
+
+            if ($user != 'all')
+                $vars[':user'] = $user;
+
+            $vars[':dt_start'] = $dt_start;
+            $vars[':dt_finish'] = $dt_finish;
+
+            $ff->execute($vars);
+
+            $return = [];
+            $skip = [];
+            while ($res = $ff->fetch()) {
+
+                if (isset($skip[$res['id']]))
+                    continue;
+
+                $res['date'] = date('Y-m-d', strtotime($res['start'] . ' -3 hour'));
+
+                if (!empty($res['spec1_sp']) && !empty($res['spec1_dolgn'])) {
+                    $res['money'] = self::getSalarisNow($db, $res['spec1_sp'], $res['spec1_dolgn'], $res['date']);
+                } else {
+                    $res['money'] = self::getSalarisNow($db, $res['job_sp'], $res['job_dolgn'], $res['date']);
+                }
+
+                $res['today_hours'] = $res['hour_on_job_hand'] ?? $res['hour_on_job'] ?? '';
+
+                if (!empty($res['money']['ocenka-hour-base']) && !empty($res['today_hours'])) {
+                    $res['salary_hour'] = $res['money']['ocenka-hour-base'];
+                    $res['summa'] = round($res['salary_hour'] * $res['today_hours'], 1);
+                } else {
+
+                    $res['today_ocenka'] = (!empty($res['ocenka']) ? $res['ocenka'] : (!empty($res['ocenka_auto']) ? $res['ocenka_auto'] : '' ) );
+
+                    if (!empty($res['money']['ocenka-hour-' . $res['today_ocenka']]) && !empty($res['today_hours'])) {
+                        $res['salary_hour'] = $res['money']['ocenka-hour-' . $res['today_ocenka']];
+                        $res['summa'] = round($res['salary_hour'] * $res['today_hours'], 1);
+                    }
+                }
+                $skip[$res['id']] = 1;
+                $return[$res['id']] = $res;
+            }
+        } catch (Exception $exc) {
+            \f\pa($exc);
+        }
+        return \f\end3('ок', true, $return);
+    }
+
+    /**
      * кто в какой должности работал в укаанный период и 1 должность до него
      * @param type $db
      * @param type $op
@@ -205,162 +430,61 @@ class JobBuh {
      * @param type $module_oborot
      * @return type
      */
-    public static function calcDayBudget($db, $sp, $date) {
+    public static function getOborotSpDay($db, $sp, $date) {
 
+        // self::$cash_ar__sp_date_oborot = [];
 
-        $sql_in = [
-            ':date_start' => date('Y-m-01 08:00:00', strtotime($date)),
-            ':date_finish' => date('Y-m-d 03:00:00', strtotime($date . ' +1 month')),
-        ];
+        if (isset(self::$cash_ar__sp_date_oborot[$sp][$date]))
+            return self::$cash_ar__sp_date_oborot[$sp][$date];
+        // echo '<br/>'.$sp.' '.$date;
 
-        $sql = '
-            SELECT '
+        $date_start = date('Y-m-01', strtotime($date));
+        $date_finish = date('Y-m-d', strtotime($date . ' +1 month -1 day'));
 
-                // .' DISTINCT c.id check_id, '
-
-                .' c.*,
-                
-                DATE( DATE_ADD( c.start , INTERVAL -3 HOUR) ) date_smena 
-                ,
-                s.sale_point norm_sp
-                ,
-                s.dolgnost norm_dolgnost
-                ,
-                s.date norm_date_start
-                ,
-                s.date_finish norm_date_finish
-                ,
-                spec.sale_point spec_sp
-                ,
-                spec.dolgnost spec_dolgnost
-
-            FROM 
-                mod_050_chekin_checkout c
-            '  
-            // спец
-            // .' LEFT JOIN mod_050_job_in_sp '
-            // норм назнач
-
-//.' LEFT JOIN (SELECT * FROM `cars` ORDER BY `carPrice` LIMIT 18446744073709551615) as `cars` '
-//.' ON cars.belongsToUser=users.id                '
-                
-            // .' LEFT OUTER JOIN `mod_jobman_send_on_sp` s '
-                
-            .' LEFT JOIN `mod_050_job_in_sp` spec '
-                . ' ON '
-                    . ' spec.jobman = `c`.`jobman` '
-                    . ' AND spec.status = \'show\' '
-                    . ' AND spec.date = DATE( DATE_ADD( c.start , INTERVAL -5 HOUR) ) '
-
-            .' LEFT JOIN `mod_jobman_send_on_sp` s '
-                . ' ON '
-                    . ' s.jobman = `c`.`jobman` '
-                    . ' AND s.status = \'show\' '
-                    . ' AND DATE( s.date ) <= DATE( DATE_ADD( c.start , INTERVAL -5 HOUR) ) '
-                    // . ' AND ( s.date_finish IS NULL or DATE( s.date_finish ) >= DATE( DATE_ADD( c.start , INTERVAL -5 HOUR) ) )'
-                    // . ' AND c.start <= s.date '
-
-                
-            .' WHERE
-                c.jobman = 101362 
-                AND
-                c.start BETWEEN :date_start AND :date_finish
-            '
-            // .' GROUP BY CONCAT( c.id, \'|\', norm_date_start ) '
-            // .' GROUP BY c.id '
-            // .' GROUP BY c.id '
-            //.' ORDER BY c.start ASC, s.date DESC '
-            // .' ORDER BY s.date ASC '
-            .' ORDER BY norm_date_start DESC '
-            // .', s.date DESC '
-            // .' ORDER BY c.start DESC '
-            ;
-
+        $sql = 'SELECT sale_point, date, '
+                // дневной оборот
+                . ' ( CASE '
+                . ' WHEN oborot.oborot_hand IS NOT NULL THEN oborot.oborot_hand '
+                . ' WHEN oborot.oborot_server IS NOT NULL THEN oborot.oborot_server '
+                . ' ELSE NULL 
+                    END ) as oborot '
+                . ' FROM mod_sale_point_oborot oborot WHERE sale_point = :sp 
+                    AND date BETWEEN :date_start AND :date_finish '
+                . ' ;';
         $ff = $db->prepare($sql);
-        $ff->execute($sql_in);
 
-//        $res = $ff->fetchAll();
-//        \f\pa($res);
-        while( $r = $ff->fetch() ){
-        // \f\pa($r,2);
-            echo '<br/>'.$r['id'].' start '.$r['start'].' date '.$r['date_smena'].' '.$r['norm_date_start'].' spec sp '.( $r['spec_sp'] ?? '-' );
+        $ar_for_sql = [
+            ':sp' => $sp,
+            ':date_start' => $date_start,
+            ':date_finish' => $date_finish
+        ];
+        $ff->execute($ar_for_sql);
+
+        while ($r = $ff->fetch()) {
+            self::$cash_ar__sp_date_oborot[$r['sale_point']][$r['date']] = $r['oborot'];
         }
-//die();
-        return true;
 
-//        DATE()
-//
-//        
-//            $f = 'SELECT * FROM `mitems` mi WHERE '
-//                    . ' mi.`status` != \'delete2\' '
-//                    // . ' AND mi.folder = :folder '
-//                    . (isset($module{
-//                            1}) ? ' AND mi.`module` = \'' . addslashes($module) . '\' ' : '')
-//                    . (isset($stat{
-//                            1}) ? ' AND mi.`status` = \'' . addslashes($stat) . '\' ' : '')
-//                    . 'ORDER BY '
-//                    . (self::$sort_head == 'desc' ? ' mi.head DESC, ' : '')
-//                    . (self::$sort_head == 'asc' ? ' mi.head ASC, ' : '')
-//                    . ' mi.`sort` DESC, mi.`add_d` DESC, mi.`add_t` DESC '
-//                    . (isset($limit{
-//                            1}) && is_numeric($limit) ? 'LIMIT ' . $limit . ' ' : '')
-//                    . ';';
-//
-//            //            if( $_SERVER['HTTP_HOST'] == 'yapdomik.uralweb.info' )
-//            //                echo '<br/>'.'<br/>'.$f;
-//
-//            $ff = $db->prepare($f);
-//            $ff->execute(
-//                    array(
-//                    // ':folder' => $folder
-//                    )
-//            );
-//
-//            //$re1 = $ff->fetchAll();
-//            $re = [];
-//
-//            while ($v = $ff->fetch()) {
-//                // foreach ($re1 as $k => $v) {
-//                $re[$v['id']] = $v;        
-//            }
+        if (isset(self::$cash_ar__sp_date_oborot[$sp][$date]))
+            return self::$cash_ar__sp_date_oborot[$sp][$date];
 
         return false;
 
-        return \f\end3('ок', true, [
-            're' => ( $return ?? [] ),
-            'fio' => $fio,
-            'fio_names' => $names,
-            'user' => \Nyos\mod\JobDesc::$WhereJobMans['data']['ar_jm']]
-        );
-    }
-
-    /**
-     * получаем сумму оборота за месяц по точке продаж
-     * @param type $db
-     * @param type $sp
-     * @param type $str_date
-     * @param type $module_sp
-     * @param type $module_oborot
-     * @return type
-     */
-    public static function getOborotSpDay($db, $sp, $date) {
-
-        $mod_sp = \Nyos\mod\JobDesc::$mod_sale_point ?? '';
-        $mod_oborot = \Nyos\mod\JobDesc::$mod_oborots ?? '';
-        // $module_sp = 'sale_point', $module_oborot = 'sale_point_oborot'
-        if (empty($mod_sp) || empty($mod_oborot)) {
-            throw new \Exception('не важных переменных, не подгружен класс jobdesc');
-        }
-
-        $var_cash_day = self::$cash_var_oborot_day . 'sp' . $sp . '_d' . $date;
-
-        $r = \f\Cash::getVar($var_cash_day);
-        if ($r) {
-            return $r;
-        } else {
-            self::getOborotSpMonth($db, $sp, $date);
-            return false;
-        }
+//        $mod_sp = \Nyos\mod\JobDesc::$mod_sale_point ?? '';
+//        $mod_oborot = \Nyos\mod\JobDesc::$mod_oborots ?? '';
+//        // $module_sp = 'sale_point', $module_oborot = 'sale_point_oborot'
+//        if (empty($mod_sp) || empty($mod_oborot)) {
+//            throw new \Exception('не важных переменных, не подгружен класс jobdesc');
+//        }
+//
+//        $var_cash_day = self::$cash_var_oborot_day . 'sp' . $sp . '_d' . $date;
+//
+//        $r = \f\Cash::getVar($var_cash_day);
+//        if ($r) {
+//            return $r;
+//        } else {
+//            self::getOborotSpMonth($db, $sp, $date);
+//            return false;
+//        }
     }
 
     /**
@@ -377,7 +501,7 @@ class JobBuh {
         $d_month = date('Y-m', strtotime($str_date));
 
         $cash_var = \Nyos\mod\JobDesc::$mod_oborots . '_sp' . $sp_id . '_date' . $d_month;
-        $cash_time = 60 * 60 * 20;
+        $cash_time = 60 * 60 * 6;
 
         // \f\timer_start(123);
 
@@ -390,42 +514,59 @@ class JobBuh {
             
         } else {
 
+
+            // новая версия с новыми бд
+            if (1 == 1) {
+
+                $sql = 'SELECT oborot FROM temp_oborot WHERE date_y = :date_y AND date_m = :date_m AND sale_point = :sp LIMIT 1;';
+                $ff = $db->prepare($sql);
+                $ff->execute([
+                    ':date_y' => date('Y', strtotime($str_date)),
+                    ':date_m' => ceil(date('m', strtotime($str_date))),
+                    ':sp' => $sp_id
+                ]);
+                $kk0 = $ff->fetch();
+                $kk = $kk0['oborot'];
+            }
+            // старая версия без новых бд
+            else {
 //        if (!empty(self::$cash['month'][$sp_id][$d_month]))
 //            return self::$cash['month'][$sp_id][$d_month];
-            // self::$cash['month'][$sp_id][$d_month] = 0;
-            $kk = 0;
+                // self::$cash['month'][$sp_id][$d_month] = 0;
+                $kk = 0;
 
-            $d_start = $d_month . '-01';
-            $d_finish = date('Y-m-d', strtotime($d_start . ' +1 month -1 day'));
+                $d_start = $d_month . '-01';
+                $d_finish = date('Y-m-d', strtotime($d_start . ' +1 month -1 day'));
 
 //        \Nyos\mod\items::$where2 = ' AND ( midop.name = \'date\' AND midop.value_date '
 //                . ' BETWEEN \''.date('Y-m-d',strtotime($d_start)).'\' '
 //                . ' AND \''.date('Y-m-d',strtotime($d_finish)).'\' ) ';
 //        $oborots = \Nyos\mod\items::getItemsSimple2($db, $module_oborot);
 
-            $oborots = \Nyos\mod\items::getItemsSimple3($db, $module_oborot);
-            // \f\pa($oborots);
+                $oborots = \Nyos\mod\items::getItemsSimple3($db, $module_oborot);
+                // \f\pa($oborots);
 
-            foreach ($oborots as $k => $v) {
-                if (isset($v['sale_point']) && $v['sale_point'] == $sp_id && $v['date'] >= $d_start && $v['date'] <= $d_finish) {
-                    // if (!empty($v['oborot_server'])) {
+                foreach ($oborots as $k => $v) {
+                    if (isset($v['sale_point']) && $v['sale_point'] == $sp_id && $v['date'] >= $d_start && $v['date'] <= $d_finish) {
+                        // if (!empty($v['oborot_server'])) {
 
-                    if (!empty($v['oborot_hand']) && is_numeric($v['oborot_hand'])) {
-                        $oborot = (int) $v['oborot_hand'];
-                    } elseif (!empty($v['oborot_server']) && is_numeric($v['oborot_server'])) {
-                        $oborot = (int) $v['oborot_server'];
-                    } else {
-                        $oborot = 0;
+                        if (!empty($v['oborot_hand']) && is_numeric($v['oborot_hand'])) {
+                            $oborot = (int) $v['oborot_hand'];
+                        } elseif (!empty($v['oborot_server']) && is_numeric($v['oborot_server'])) {
+                            $oborot = (int) $v['oborot_server'];
+                        } else {
+                            $oborot = 0;
+                        }
+
+                        // $oborot = $v['oborot_hand'] ?? $v['oborot_server'] ?? 0;
+                        // self::$cash['month'][$sp_id][$d_month] += $v['oborot_server'];
+                        \f\Cash::setVar(self::$cash_var_oborot_day . 'sp' . $sp_id . '_d' . $v['date'], $oborot);
+                        //$kk += $v['oborot_server'];
+
+                        $kk += $oborot;
+                        // $r[ $d_start .' + '. $d_finish .' ++ '. $v['dop']['date'] .' - '. $v['dop']['sale_point'] ] = $v['dop']['oborot_server'];
+                        // }
                     }
-
-                    // $oborot = $v['oborot_hand'] ?? $v['oborot_server'] ?? 0;
-                    // self::$cash['month'][$sp_id][$d_month] += $v['oborot_server'];
-                    \f\Cash::setVar(self::$cash_var_oborot_day . 'sp' . $sp_id . '_d' . $v['date'], $oborot);
-                    //$kk += $v['oborot_server'];
-
-                    $kk += $oborot;
-                    // $r[ $d_start .' + '. $d_finish .' ++ '. $v['dop']['date'] .' - '. $v['dop']['sale_point'] ] = $v['dop']['oborot_server'];
-                    // }
                 }
             }
 

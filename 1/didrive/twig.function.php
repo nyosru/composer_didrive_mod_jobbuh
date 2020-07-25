@@ -10,12 +10,12 @@
 // $twig->addFunction($function);
 
 // creatSecret
- $function = new Twig_SimpleFunction('jobdesc__newGetSmensFullMonth', function ( $db, $user, $date ) {
+ $function = new Twig_SimpleFunction('jobbuh__newGetSmensFullMonth', function ( $db, $user, $date ) {
     
-     $res = \Nyos\mod\JobDesc::newGetSmensFullMonth($db, $user, $date);
+     return \Nyos\mod\JobBuh::newGetSmensFullMonth($db, $user, $date);
+     // $res = \Nyos\mod\JobBuh::newGetSmensFullMonth($db, $user, $date);
      // \f\pa($res);
-     
-     return $res;
+     // return $res;
  });
  $twig->addFunction($function);
 

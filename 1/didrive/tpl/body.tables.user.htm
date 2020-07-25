@@ -20,6 +20,9 @@
     {# старая версия #}
     {#{% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.user_line.htm' %}#}
 
+    {% set dolgnosti = items__get(db,'061.dolgnost') %}
+    {#{{ pa(dolgnosti) }}#}
+
     {# верхняя строка сотрудника #}
     {% if 1 == 1 %}
 
@@ -205,15 +208,15 @@
                                 >
 
                                 <nobr>
-                                {% if ( kolvo_points == 1 ) or ( head_sps__jobman_sp[man_id] is defined and head_sps__jobman_sp[man_id] == k ) %}
-                                    {% set now_sp_head = k %}
-                                    <span class="fa fa-check"></span>
-                                {% else %}
-                                    <span class="fa fa-circle-thin"></span>
-                                {% endif %}
-                                {{ sps[k]['head'] }}
+                                    {% if ( kolvo_points == 1 ) or ( head_sps__jobman_sp[man_id] is defined and head_sps__jobman_sp[man_id] == k ) %}
+                                        {% set now_sp_head = k %}
+                                        <span class="fa fa-check"></span>
+                                    {% else %}
+                                        <span class="fa fa-circle-thin"></span>
+                                    {% endif %}
+                                    {{ sps[k]['head'] }}
                                 </nobr>
-                                
+
                         </{% if 1 == 1 or ( now_level.type2 is defined and now_level.type2 == 'buh' ) %}a{% else %}span{% endif %}>
 
                     {% endfor %}
@@ -247,6 +250,10 @@
     {# проходимся по датам и показываем смены бонусы минусы #}
     {# ---------------------------- #}
 
+    {#    new_list_smens
+        {{ pa(new_list_smens,2) }}
+    #}
+
     {% for dd in range(0,32) %}
 
         {% set run_date = date_start|date_modify('+'~dd~' day')|date('Y-m-d') %}
@@ -264,85 +271,68 @@
         {# проходимся по чекам #}
         {#{% for check_id, item in getListJobsPeriodAll.data.checks if item.jobman == man_id and item.start|date('Y-m-d') == run_date %}#}
 
+        {% if get.d_fin|date("U") >= run_date|date("U") %}
+
+            {% for k, item in new_list_smens.data if item.date == run_date and item.today_hours > 0 %}
+
+                {# если тру то пропускаем сумму для калькуляции #}
+                {% set skip_calc = false %}
+
+                {% if item.job_finish == '' or item.job_finish >= item.date %}
+                {% else %}
+                    не учитывается, нет назначения
+                    {% set skip_calc = true %}
+                {% endif %}
+
+                {% set item_sp = item.sale_point ?? 0 %}
+
+                {% if item.spec1_sp is not null  %}
+                    {% set item_sp = item.spec1_sp %}
+                {% elseif item.job_sp is not null  %}
+                    {% set item_sp = item.job_sp %}
+                {% endif %}
+
+                {#sp{{ item_sp }}#}
+
+                {% set check_id = item.id %}
+                {#{%  set now_day_job = getListJobsPeriodAll.data.where_job__workman_date[man_id][run_date] %}#}
 
 
-        {% for k, item in new_list_smens.data if item.date == run_date and item.today_hours > 0 %}
+                {# показываем смену если катит точка продаж #}
+                {#{% if item_sp is not null and get.sp is defined and ( item_sp == get.sp or ( now_sp_head == get.sp and kolvo_points > 1 ) ) %}#}
+                {% if item_sp is not null and get.sp is defined and ( item_sp == get.sp or ( now_sp_head == get.sp and kolvo_points > 1 ) ) %}
 
-            {# если тру то пропускаем сумму для калькуляции #}
-            {% set skip_calc = false %}
+                    {#<br/> / {{ get.sp }} / {{ now_sp_head }} / {{ kolvo_points }} /#}
 
-            {% if item.job_finish == '' or item.job_finish >= item.date %}
-            {% else %}
-                не учитывается, нет назначения
-                {% set skip_calc = true %}
-            {% endif %}
+                    <div class="trow info_{{ man_id }}" style="display:none;" >
 
-            {% set item_sp = item.sale_point ?? 0 %}
+                        <div class="tcell" title="#{{ item.id }}" >
+                            {{ item.date|date('d.m.Y') }}
+                        </div>
 
-            {% if item.spec1_sp is not null  %}
-                {% set item_sp = item.spec1_sp %}
-            {% elseif item.job_sp is not null  %}
-                {% set item_sp = item.job_sp %}
-            {% endif %}
-
-            {#sp{{ item_sp }}#}
-
-            {% set check_id = item.id %}
-            {#{%  set now_day_job = getListJobsPeriodAll.data.where_job__workman_date[man_id][run_date] %}#}
-
-
-            {# показываем смену если катит точка продаж #}
-            {#{% if item_sp is not null and get.sp is defined and ( item_sp == get.sp or ( now_sp_head == get.sp and kolvo_points > 1 ) ) %}#}
-            {% if item_sp is not null and get.sp is defined and ( item_sp == get.sp or ( now_sp_head == get.sp and kolvo_points > 1 ) ) %}
-
-                {#<br/> / {{ get.sp }} / {{ now_sp_head }} / {{ kolvo_points }} /#}
-
-                {#{% if 1 == 1 %}#}
-
-                <div
-                    {% if 1 == 2 and ( item.ocenka is not defined or now.ocenka == 0 ) %}
-                        class="trow"
-                        {% set error_ruk = true %}
-                    {% else %}
-                        class="trow info_{{ man_id }}" style="display:none;"  
-                    {% endif %}
-                    >
-
-                    <div class="tcell" title="#{{ item.id }}" >
-
-                        {#                        {% if date_last != item.date|date('d.m.Y') %}#}
-                        {{ item.date|date('d.m.Y') }}
-                        {#                            {% set date_last = item.date|date('d.m.Y') %}
-                                                {% endif %}
-                        #}
-                    </div>
-
-                    <div class="tcell bg-white stick-left" >
+                        <div class="tcell bg-white stick-left" >
 
                         {% set sum_day = 0 %}
 
-                        {% if sps[item.money.sale_point]['head'] is not null %}
-                            <span class="checks_item sp1" >{{ sps[item.money.sale_point]['head'] }}</span>
+                        {% if sps[item.now_sale_point]['head'] is not null %}
+                            <span class="checks_item sp1" >{{ sps[item.now_sale_point]['head'] }}</span>
                         {% endif %}
 
-                        {% if now_day_job.type is defined and now_day_job.type == 'spec' %}
+                        {% if item.now_sale_point is not null and item.now_sale_point == item.job_sp %}
+                            <span class="checks_item smena" >Трудовая смена</span>
+                        {% elseif item.now_sale_point is not null and item.now_sale_point == item.spec1_sp %}
                             <span class="checks_item spec" >Спец. назначение</span>
                             {% set now_day_spec_jobs = true %}
                         {% endif %}
 
-                        <span class="checks_item smena" >Трудовая смена</span>
-
-                        {% if dolgns.data[now_day_job.dolgnost]['head'] is defined %}
-                            <span class="checks_item dolgn sup_hover_gray" >{{ dolgns.data[now_day_job.dolgnost]['head'] }}
-                                {% if now_day_job.smoke is defined and now_day_job.smoke == 'da' %}
-                                    <sup>курит</sup>
-                                {% endif %}
-                            </span>
+                        {% if dolgnosti[item.now_dolgnost]['head'] is defined %}
+                            <span class="checks_item dolgn sup_hover_gray" >{{ dolgnosti[item.now_dolgnost]['head'] }}</span>
                         {% endif %}
 
                         c {{ item.start[11:5] }} до {% if item.start[11:2] < item.fin[11:2] %}{{ item.fin|date('H:i') }}{% else %}{{ item.fin|date('d.m.Y H:i') }}{% endif %}
 
                         <br/>
+                        {#{% if item.jobman == 200 %}{{ pa(item,2) }}<br/>{% endif %} #}
 
                         Часов: {{ item.today_hours ?? '-' }}
                         Оценка: {{ item.today_ocenka ?? '-' }}
@@ -351,9 +341,9 @@
                         {%  endif %}
                         Цена часа: {{ item.salary_hour ?? '-' }}
 
-                            {#{% if 1 == 1 or item.id == 121515 %} item {{ pa(item,2) }} {% endif %}#}
-                            {% if 1 == 2 or item.id == 109409 %} item {{ pa(item,2) }} {% endif %}
-                            {% if 1 == 2 %} now_day_job {{ pa(now_day_job) }} {% endif %}
+                        {#{% if 1 == 1 or item.id == 121515 %} item {{ pa(item,2) }} {% endif %}#}
+                        {#{% if 1 == 2 or item.id == 109409 %} item {{ pa(item,2) }} {% endif %}#}
+                        {#{% if 1 == 2 %} now_day_job {{ pa(now_day_job) }} {% endif %}#}
 
                     </div>
                     <div class="tcell text-right" >
@@ -363,7 +353,6 @@
 
                                 {{ item.summa|number_format(0, '.', '`') }}
                                 {% set summa_man1 = summa_man1 + item.summa %}
-
                                 {% set money_job = money_job + item.summa %}
 
                             {% endif %}
@@ -377,118 +366,108 @@
 
                 </div>
 
-            {% endif %}
+                {% endif %}
 
-        {% endfor %}
+                    {% endfor %}
 
-        {# проходимся по бонусам #}
-        {% for item in new_pays.data if item.date == run_date %}
+                        {# проходимся по бонусам #}
+                        {% for item in new_pays.data if item.date == run_date %}
 
-            {#{{ pa(item) }}#}
+                            {#{{ pa(item) }}#}
 
-            {# показываем смену если катит точка продаж #}
-            {% if item.sale_point is defined and get.sp is defined and ( item.sale_point == get.sp or ( now_sp_head == get.sp and kolvo_points > 1 ) ) %}
+                            {# показываем смену если катит точка продаж #}
+                            {% if item.sale_point is defined and get.sp is defined and ( item.sale_point == get.sp or ( now_sp_head == get.sp and kolvo_points > 1 ) ) %}
 
-                {#% set summa_man = summa_man + 10 %#}
-                <div class="trow info_{{ man_id }}" style="display:none;" >
+                                {#% set summa_man = summa_man + 10 %#}
+                                <div class="trow info_{{ man_id }}" style="display:none;" >
 
-                    <div class="tcell" >
-                        {{ run_date|date('d.m.Y') }}
+                                    <div class="tcell" >
+                                        {{ run_date|date('d.m.Y') }}
+                                        {#{ pa(item) }#}
+                                    </div>
+
+                                    <div class="tcell bg-white stick-left" >
+
+                                        {% if item.sp is defined %}
+                                            <span class="checks_item sp1" >{{ item.sp }}</span>
+                                        {% endif %}
+
+                                        <span class="checks_item plus" >Бонус</span>
+                                        {{ item.text }}
+                                        {#<a style="float:right;" href="">удалить</a>#}
+                                    </div>
+                                    <div class="tcell text-right" >
+                                        {% if item.summa > 0 %}
+                                            {{ item.summa|number_format(0, '.', '`') }}
+
+                                            {% set summa_man1 = summa_man1 + item.summa %}
+                                            {% set money_bonus = money_bonus + item.summa %}
+
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </div>
+                                    <div class="tcell" ></div>
+                                    <div class="tcell" ></div>
+                                </div>
+
+                            {% endif %}
+                        {% endfor %}
+
+                        {# проходимся по минусам #}
+                        {% for id, item in getListJobsPeriodAll.data.money_minus 
+            if item.jobman == man_id and item.date_now == run_date and ( ( item.sale_point == get.sp and get.sp is defined ) or ( now_day_spec_jobs == true ) ) %}
+
                         {#{ pa(item) }#}
-                    </div>
+                        {#% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.user.minus.htm' %#}
 
-                    <div class="tcell bg-white stick-left" >
+                        {% if 1 == 1 %}
 
-                        {% if item.sp is defined %}
-                            <span class="checks_item sp1" >{{ item.sp }}</span>
+                            {#% set summa_man = summa_man + 10 %#}
+
+                            <div class="trow info_{{ man_id }}" style="display:none;" >
+
+                                <div class="tcell" >
+                                    {{ run_date|date('d.m.Y') }}
+                                    {#{ pa(item) }#}
+                                </div>
+
+                                <div class="tcell bg-white stick-left" >
+
+                                    {% if sps[item.sale_point]['head'] is defined %}
+                                        <span class="checks_item sp1" >{{ sps[item.sale_point]['head'] }}</span>
+                                    {% endif %}
+
+                                    <span class="checks_item minus" >Взыскание</span>
+                                    {{ item.text }}
+
+                                </div>
+                                <div class="tcell text-right" >
+                                    {% if item.summa != 0 %}
+
+                                        {{ item.summa|number_format(0, '.', '`') }}
+                                        {% set summa_man1 = summa_man1 + item.summa %}
+
+                                        {% set money_minus = money_minus + item.summa %}
+
+
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </div>
+                                <div class="tcell" ></div>
+                                <div class="tcell" ></div>
+                            </div>
+
+
                         {% endif %}
 
-                        <span class="checks_item plus" >Бонус</span>
-                        {{ item.text }}
-                        {#<a style="float:right;" href="">удалить</a>#}
-                    </div>
-                    <div class="tcell text-right" >
-                        {% if item.summa > 0 %}
-                            {{ item.summa|number_format(0, '.', '`') }}
+                        {% endfor %}
 
-                            {% set summa_man1 = summa_man1 + item.summa %}
-                            {% set money_bonus = money_bonus + item.summa %}
+                            {% endif %}
 
-                        {% else %}
-                            -
-                        {% endif %}
-                    </div>
-                    <div class="tcell" ></div>
-                    <div class="tcell" ></div>
-                </div>
+                                {% endfor %}
 
-            {% endif %}
-        {% endfor %}
+                                    {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.user_bottom_line.htm' %}
 
-
-
-
-        {# проходимся по минусам #}
-        {% for id, item in getListJobsPeriodAll.data.money_minus 
-            if 
-            item.jobman == man_id 
-            and item.date_now == run_date 
-            and 
-                ( 
-                    ( item.sale_point == get.sp and get.sp is defined )
-                    or
-                    ( now_day_spec_jobs == true )
-                )
-        %}
-
-        {#{ pa(item) }#}
-        {#% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.user.minus.htm' %#}
-
-        {% if 1 == 1 %}
-
-            {#% set summa_man = summa_man + 10 %#}
-
-            <div class="trow info_{{ man_id }}" style="display:none;" >
-
-                <div class="tcell" >
-                    {{ run_date|date('d.m.Y') }}
-                    {#{ pa(item) }#}
-                </div>
-
-                <div class="tcell bg-white stick-left" >
-
-                    {% if sps[item.sale_point]['head'] is defined %}
-                        <span class="checks_item sp1" >{{ sps[item.sale_point]['head'] }}</span>
-                    {% endif %}
-
-                    <span class="checks_item minus" >Взыскание</span>
-                    {{ item.text }}
-
-                </div>
-                <div class="tcell text-right" >
-                    {% if item.summa != 0 %}
-
-                        {{ item.summa|number_format(0, '.', '`') }}
-                        {% set summa_man1 = summa_man1 + item.summa %}
-
-                        {% set money_minus = money_minus + item.summa %}
-
-
-                    {% else %}
-                        -
-                    {% endif %}
-                </div>
-                <div class="tcell" ></div>
-                <div class="tcell" ></div>
-            </div>
-
-
-        {% endif %}
-
-    {% endfor %}
-
-    {% endfor %}
-
-        {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.user_bottom_line.htm' %}
-
-        {% endspaceless %}
+                                    {% endspaceless %}
