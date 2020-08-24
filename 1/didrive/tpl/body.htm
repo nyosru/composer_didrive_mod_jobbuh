@@ -88,7 +88,7 @@
                         Выберите точку продаж
                         <br/>
                         <br/>
-                        <h3>В бух интерфейсе загружаются обновления из графика в 10,20,30,40,50 минут каждого часа</h3>
+                        {#<h3>В бух интерфейсе загружаются обновления из графика в 10,20,30,40,50 минут каждого часа</h3>#}
                         <br/>
                     </div>
 
@@ -99,7 +99,8 @@
 
                         {#% set sps = readItems( 'sale_point', null )  %#}
                         {#{ pa(sps.data,2) }#}
-                        {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.htm' %}
+                        {#{% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.htm' %}#}
+                        {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.2007.tables.htm' %}
 
                     {% else %}
 

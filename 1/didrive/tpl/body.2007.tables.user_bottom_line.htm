@@ -1,0 +1,747 @@
+{% spaceless %}
+
+    {% if 1 == 1 %}
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <div class="trow xstick-top3" >
+
+            <div class="tcell" >&nbsp;</div>
+            <div class="tcell summa1" >
+            
+            
+
+                {% set pm_user = job_buh__get_buh_PM(db,get.d_start,man_id) %}
+                {#{ pa(pm_user) }}
+                {{ pa(buh_pm_cfg) }#}
+
+                {% set diff_summ = 0 %}
+                {% set buh = 0 %}
+
+                <div class="container-fluid" >
+                    <div class="row" >
+                        <div class="col-xs-12 col-sm-6" style="font-size:10px;">
+
+                            {% if now_level.type2 is defined and now_level.type2 == 'buh' %}
+                                <div xclass="bg-warning" style="background-color: rgba(0,255,0,0.2); padding:10px;" >
+                                    плюс</div>
+                                {% endif %}
+
+                            {% for k,v in buh_pm_cfg.plus if k != 'skip' %}
+
+                                {% set diff_summ = diff_summ + ( pm_user[k]['summa'] ?? 0 ) %}
+                                {% set plus = plus + ( pm_user[k]['summa'] ?? 0 ) %}
+
+                                {# формочка добавить выплату доступна всем #}
+                                {% if now_level.type2 is defined and now_level.type2 == 'buh' %}
+
+                                    <div>
+
+                                        {% set action = 'didrive__items__new_edit' %}
+                                        {% set aj_module = '003_money_buh_pm' %}
+                                        {% set aj_value = ( pm_user[k]['summa'] ?? '' ) %}
+                                        {% set aj_edit_pole = 'summa' %}
+
+                                        {% set dops = { 'jobman' : man_id ,
+                                           "date" : get.d_start ,
+                                           "type_plus" :  k } %}
+
+                                        <input type="number" 
+                                               class="didrive__items__new_edit"
+                                               style="width: 80px;"
+
+                                               step="0.01"
+                                               min="1"
+                                               max="99999"
+                                               placeholder=""
+
+                                               action="{{ action }}"
+                                               items_module="{{ aj_module }}"
+
+                                               edit_dop_name="{{ aj_edit_pole }}"
+                                               value="{{ aj_value }}"
+
+                                               {% set string_dop = '' %}
+                                               {% set nn = 1 %}
+
+                                               {% for k,v in dops %}
+
+                                                   addpole{{ nn }} = "{{ k }}"
+                                                   addpole{{ nn }}val = "{{ v }}"
+
+                                                   {% set string_dop = string_dop~'_'~k~'_'~v %}
+
+                                                   {% set nn = nn+1 %}
+
+                                               {% endfor %}
+
+                                               aj_id="{{ action }}_{{ aj_module }}{{ string_dop }}"
+                                               aj_s="{{ creatSecret( action ~'_'~ aj_module ~ string_dop ) }}"
+
+                                               >
+                                        {{ v }}                                
+                                    </div>
+                                    {#<br clear="all" />#}
+
+                                {% else %}
+                                    {% if pm_user[k]['summa'] is defined and pm_user[k]['summa'] > 0 %}
+                                        <b>{{ pm_user[k]['summa']|number_format(0, '.', '`') }}р</b> {{ v }}<br/>
+                                    {% endif %}
+                                {% endif %}
+
+                            {% endfor %}
+                        </div>
+
+                        <div class="col-xs-12 col-sm-6" style="font-size:10px;">
+
+                            {% if now_level.type2 is defined and now_level.type2 == 'buh' %}
+
+                                <div xclass="bg-warning" style="background-color: rgba(255,0,0,0.2); padding:10px;" >
+                                    взыскания
+                                </div>
+
+                            {% endif %}
+
+                            {% for k,v in buh_pm_cfg.minus if k != 'skip' %}
+
+                                {% set diff_summ = diff_summ - ( pm_user[k]['summa'] ?? 0 ) %}
+                                {% set minus = minus - ( pm_user[k]['summa'] ?? 0 ) %}
+
+
+                                {% if now_level.type2 is defined and now_level.type2 == 'buh' %}
+                                    <div>
+                                        {% set action = 'didrive__items__new_edit' %}
+                                        {% set aj_module = '003_money_buh_pm' %}
+                                        {% set aj_value = ( pm_user[k]['summa'] ?? '' ) %}
+                                        {% set aj_edit_pole = 'summa' %}
+
+                                        {% set dops = { 'jobman' : man_id ,
+                                           "date" : get.d_start ,
+                                           "type_plus" :  k } %}
+
+                                        <input type="number" 
+                                               class="didrive__items__new_edit"
+                                               style="width: 80px;"
+
+                                               step="0.01"
+                                               min="1"
+                                               max="99999"
+                                               placeholder=""
+
+                                               action="{{ action }}"
+                                               items_module="{{ aj_module }}"
+
+                                               edit_dop_name="{{ aj_edit_pole }}"
+                                               value="{{ aj_value }}"
+
+                                               {% set string_dop = '' %}
+                                               {% set nn = 1 %}
+
+                                               {% for k,v in dops %}
+
+                                                   addpole{{ nn }} = "{{ k }}"
+                                                   addpole{{ nn }}val = "{{ v }}"
+
+                                                   {% set string_dop = string_dop~'_'~k~'_'~v %}
+
+                                                   {% set nn = nn+1 %}
+
+                                               {% endfor %}
+
+                                               aj_id="{{ action }}_{{ aj_module }}{{ string_dop }}"
+                                               aj_s="{{ creatSecret( action ~'_'~ aj_module ~ string_dop ) }}"
+
+                                               >
+                                        {{ v }}
+                                    </div>
+                                {% else %}
+                                    {% if pm_user[k]['summa'] is defined and pm_user[k]['summa'] > 0 %}
+                                        <b>{{ pm_user[k]['summa']|number_format(0, '.', '`') }}р</b> {{ v }}<br/>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            
+            
+            </div>
+            <div class="tcell" >
+
+                    {% set summa_man = summa_man1 + minus + plus %}
+                    {{ summa_man|number_format(0, '.', '`') }}
+
+            </div>
+                    <div class="tcell" >
+
+                        {% set pays0 = 0 %}
+
+                        выплаты:
+
+                        {% set pays = jobbuh__get_list_pays_for_jobman( db, man_id , get.d_fin ) %}
+                        {# {{ pa( pays ) }} #}
+
+                        {% if pays[man_id] is defined %}
+                        {% for k,v in pays[man_id] %}
+                            <br/><nobr><small style="color:gray;" >{{ v.date }}</small> {{ v.summa|number_format(0, '.', '`') }}</nobr>
+                            {% set pays0 = pays0 - v.summa %}
+                        {% endfor %}
+                        {% endif %}
+
+                        {#{{ buh|number_format(0, '.', '`') }}#}
+                        <br/>
+                        <nobr>записи бухгалтера:</nobr>
+                        <br/>
+                        {{ diff_summ|number_format(0, '.', '`') }}
+                    </div>
+                    <div class="tcell" >
+                        {% set itogo = summa_man + diff_summ + pays0 %}
+                        {{ itogo|number_format(0, '.', '`') }}
+                    </div>
+
+        </div>
+
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+    {% else %}
+
+        {% set minus = 0 %}
+        {% set plus = 0 %}
+
+        <div class="trow xstick-top3" >
+
+            <div class="tcell" >&nbsp;</div>
+            <div class="tcell summa1 text-left" >
+
+                {% set pm_user = job_buh__get_buh_PM(db,get.d_start,man_id) %}
+                {#{ pa(pm_user) }}
+                {{ pa(buh_pm_cfg) }#}
+
+                {% set diff_summ = 0 %}
+
+                <div class="container-fluid" >
+                    <div class="row" >
+                        <div class="col-xs-12 col-sm-6" style="font-size:10px;">
+
+                            {% if now_level.type2 is defined and now_level.type2 == 'buh' %}
+                                <div xclass="bg-warning" style="background-color: rgba(0,255,0,0.2); padding:10px;" >
+                                    плюс</div>
+                                {% endif %}
+
+                            {% for k,v in buh_pm_cfg.plus if k != 'skip' %}
+
+                                {% set diff_summ = diff_summ + ( pm_user[k]['summa'] ?? 0 ) %}
+                                {% set plus = plus + ( pm_user[k]['summa'] ?? 0 ) %}
+
+                                {# формочка добавить выплату доступна всем #}
+                                {% if now_level.type2 is defined and now_level.type2 == 'buh' %}
+
+                                    <div>
+
+                                        {% set action = 'didrive__items__new_edit' %}
+                                        {% set aj_module = '003_money_buh_pm' %}
+                                        {% set aj_value = ( pm_user[k]['summa'] ?? '' ) %}
+                                        {% set aj_edit_pole = 'summa' %}
+
+                                        {% set dops = { 'jobman' : man_id ,
+                                           "date" : get.d_start ,
+                                           "type_plus" :  k } %}
+
+                                        <input type="number" 
+                                               class="didrive__items__new_edit"
+                                               style="width: 80px;"
+
+                                               step="0.01"
+                                               min="1"
+                                               max="99999"
+                                               placeholder=""
+
+                                               action="{{ action }}"
+                                               items_module="{{ aj_module }}"
+
+                                               edit_dop_name="{{ aj_edit_pole }}"
+                                               value="{{ aj_value }}"
+
+                                               {% set string_dop = '' %}
+                                               {% set nn = 1 %}
+
+                                               {% for k,v in dops %}
+
+                                                   addpole{{ nn }} = "{{ k }}"
+                                                   addpole{{ nn }}val = "{{ v }}"
+
+                                                   {% set string_dop = string_dop~'_'~k~'_'~v %}
+
+                                                   {% set nn = nn+1 %}
+
+                                               {% endfor %}
+
+                                               aj_id="{{ action }}_{{ aj_module }}{{ string_dop }}"
+                                               aj_s="{{ creatSecret( action ~'_'~ aj_module ~ string_dop ) }}"
+
+                                               >
+                                        {{ v }}                                
+                                    </div>
+                                    {#<br clear="all" />#}
+
+                                {% else %}
+                                    {% if pm_user[k]['summa'] is defined and pm_user[k]['summa'] > 0 %}
+                                        <b>{{ pm_user[k]['summa']|number_format(0, '.', '`') }}р</b> {{ v }}<br/>
+                                    {% endif %}
+                                {% endif %}
+
+                            {% endfor %}
+                        </div>
+
+                        <div class="col-xs-12 col-sm-6" style="font-size:10px;">
+
+                            {% if now_level.type2 is defined and now_level.type2 == 'buh' %}
+
+                                <div xclass="bg-warning" style="background-color: rgba(255,0,0,0.2); padding:10px;" >
+                                    взыскания
+                                </div>
+
+                            {% endif %}
+
+                            {% for k,v in buh_pm_cfg.minus if k != 'skip' %}
+
+                                {% set diff_summ = diff_summ - ( pm_user[k]['summa'] ?? 0 ) %}
+                                {% set minus = minus - ( pm_user[k]['summa'] ?? 0 ) %}
+
+
+                                {% if now_level.type2 is defined and now_level.type2 == 'buh' %}
+                                    <div>
+                                        {% set action = 'didrive__items__new_edit' %}
+                                        {% set aj_module = '003_money_buh_pm' %}
+                                        {% set aj_value = ( pm_user[k]['summa'] ?? '' ) %}
+                                        {% set aj_edit_pole = 'summa' %}
+
+                                        {% set dops = { 'jobman' : man_id ,
+                                           "date" : get.d_start ,
+                                           "type_plus" :  k } %}
+
+                                        <input type="number" 
+                                               class="didrive__items__new_edit"
+                                               style="width: 80px;"
+
+                                               step="0.01"
+                                               min="1"
+                                               max="99999"
+                                               placeholder=""
+
+                                               action="{{ action }}"
+                                               items_module="{{ aj_module }}"
+
+                                               edit_dop_name="{{ aj_edit_pole }}"
+                                               value="{{ aj_value }}"
+
+                                               {% set string_dop = '' %}
+                                               {% set nn = 1 %}
+
+                                               {% for k,v in dops %}
+
+                                                   addpole{{ nn }} = "{{ k }}"
+                                                   addpole{{ nn }}val = "{{ v }}"
+
+                                                   {% set string_dop = string_dop~'_'~k~'_'~v %}
+
+                                                   {% set nn = nn+1 %}
+
+                                               {% endfor %}
+
+                                               aj_id="{{ action }}_{{ aj_module }}{{ string_dop }}"
+                                               aj_s="{{ creatSecret( action ~'_'~ aj_module ~ string_dop ) }}"
+
+                                               >
+                                        {{ v }}
+                                    </div>
+                                {% else %}
+                                    {% if pm_user[k]['summa'] is defined and pm_user[k]['summa'] > 0 %}
+                                        <b>{{ pm_user[k]['summa']|number_format(0, '.', '`') }}р</b> {{ v }}<br/>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="tcell summa1 text-right" >
+
+                {% if 1 == 2 %}
+
+                    <small>
+
+                        payed_man 
+
+                        <br/>
+                        {{ payed_man }}
+
+                        <br/>
+
+                        {{ summa_man1 }}
+
+                    {% endif %}
+
+                    <small >
+                        <nobr>
+                            <font>За смены:</font>&nbsp;{{ money_job }}<br/>
+                            <font>Бонусы:</font>&nbsp;{{ money_bonus }}<br/>
+                            <font>Минусы:</font>&nbsp;{{ money_minus }}<br/>
+                            {#{{ summa_man1 }}<br/>#}
+                            <font>Бонусы:</font>&nbsp;{{ plus }}<br/>
+                            <font>Взыскания:</font>&nbsp;{{ minus }}
+                        </nobr>
+                        <br/>
+                    </small>
+
+                    {% set summa_man = summa_man1 + minus + plus %}
+                    {{ summa_man|number_format(0, '.', '`') }}
+
+                    {#{% set summa_man0 = getListJobsPeriodAll.data.money_to_pay[get.sp][man_id] %}#}
+
+
+                    {% if 1 == 2 %}
+
+                        <br/>
+                        <br/>
+
+                    </small>
+
+                    {% set summa_man0 = getListJobsPeriodAll.data.money_to_pay[get.sp][man_id] %}
+                    {% set summa_man = summa_man0 + diff_summ %}
+
+                    {#
+                    11111
+                    {{ summa_man|number_format(0, '.', '`') }}
+                    + 222222 +
+                    {{ diff_summ|number_format(0, '.', '`') }}
+                    + 222222 +
+                    #}
+                    {{ summa_man0|number_format(0, '.', '`') }}
+
+                    {#
+                                <br/>
+                                <br/>
+                                <button class="btn btn-xs btn-light send-pay-good" 
+                                        val-summa="{{ ostatok }}" 
+                                        val-checkin="{{ d.id_check }}"
+                                        show_on_click="res{{ d.id_check }}"
+                                        resto="res{{ d.id_check }}"
+                                        >Оплатить остаток</button>
+                                <div id="res{{ d.id_check }}" ></div>
+                    #}
+
+                {% endif %}
+
+            </div>
+            <div class="tcell plategi text-right" >
+
+                {#
+                {{ get.sp }} // ss - {{ now_sp_head }} / {{ kolvo_points }}
+                  <br/>
+                #}
+
+                {# если много точек и наша главная, то показываем ссылку #}
+                {% if kolvo_points == 1 or ( kolvo_points > 1 and now_sp_head is defined and get.sp is defined and now_sp_head == get.sp ) %}
+                    {% set show_button_pay = true %}
+                {% else %}
+                    {% set show_button_pay = false %}
+                {% endif %}
+
+                {% if show_button_pay == true %}
+
+                    {% set ostatok = summa_man - getListJobsPeriodAll.data.money_oplats[get.sp][man_id] %}
+
+                    {#{  pa(getListJobsPeriodAll.data.money_oplats[get.sp][man_id]) }#}
+
+                    {% for k51, pay in getListJobsPeriodAll.data.oplats if pay.jobman == man_id and pay.sale_point == get.sp 
+                and pay.date_end_period <= get.d_fin 
+                and pay.date_end_period >= get.d_start 
+                    %}
+
+                    {#{ pa(pay) }#}
+
+                    <div style="padding:3px; background-color: rgba(0,0,0,0.05); xborder: 1px solid gray; margin: 1px;">
+
+                        {#{ pa(pay) }#}
+                        {{ pay.summa|number_format(0, '.', '`') }} 
+
+                        <br/>
+
+                        <sup>{{ pay.date }}
+
+                            <a href="#" 
+
+                               class="btn3 edit_items_dop_values drop2_{{ pay.id }} xbtn xbtn-xs xbtn-light" 
+
+                               xstyle='display:none;'
+
+                               {# действие после вопроса #}
+                               comit_answer="Отменить премию ?"
+
+                               {# замена доп параметра #}
+                               action="edit_dop_item"
+
+                               {# модуль итемов #}
+                               itemsmod="075.buh_oplats"
+
+                               {# id итема #}
+                               item_id="{{ pay.id }}"
+
+                               {# название доп параметра #}
+                               {# dop_name="pay_check" #}
+                               {# новое значение параметра #}
+                               {# dop_new_value="no" #}
+                               {# секрет #}
+                               {# s3="{{ creatSecret( '050.chekin_checkout-'~item.id~'-pay_check-no' ) }}"  #}
+
+                               {# новое значение статуса записи #}
+                               new_status="hide"
+
+                               {# секрет #}
+                               s3="{{ creatSecret( '075.buh_oplats-'~pay.id~'-hide' ) }}" 
+
+                               {# скрыть ссылку после клика #}
+                               hidethis="da" 
+
+                               {# сделать видимым блок по id #}
+                               show_id="del_pay_{{ pay.id }}" 
+
+                               {# id куда печатаем результат #}
+                               res_to_id="del_pay_{{ pay.id }}" 
+
+                               {# сообщение печатаем если всё ок #}
+                               msg_to_success="Отменено"
+
+                               >Х</a>
+                        </sup>
+
+                        <div style="display:none;" id="del_pay_{{ pay.id }}" ></div>
+
+                        {% if 1 == 2 %}
+
+                            57
+
+                            <a href="#" 
+
+                               xclass="xbtn3 edit_items_dop_values drop2_{{ pay.id }} xbtn xbtn-xs xbtn-light" 
+                               class="edit_items_dop_values2" 
+
+                               xstyle='display:none;'
+
+                               {# действие после вопроса #}
+                               comit_answer="Отменить выплату ?"
+
+                               {# замена доп параметра #}
+                               action="edit_dop_item"
+
+                               {# модуль итемов #}
+                               itemsmod="075.buh_oplats"
+
+                               {# id итема #}
+                               item_id="{{ pay.id }}"
+
+                               {# название доп параметра #}
+                               {# dop_name="pay_check" #}
+                               {# новое значение параметра #}
+                               {# dop_new_value="no" #}
+                               {# секрет #}
+                               {# s3="{{ creatSecret( '050.chekin_checkout-'~item.id~'-pay_check-no' ) }}"  #}
+
+                               {# новое значение статуса записи #}
+                               new_status="hide"
+
+                               {# секрет #}
+                               s3="{{ creatSecret( '075.buh_oplats-'~pay.id~'-hide' ) }}" 
+
+                               {# скрыть ссылку после клика #}
+                               hidethis="da" 
+
+                               {# сделать видимым блок по id #}
+                               show_id="del_pay_{{ pay.id }}" 
+
+                               {# id куда печатаем результат #}
+                               res_to_id="del_pay_{{ pay.id }}" 
+
+                               {# сообщение печатаем если всё ок #}
+                               msg_to_success="Отменено"
+
+                               {# print_res_to_id="ares{{ k1 }}" #}
+
+                               >Х</a>
+
+
+                            </sup>
+
+                            <div style="display:none;" id="del_pay_{{ pay.id }}" ></div>
+
+                            <br/>
+                        {% endif %}
+
+                    </div>
+
+                    {#% set ostatok = ostatok - pay.summa %#}
+                    {% endfor %}
+
+
+
+
+                        {% set show_for_user_pay = true %}
+
+                        {% if show_for_user_pay == true %}
+
+                            {# форма фиксации оплаты #}
+                            {% if 1 == 1 %}
+
+                                {% if get.sp is not defined or ( get.sp is defined and get.sp == 'all' ) %}
+
+                                    для зачисления оплаты, выберите точку продаж
+
+                                {% else %}
+
+                                    <br/>
+                                    <a href="#" 
+                                       id="nadpis_form_send_money_{{ man_id }}"
+                                       onclick="$('#form_send_money_{{ man_id }}').show('slow');
+                                               $(this).hide('slow');
+                                               return false;"><span class="fa fa-plus" ></span> добавить выплату</a>
+                                    <center>
+                                        <form 
+                                            action=""
+                                            method="post"
+                                            class="send-pay-form"
+                                            id="form_send_money_{{ man_id }}" 
+                                            style=" display:none; background-color:rgba(0,0,255,0.2);
+                                            padding: 5px 10px; width:200px; border-radius:15px; text-align:center;"
+
+                                            {# если есть "ajax" то передаётся в форму ajax_resto_id="res_form_add_{{ jobman }}" #}
+                                            {# куда печатаем результат#}
+                                            resto_id="res_form_add_{{ man_id }}"
+
+                                            >
+
+                                            добавить выплату
+
+                                            <div class="input-group" >
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="inputGroupPrepend">дата</span>
+                                                </div>
+                                                <input type="date" class="form-control" xstyle="padding:3px;"
+                                                       name="date" 
+
+                                                       {%  if "now"|date('Y-m-d') >= get.d_start|date('Y-m-d') and "now"|date('Y-m-d') <= get.d_fin|date('Y-m-d') %}
+                                                           value="{{ "now"|date('Y-m-d') }}" 
+                                                       {%  else %}
+                                                           value="{{ get.d_fin|date('Y-m-d') }}" 
+                                                       {% endif %}
+
+                                                       xmin="{{ get.d_start|date('Y-m-d') }}" 
+                                                       xmax="{{ get.d_fin|date('Y-m-d') }}" 
+
+                                                       required="required"
+                                                       />
+
+                                            </div>
+
+                                            <div class="input-group" >
+
+                                                <input 
+                                                    type="number" min="1" xmax="{{ ostatok }}" 
+                                                    name="summa"
+                                                    value="{{ ostatok }}" class="form-control"  
+                                                    required="required"
+                                                    > 
+
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="inputGroupPrepend">₽</span>
+                                                </div>
+
+                                            </div>
+
+                                            <input type="hidden" name="sale_point" value="{{ get.sp }}" />
+
+                                            <input type="hidden" name="date_end_period" value="{{ get.d_fin }}" />
+
+                                            <input type="hidden" name="jobman" value="{{ man_id }}" />
+                                            <input type="hidden" name="id" value="{{ man_id }}" />
+                                            <input type="hidden" name="s" value="{{ creatSecret(man_id) }}" />
+
+                                            <input type="submit" class="xform-control xbtn-xs btn btn-success" value="Выплачено" onclick="$('#nadpis_form_send_money_{{ man_id }}').show('slow');" />
+
+                                        </form>
+                                    </center>
+                                    <div id="res_form_add_{{ man_id }}-2"></div>
+                                    <div id="res_form_add_{{ man_id }}"></div>
+
+                                {% endif %}
+
+                            {% endif %}                                
+
+                        {%  endif %}
+                        {%  endif %}
+
+                        </div>
+
+                        <div class="tcell ostatki {% if show_button_pay == true %} {% if ostatok == 0 %} bg-success {% else %} bg-warning {% endif %} {% endif %}" >
+
+                            {% if show_button_pay == true %}
+
+                                {% if ostatok == 0 %}
+
+                                    <center title="всё оплачено" class="text-white" >
+                                        оплачено
+                                    </center>
+
+                                {% else %}
+
+                                    {% if show_for_user_pay == true %}
+                                        <a href="#" 
+                                           onclick="$('#nadpis_form_send_money_{{ man_id }}').hide();$('#form_send_money_{{ man_id }}').show('slow');$('#form_send_money_{{ man_id }} input[name=summa]').val('{{ ostatok }}');
+                                                   return false;">
+                                            {{ ostatok|number_format(0, '.', '`') }}
+                                        </a>
+                                    {% else %}
+                                        {{ ostatok|number_format(0, '.', '`') }}
+                                    {% endif %}
+
+                                {% endif %}
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+                    {% endif %}
+                        {% endspaceless %}

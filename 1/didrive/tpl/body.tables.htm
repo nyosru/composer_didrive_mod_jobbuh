@@ -37,7 +37,8 @@
                 {% set sps = items__get( db, 'sale_point' )  %}    
                 {#{ pa(sps) }#} 
 
-                {% set dolgns = readItems( '061.dolgnost', null )  %}
+                {#{% set dolgns = readItems( '061.dolgnost', null )  %}#}
+                {% set dolgns = items__get( '061.dolgnost', null )  %}
                 {#{ pa(dolgns.data,2) }#}
 
                 {# показ таблицы с данными #}
