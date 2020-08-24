@@ -2,34 +2,22 @@
 
     {% if 1 == 1 %}
 
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         <div class="trow xstick-top3" >
 
             <div class="tcell" >&nbsp;</div>
             <div class="tcell summa1" >
-            
-            
 
-                {% set pm_user = job_buh__get_buh_PM(db,get.d_start,man_id) %}
-                {#{ pa(pm_user) }}
-                {{ pa(buh_pm_cfg) }#}
+
+
+                {#{% set pm_user = job_buh__get_buh_PM(db,get.d_start,) %}#}
+                {#{% set pm_user = job_buh__get_buh_PM(db,get.d_start,man_id) %}#}
+                {% set pm_user = job_buh__get_buh_PM2(db,get.d_start,man_id) %}
+
+                {% if 1 == 2 and session['now_user_di']['soc_web_id'] == 5903492 %}                
+                    {##{{ man_id }}#}
+                    {{ pa(pm_user,2) }}
+                    {#{{ pa(buh_pm_cfg,2) }}#}
+                {% endif %}
 
                 {% set diff_summ = 0 %}
                 {% set buh = 0 %}
@@ -61,40 +49,78 @@
                                         {% set dops = { 'jobman' : man_id ,
                                            "date" : get.d_start ,
                                            "type_plus" :  k } %}
+                                        {% if 1 == 2 %}
+                                            <input type="number" 
+                                                   class="didrive__items__new_edit"
+                                                   style="width: 80px;"
 
-                                        <input type="number" 
-                                               class="didrive__items__new_edit"
-                                               style="width: 80px;"
+                                                   step="0.01"
+                                                   min="1"
+                                                   max="99999"
+                                                   placeholder=""
 
-                                               step="0.01"
-                                               min="1"
-                                               max="99999"
-                                               placeholder=""
+                                                   action="{{ action }}"
+                                                   items_module="{{ aj_module }}"
 
-                                               action="{{ action }}"
-                                               items_module="{{ aj_module }}"
+                                                   edit_dop_name="{{ aj_edit_pole }}"
+                                                   value="{{ aj_value }}"
 
-                                               edit_dop_name="{{ aj_edit_pole }}"
-                                               value="{{ aj_value }}"
+                                                   {% set string_dop = '' %}
+                                                   {% set nn = 1 %}
 
-                                               {% set string_dop = '' %}
-                                               {% set nn = 1 %}
+                                                   {% for k,v in dops %}
 
-                                               {% for k,v in dops %}
+                                                       addpole{{ nn }} = "{{ k }}"
+                                                       addpole{{ nn }}val = "{{ v }}"
 
-                                                   addpole{{ nn }} = "{{ k }}"
-                                                   addpole{{ nn }}val = "{{ v }}"
+                                                       {% set string_dop = string_dop~'_'~k~'_'~v %}
 
-                                                   {% set string_dop = string_dop~'_'~k~'_'~v %}
+                                                       {% set nn = nn+1 %}
 
-                                                   {% set nn = nn+1 %}
+                                                   {% endfor %}
 
-                                               {% endfor %}
+                                                   aj_id="{{ action }}_{{ aj_module }}{{ string_dop }}"
+                                                   aj_s="{{ creatSecret( action ~'_'~ aj_module ~ string_dop ) }}"
 
-                                               aj_id="{{ action }}_{{ aj_module }}{{ string_dop }}"
-                                               aj_s="{{ creatSecret( action ~'_'~ aj_module ~ string_dop ) }}"
+                                                   >
+                                        {% endif %}                            
 
-                                               >
+                                        <input type="number" max="30000" min="0" step="0.1"
+                                               {#placeholder="уточнить"#}
+                                               title="укажите сумму"
+
+                                               {#value="{% if v.oborot_hand > 0 %}{{ v.oborot_hand }}{% endif %}" #}
+                                               value="{{ pm_user[k]['summa'] ?? '' }}" 
+
+                                               style="width: 90px; padding: 3px; margin: 0; display: inline-block ;"
+                                               {#style="width:120px; padding: 3px; margin: 0 auto; text-align:center;" #}
+                                               class="form-control didrive__edit_items_dop_pole"
+
+                                               module="003_money_buh_pm"
+
+                                               pole_edit_name="summa"
+
+                                               edit1="jobman"
+                                               edit1val="{{ man_id }}"
+                                               edit2="date"
+                                               edit2val="{{ get.d_start }}"
+                                               edit3="type_plus"
+                                               edit3val="{{ k }}"
+
+                                               edit_s="{{ creatSecret( "003_money_buh_pm"~man_id~get.d_start~k ) }}"
+
+                                               xedit_item_id="{{ oborots[now_date2]['id'] }}"
+                                               xedit_dop_name="oborot_hand"
+
+                                               xpole_price_id="a_price_{{ sp_now }}_{{ now_date2 }}"
+                                               xtext_in_pole_price_id="<br/><center>оборот изменился, текущая автооценка удалена</center>"
+
+                                               xdelete_ocenka_sp="{{ sp_now }}"
+                                               xdelete_ocenka_date="{{ now_date2 }}"
+                                               xdelete_ocenka_s="{{ creatSecret( sp_now~now_date2 ) }}"
+
+                                               />                                        
+
                                         {{ v }}                                
                                     </div>
                                     {#<br clear="all" />#}
@@ -135,6 +161,7 @@
                                            "date" : get.d_start ,
                                            "type_plus" :  k } %}
 
+                                           {% if 1 == 2 %}
                                         <input type="number" 
                                                class="didrive__items__new_edit"
                                                style="width: 80px;"
@@ -168,71 +195,110 @@
                                                aj_s="{{ creatSecret( action ~'_'~ aj_module ~ string_dop ) }}"
 
                                                >
+                                        {% endif %}
+                                        
+                                        <input type="number" max="30000" min="0" step="0.1"
+                                               {#placeholder="уточнить"#}
+                                               title="укажите сумму"
+
+                                               value="{{ pm_user[k]['summa'] ?? '' }}" 
+
+                                               style="width: 90px; padding: 3px; margin: 0; display: inline-block ;"
+                                               {#style="width:120px; padding: 3px; margin: 0 auto; text-align:center;" #}
+                                               class="form-control didrive__edit_items_dop_pole"
+
+                                               module="003_money_buh_pm"
+
+                                               pole_edit_name="summa"
+
+                                               edit1="jobman"
+                                               edit1val="{{ man_id }}"
+                                               edit2="date"
+                                               edit2val="{{ get.d_start }}"
+                                               edit3="type_minus"
+                                               edit3val="{{ k }}"
+
+                                               edit_s="{{ creatSecret( "003_money_buh_pm"~man_id~get.d_start~k ) }}"
+
+                                               xedit_item_id="{{ oborots[now_date2]['id'] }}"
+                                               xedit_dop_name="oborot_hand"
+
+                                               xpole_price_id="a_price_{{ sp_now }}_{{ now_date2 }}"
+                                               xtext_in_pole_price_id="<br/><center>оборот изменился, текущая автооценка удалена</center>"
+
+                                               xdelete_ocenka_sp="{{ sp_now }}"
+                                               xdelete_ocenka_date="{{ now_date2 }}"
+                                               xdelete_ocenka_s="{{ creatSecret( sp_now~now_date2 ) }}"
+
+                                               />                                          
+                                        
                                         {{ v }}
                                     </div>
                                 {% else %}
+                                    
                                     {% if pm_user[k]['summa'] is defined and pm_user[k]['summa'] > 0 %}
                                         <b>{{ pm_user[k]['summa']|number_format(0, '.', '`') }}р</b> {{ v }}<br/>
                                     {% endif %}
+                                    
                                 {% endif %}
                             {% endfor %}
                         </div>
                     </div>
                 </div>
-            
-            
+
+
             </div>
             <div class="tcell" >
 
-                    {% set summa_man = summa_man1 + minus + plus %}
-                    {{ summa_man|number_format(0, '.', '`') }}
+                {% set summa_man = summa_man1 + minus + plus %}
+                {{ summa_man|number_format(0, '.', '`') }}
 
             </div>
-                    <div class="tcell" >
+            <div class="tcell" >
 
-                        {% set pays0 = 0 %}
+                {% set pays0 = 0 %}
 
-                        выплаты:
+                выплаты:
 
-                        {% set pays = jobbuh__get_list_pays_for_jobman( db, man_id , get.d_fin ) %}
-                        {# {{ pa( pays ) }} #}
+                {% set pays = jobbuh__get_list_pays_for_jobman( db, man_id , get.d_fin ) %}
+                {# {{ pa( pays ) }} #}
 
-                        {% if pays[man_id] is defined %}
-                        {% for k,v in pays[man_id] %}
-                            <br/><nobr><small style="color:gray;" >{{ v.date }}</small> {{ v.summa|number_format(0, '.', '`') }}</nobr>
+                {% if pays[man_id] is defined %}
+                    {% for k,v in pays[man_id] %}
+                        <br/><nobr><small style="color:gray;" >{{ v.date }}</small> {{ v.summa|number_format(0, '.', '`') }}</nobr>
                             {% set pays0 = pays0 - v.summa %}
                         {% endfor %}
-                        {% endif %}
+                    {% endif %}
 
-                        {#{{ buh|number_format(0, '.', '`') }}#}
-                        <br/>
-                        <nobr>записи бухгалтера:</nobr>
-                        <br/>
-                        {{ diff_summ|number_format(0, '.', '`') }}
-                    </div>
-                    <div class="tcell" >
-                        {% set itogo = summa_man + diff_summ + pays0 %}
-                        {{ itogo|number_format(0, '.', '`') }}
-                    </div>
+                {#{{ buh|number_format(0, '.', '`') }}#}
+                <br/>
+                <nobr>записи бухгалтера:</nobr>
+                <br/>
+                {{ diff_summ|number_format(0, '.', '`') }}
+            </div>
+            <div class="tcell" >
+                {% set itogo = summa_man + diff_summ + pays0 %}
+                {{ itogo|number_format(0, '.', '`') }}
+            </div>
 
         </div>
 
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     {% else %}
 
         {% set minus = 0 %}

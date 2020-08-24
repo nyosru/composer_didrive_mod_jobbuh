@@ -75,8 +75,7 @@
                 {% set head_sps__jobman_sp = job_buh__get_head_sp( db, date_finish ) %}
                 {# {{ pa(head_sps__jobman_sp) }} #}
 
-
-            {% else %}                
+            {% else %}
 
                 {% set getListJobsPeriodAll = jobdesc__getListJobsPeriodAll( db, date_start, date_finish ) %}
                 {# весь массив данных по этому месяцу #}
@@ -118,11 +117,13 @@
 
                         {% set gets = get %}
 
+                        {% if 1 == 2 %}
                         {% set gets = gets|merge({ 'type':'print' }) %}
                         <a href="/i.didrive.php?{{ http_build_query(gets) }}" target="_blank" 
                            xstyle="float:right;"
                            xclass="btn btn-xs btn-success" style="display:inline-block; margin-bottom:15px; xfloat:right;"><i class="fa fa-print" ></i> Версия для печати</a>
-
+                        {% endif %}
+                           
                         <div class="ttable cell-padding5 list_otrezki2 cell-border">
 
                             <div class="trow user_head alert-warning stick-top"  >
@@ -176,15 +177,14 @@
                                     {#{{ pa(new_pays) }}#}
 
                                     {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.tables.user.htm' %}
-                                {% endfor %}
 
+                                {% endfor %}
                             {% endif %}
 
                         </div>
                     </span>
 
                 {% endif %}
-
             {% endif %}
 
         </div>

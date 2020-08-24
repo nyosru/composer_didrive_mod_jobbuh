@@ -27,7 +27,7 @@ $function = new Twig_SimpleFunction('buh__jobdesc_ms__get_actions_jobmans_on_mon
         if (!empty($v['type']) && $v['type'] == 'check') {
 
             $e['data']['actions'][$k]['today_hours'] = $v['hour_on_job_hand'] ?? $v['hour_on_job'];
-            $e['data']['actions'][$k]['today_ocenka'] = $v['ocenka'] ?? $v['ocenka_auto'] ;
+            $e['data']['actions'][$k]['today_ocenka'] = $v['ocenka'] ?? $v['ocenka_auto'];
 
             if (empty($v['spec_id']) && !empty($v['position_sp']) && !empty($v['position_d'])) {
 
@@ -35,7 +35,6 @@ $function = new Twig_SimpleFunction('buh__jobdesc_ms__get_actions_jobmans_on_mon
                 $e['data']['actions'][$k]['salary_hour'] = $v['pay_base'] ?? $v['pay' . $e['data']['actions'][$k]['today_ocenka']] ?? 0;
                 $e['data']['actions'][$k]['today_sp'] = $v['position_sp'];
                 $e['data']['actions'][$k]['today_d'] = $v['position_d'];
-                
             } elseif (!empty($v['spec_id'])) {
 
                 $e['data']['actions'][$k]['today_type'] = 'spec';
@@ -46,11 +45,10 @@ $function = new Twig_SimpleFunction('buh__jobdesc_ms__get_actions_jobmans_on_mon
                 // \f\pa($e['data']['actions'][$k]);
             }
 
-            
-            if ( 
-                    isset($e['data']['actions'][$k]['today_d']) 
-                    && $e['data']['actions'][$k]['today_d'] == 111186
-                    ) {
+
+            if (
+                    isset($e['data']['actions'][$k]['today_d']) && $e['data']['actions'][$k]['today_d'] == 111186
+            ) {
                 $ee = \Nyos\mod\JobDesc::whoisSizeNowPay($db, $e['data']['actions'][$k]['today_sp'], $e['data']['actions'][$k]['today_d'], $v['date']);
                 // \f\pa($ee);
 
@@ -74,30 +72,28 @@ $function = new Twig_SimpleFunction('buh__jobdesc_ms__get_actions_jobmans_on_mon
 //            }
 
             $now = $e['data']['actions'][$k];
-            
-            if ( isset($now['today_sp']) && !isset( \Nyos\mod\JobDesc::$cash['auto_bonus'][ $now['jobman'] ][ $now['today_sp'] ][ $now['date'] ] )) {
+
+            if (isset($now['today_sp']) && !isset(\Nyos\mod\JobDesc::$cash['auto_bonus'][$now['jobman']][$now['today_sp']][$now['date']])) {
 
                 // \f\pa($e['data']['actions'][$k]);
                 // \f\pa($v);
-                
-                \Nyos\mod\JobDesc::$cash['auto_bonus'][ $now['jobman'] ][ $now['today_sp'] ][ $now['date'] ] = 1;
-                
-                $bb = \Nyos\mod\JobDesc::calcAutoBonus($db, $now['today_sp'] , $e['data']['actions'][$k]);
+
+                \Nyos\mod\JobDesc::$cash['auto_bonus'][$now['jobman']][$now['today_sp']][$now['date']] = 1;
+
+                $bb = \Nyos\mod\JobDesc::calcAutoBonus($db, $now['today_sp'], $e['data']['actions'][$k]);
 
                 // \f\pa($bb);
-                
+
                 if (isset($bb['status']) && $bb['status'] == 'ok') {
 
                     // \f\pa($bb);
                     $new_bonus = $bb['data'];
                     $new_bonus['date'] = $e['data']['actions'][$k]['date'];
-                    $new_bonus['type'] = 
-                    $new_bonus['today_type'] = 'auto_plus';
+                    $new_bonus['type'] = $new_bonus['today_type'] = 'auto_plus';
                     $new_bonus['today_sp'] = $e['data']['actions'][$k]['today_sp'];
                     $new_bonus['jobman'] = $e['data']['actions'][$k]['jobman'];
                     // \f\pa($new_bonus,2);
                     $e['data']['actions'][] = $new_bonus;
-
                 }
             }
         }
@@ -124,8 +120,8 @@ $twig->addFunction($function);
 // creatSecret
 $function = new Twig_SimpleFunction('jobbuh__get_list_pays_for_jobman', function ( $db, $user, $date ) {
 
-    $date_start = date('Y-m-01', strtotime($date) );    
-    $date_finish = date('Y-m-d', strtotime( $date_start.' +1 month -1 day' ) );    
+    $date_start = date('Y-m-01', strtotime($date));
+    $date_finish = date('Y-m-d', strtotime($date_start . ' +1 month -1 day'));
 
     $sql = 'SELECT * FROM mod_075_buh_oplats WHERE date >= :date_s and date <= :date_f and jobman = :jm ';
     $ff = $db->prepare($sql);
@@ -137,7 +133,7 @@ $function = new Twig_SimpleFunction('jobbuh__get_list_pays_for_jobman', function
     $ff->execute($sql_vars);
 
 // $return = [];
-return $ff->fetchAll();
+    return $ff->fetchAll();
     return $e;
 });
 $twig->addFunction($function);
@@ -228,7 +224,14 @@ $function = new Twig_SimpleFunction('job_buh__get_buh_PM2', function ($db, $date
     $ff->execute($sql_vars);
 
 // $return = [];
-    return $ff->fetchAll();
+    // $res = $ff->fetchAll();
+    $re = [];
+    while ($res = $ff->fetch()) {
+        $re[$res['type_plus'] ?? $res['type_minus'] ?? 'x'] = ['summa' => $res['summa']];
+    }
+
+    // return $ff->fetchAll();
+    return $re;
     // echo '<div style="padding:10px; border: 1px solid green;" >';
 //
 //                $return = $return1 = [];
