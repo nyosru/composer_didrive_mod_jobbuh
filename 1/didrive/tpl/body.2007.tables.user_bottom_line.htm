@@ -33,8 +33,10 @@
 
                             {% for k,v in buh_pm_cfg.plus if k != 'skip' %}
 
-                                {% set diff_summ = diff_summ + ( pm_user[k]['summa'] ?? 0 ) %}
-                                {% set plus = plus + ( pm_user[k]['summa'] ?? 0 ) %}
+                                {% if pm_user[k]['summa'] > 0 %}
+                                    {% set diff_summ = diff_summ + ( pm_user[k]['summa'] ?? 0 ) %}
+                                    {% set plus = plus + ( pm_user[k]['summa'] ?? 0 ) %}
+                                {% endif %}
 
                                 {# формочка добавить выплату доступна всем #}
                                 {% if now_level.type2 is defined and now_level.type2 == 'buh' %}
@@ -146,8 +148,10 @@
 
                             {% for k,v in buh_pm_cfg.minus if k != 'skip' %}
 
-                                {% set diff_summ = diff_summ - ( pm_user[k]['summa'] ?? 0 ) %}
-                                {% set minus = minus - ( pm_user[k]['summa'] ?? 0 ) %}
+                                {% if pm_user[k]['summa'] > 0 %}
+                                    {% set diff_summ = diff_summ - ( pm_user[k]['summa'] ?? 0 ) %}
+                                    {% set minus = minus - ( pm_user[k]['summa'] ?? 0 ) %}
+                                {% endif %}
 
 
                                 {% if now_level.type2 is defined and now_level.type2 == 'buh' %}
@@ -161,42 +165,42 @@
                                            "date" : get.d_start ,
                                            "type_plus" :  k } %}
 
-                                           {% if 1 == 2 %}
-                                        <input type="number" 
-                                               class="didrive__items__new_edit"
-                                               style="width: 80px;"
+                                        {% if 1 == 2 %}
+                                            <input type="number" 
+                                                   class="didrive__items__new_edit"
+                                                   style="width: 80px;"
 
-                                               step="0.01"
-                                               min="1"
-                                               max="99999"
-                                               placeholder=""
+                                                   step="0.01"
+                                                   min="1"
+                                                   max="99999"
+                                                   placeholder=""
 
-                                               action="{{ action }}"
-                                               items_module="{{ aj_module }}"
+                                                   action="{{ action }}"
+                                                   items_module="{{ aj_module }}"
 
-                                               edit_dop_name="{{ aj_edit_pole }}"
-                                               value="{{ aj_value }}"
+                                                   edit_dop_name="{{ aj_edit_pole }}"
+                                                   value="{{ aj_value }}"
 
-                                               {% set string_dop = '' %}
-                                               {% set nn = 1 %}
+                                                   {% set string_dop = '' %}
+                                                   {% set nn = 1 %}
 
-                                               {% for k,v in dops %}
+                                                   {% for k,v in dops %}
 
-                                                   addpole{{ nn }} = "{{ k }}"
-                                                   addpole{{ nn }}val = "{{ v }}"
+                                                       addpole{{ nn }} = "{{ k }}"
+                                                       addpole{{ nn }}val = "{{ v }}"
 
-                                                   {% set string_dop = string_dop~'_'~k~'_'~v %}
+                                                       {% set string_dop = string_dop~'_'~k~'_'~v %}
 
-                                                   {% set nn = nn+1 %}
+                                                       {% set nn = nn+1 %}
 
-                                               {% endfor %}
+                                                   {% endfor %}
 
-                                               aj_id="{{ action }}_{{ aj_module }}{{ string_dop }}"
-                                               aj_s="{{ creatSecret( action ~'_'~ aj_module ~ string_dop ) }}"
+                                                   aj_id="{{ action }}_{{ aj_module }}{{ string_dop }}"
+                                                   aj_s="{{ creatSecret( action ~'_'~ aj_module ~ string_dop ) }}"
 
-                                               >
+                                                   >
                                         {% endif %}
-                                        
+
                                         <input type="number" max="30000" min="0" step="0.1"
                                                {#placeholder="уточнить"#}
                                                title="укажите сумму"
@@ -231,15 +235,15 @@
                                                xdelete_ocenka_s="{{ creatSecret( sp_now~now_date2 ) }}"
 
                                                />                                          
-                                        
+
                                         {{ v }}
                                     </div>
                                 {% else %}
-                                    
+
                                     {% if pm_user[k]['summa'] is defined and pm_user[k]['summa'] > 0 %}
                                         <b>{{ pm_user[k]['summa']|number_format(0, '.', '`') }}р</b> {{ v }}<br/>
                                     {% endif %}
-                                    
+
                                 {% endif %}
                             {% endfor %}
                         </div>
