@@ -5,17 +5,16 @@
         <div class="trow xstick-top3" >
 
             <div class="tcell" >&nbsp;</div>
+
             <div class="tcell summa1" >
-
-
 
                 {#{% set pm_user = job_buh__get_buh_PM(db,get.d_start,) %}#}
                 {#{% set pm_user = job_buh__get_buh_PM(db,get.d_start,man_id) %}#}
                 {% set pm_user = job_buh__get_buh_PM2(db,get.d_start,man_id) %}
 
-                {% if 1 == 2 and session['now_user_di']['soc_web_id'] == 5903492 %}                
+                {% if 1 == 1 and session['now_user_di']['soc_web_id'] == 5903492 %}                
                     {##{{ man_id }}#}
-                    {{ pa(pm_user,2) }}
+                    {#{{ pa(pm_user,2) }}#}
                     {#{{ pa(buh_pm_cfg,2) }}#}
                 {% endif %}
 
@@ -252,30 +251,138 @@
 
 
             </div>
-            <div class="tcell" >
 
+            <div class="tcell" >
                 {% set summa_man = summa_man1 + minus + plus %}
                 {{ summa_man|number_format(0, '.', '`') }}
-
             </div>
-            <div class="tcell" >
 
+            <div class="tcell" >
                 {% set pays0 = 0 %}
 
-                выплаты:
+                <table class="table table-condense" >
 
-                {% set pays = jobbuh__get_list_pays_for_jobman( db, man_id , get.d_fin ) %}
-                {# {{ pa( pays ) }} #}
+                    {#<thead><tr><td>выплаты:</td></tr></thead>#}
 
-                {% if pays[man_id] is defined %}
-                    {% for k,v in pays[man_id] %}
-                        <br/><nobr><small style="color:gray;" >{{ v.date }}</small> {{ v.summa|number_format(0, '.', '`') }}</nobr>
-                            {% set pays0 = pays0 - v.summa %}
+                    <tbody>
+
+                        {% if pays[man_id] is defined %}
+
+                            {% for k,pay in pays[man_id] %}
+                                <tr><td>
+
+                                        {#{{ pa(pay) }}#}
+
+                            <nobr>
+                                <small style="color:gray;" >{{ pay.date }}</small> 
+                                {{ pay.summa|number_format(0, '.', '`') }}
+
+                                <a href="#" 
+
+                                   class="base__send_to_ajax" 
+                                   style="float:right;" 
+
+                                   href_to_ajax="/vendor/didrive_mod/items/3/micro-service/delete-items.php" 
+
+                                   hidethis="da" 
+                                   answer="отменить выплату ?" 
+
+                                   r_module="075.buh_oplats"
+                                   delete_id='{{ pay.id }}'
+                                   s='{{ creatSecret(pay.id) }}'
+
+                                   res_to_id="pa{{ pay.id }}" 
+                                   after_click_showid="pa{{ pay.id }}" 
+                                   msg_to_success="<div class='bg-warning'>Выплата отменена</div>" 
+
+                                   {#// эти строчки для второго запроса // будет отправлен если они есть#}
+                                   {#ajax2_link='/vendor/didrive_mod/items/3/micro-service/delete-items.php'#}
+                                   {#ajax2_vars='r_module=sp_ocenki_job_day&remove[sale_point]={{ sp_now }}&remove[date]={{ date }}'#}
+
+                                   ><span class="fa fa-remove"></span></a>
+                                <div id="pa{{ pay.id }}" style="display:none;"></div>
+
+                                {% set pays0 = pays0 - pay.summa %}
+
+                            </nobr>
+                            </td></tr>
                         {% endfor %}
+
+
                     {% endif %}
 
-                {#{{ buh|number_format(0, '.', '`') }}#}
-                <br/>
+
+                    <tr>
+                        <td>
+                            {# форма фиксации оплаты #}
+                            {% if 1 == 1 %}
+
+                                {% if get.sp is not defined or ( get.sp is defined and get.sp == 'all' ) %}
+
+                                    для зачисления оплаты, выберите точку продаж
+
+                                {% else %}
+
+                                    <br/>
+
+                                    <a href="#" 
+                                       id="nadpis_form_send_money_{{ man_id }}"
+                                       onclick="$('#form_send_money_{{ man_id }}').show('slow');
+                                               $(this).hide('slow');
+                                               return false;"><span class="fa fa-plus" ></span> добавить выплату</a>
+                            <center>
+
+
+
+                                <form class="base__send_form_ajax" 
+                                      action="/vendor/didrive_mod/job_buh/1/micro-service/pay-add.php"
+                                      after_send_show_id="321"
+                                      resto_id="res1_form_add_{{ man_id }}"
+                                      hide_before_job_ok="23"
+                                      before_job_ok_reload="234"
+                                      >
+
+                                    {#jobman#}
+                                    <input type="hidden" name="jobman" value="{{ man_id }}" />
+
+                                    {#date_end_period#}
+                                    <input type="hidden" name="date_end_period" value="{{ get.d_fin }}" />
+
+                                    <input type="date" name="date" value="{{ "now"|date('Y-m-d') }}" />
+                                    <input type="number" name="summa" value="" />
+
+                                    {#sale_point#}
+                                    <input type="hidden" name="sale_point" value="{{ get.sp }}" />
+
+                                    {#pay_buh_who#}
+                                    {#{% if session.now_user_di.id is not empty %}
+                                    <input type="hidden" name="pay_buh_who" value="{{ session.now_user_di.id }}" />
+                                    {% endif %}#}
+
+                                    {#{{ pa(session) }}#}
+
+                                    {#pay_buh_dt
+                                    <input type="datetime" name="pay_buh_dt" value="" />#}
+
+                                    <input type="submit" name="add" value="Добавить выплату" />
+                                </form>
+                            </center>
+
+                            <div id="res1_form_add_{{ man_id }}"></div>
+
+
+
+                        {% endif %}
+
+                    {% endif %}                                
+                    </td>
+                    </tr>
+
+                    </tbody></table>
+
+
+
+
                 <nobr>записи бухгалтера:</nobr>
                 <br/>
                 {{ diff_summ|number_format(0, '.', '`') }}
@@ -798,7 +905,9 @@
 
                                     {% if show_for_user_pay == true %}
                                         <a href="#" 
-                                           onclick="$('#nadpis_form_send_money_{{ man_id }}').hide();$('#form_send_money_{{ man_id }}').show('slow');$('#form_send_money_{{ man_id }} input[name=summa]').val('{{ ostatok }}');
+                                           onclick="$('#nadpis_form_send_money_{{ man_id }}').hide();
+                                                   $('#form_send_money_{{ man_id }}').show('slow');
+                                                   $('#form_send_money_{{ man_id }} input[name=summa]').val('{{ ostatok }}');
                                                    return false;">
                                             {{ ostatok|number_format(0, '.', '`') }}
                                         </a>

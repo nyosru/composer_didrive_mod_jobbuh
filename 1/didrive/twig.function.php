@@ -141,6 +141,42 @@ $twig->addFunction($function);
 
 
 
+$function = new Twig_SimpleFunction('jobbuh__get_list_pays_for_jobmans_on_month', function ( $db, $users, $date ) {
+
+    $date_start = date('Y-m-01', strtotime($date));
+    $date_finish = date('Y-m-d', strtotime($date_start . ' +1 month -1 day'));
+
+    $jm = ' `jobman` = \''.implode('\' OR `jobman` = \'',$users).'\' ';
+    
+    $sql = 'SELECT '.
+//        ' id, summa, date, jobman, sale_point '.
+            ' * '.
+        ' FROM mod_075_buh_oplats WHERE date_end_period >= :date_s and date_end_period <= :date_f and ( '.$jm.' ) AND `status` = \'show\' ';
+    // \f\pa($sql);
+    $ff = $db->prepare($sql);
+    $sql_vars = [
+        ':date_s' => $date_start,
+        ':date_f' => $date_finish,
+    //    ':jm' => implode(', ',$users)
+    ];
+    // \f\pa($sql_vars);
+    $ff->execute($sql_vars);
+
+// $return = [];
+    // return $ff->fetchAll();
+    $return_jobman_d = [];
+    
+    while( $r = $ff->fetch() ){
+        $return_jobman_d[$r['jobman']][] = $r;
+    }
+    
+    return $return_jobman_d;
+});
+$twig->addFunction($function);
+
+
+
+
 
 
 
