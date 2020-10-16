@@ -3,38 +3,101 @@
     {# верхняя строка сотрудника #}
     {% if 1 == 1 %}
 
-        <div class="trow stick-top3 row_user" 
-             {# style="background-color: lightgreen;" #}
-             >
 
-            <div class="tcell"  >&nbsp;</div>
-            <div class="tcell nameuser" >
+        {# версия для печати #}
+        {% if get.type is defined and get.type == 'print' %}
+        {% else %}
 
-                {% if 1 == 2 %}
-                    {{ pa(session) }}
-                    {# текущий пользователь #}
-                    {{ pa(session.now_user_di.id) }}
-                {% endif %}
+            <div class="trow stick-top3 row_user" 
+                 {# style="background-color: lightgreen;" #}
+                 >
 
-                <button class="btn-xs btn" 
-                        onclick="$('.info_{{ man_id }}').toggle('slow');"
-                        style="float:right;">показать/скрыть подробности</button>
+                <div class="tcell"  >&nbsp;</div>
 
-                <span title="#{{ man_id }}" >{{ man }}</span> &nbsp; 
+                <div class="tcell nameuser" >
 
-                {#{ pa(getListJobsPeriodAll.data.job_on_sp) }#}
+                    {% if 1 == 2 %}
+                        {{ pa(session) }}
+                        {# текущий пользователь #}
+                        {{ pa(session.now_user_di.id) }}
+                    {% endif %}
 
-{#                <sup style="xfont-size:0.8em; color: black;" title="отмечены точки продаж где сотрудник работает в этом месяце">
-                    точки продаж                    
-                </sup>
-#}
+                    <button class="btn-xs btn" 
+                            onclick="$('.info_{{ man_id }}').toggle('slow');"
+                            style="float:right;">показать/скрыть подробности</button>
+
+                    <span title="#{{ man_id }}" >{{ man }}</span> &nbsp; 
+
+                    {% if jobmans.data.ar__jm_sp[man_id]|length > 1 %}
+
+                        {% for sp_id,v in jobmans.data.ar__jm_sp[man_id] %}
+                            <button class="base__send_to_ajax btn btn-xs {% if sps_heads__jm_sp[man_id] is defined and sps_heads__jm_sp[man_id] == sp_id %}btn-success{% else %}btn-light{% endif %} " style="border: 1px solid gray;" 
+
+                                    href_to_ajax="/vendor/didrive_mod/job_buh/1/micro-service/set_head_sp_for_jobman.php" 
+                                    date="{{ get.d_fin }}"
+                                    sale_point="{{ sp_id }}"
+                                    jobman="{{ man_id }}"
+
+                                    after_click_showid="info_sp_head_{{ man_id }}" 
+                                    res_to_id="info_sp_head_{{ man_id }}" 
+                                    msg_to_success="<div class='alert-success' >Установлена главная точка продаж {{ sps[sp_id]['head'] }} (обновите страницу)</div>" 
+
+                                    {#// эти строчки для второго запроса // будет отправлен если они есть#}
+                                    {#xajax2_link='/vendor/didrive_mod/items/3/micro-service/delete-items.php'#}
+                                    {#xajax2_vars='r_module=sp_ocenki_job_day&remove[sale_point]={{ sp_now }}&remove[date]={{ date }}'#}
+
+                                    >{{ sps[sp_id]['head'] }}</button>
+
+
+                            {#<a href="#" 
+                        
+                                class="base__send_to_ajax" 
+                                style="float:right;" 
+                        
+                                href_to_ajax="/vendor/didrive_mod/items/1/ajax.php" 
+                        
+                                xhidethis="da" 
+                                xanswer="удалить комментарий ?" 
+                        
+                                action="remove_item" 
+                                aj_id="' + ar['id'] + '" 
+                                aj_s="' + ar['s'] + '" 
+                        
+                                res_to_id="com' + ar['id'] + '" 
+                                after_click_showid="com' + ar['id'] + '" 
+                                msg_to_success="Комментарий удалён" 
+                        
+                                // эти строчки для второго запроса // будет отправлен если они есть
+                                ajax2_link='/vendor/didrive_mod/items/3/micro-service/delete-items.php'
+                                ajax2_vars='r_module=sp_ocenki_job_day&remove[sale_point]={{ sp_now }}&remove[date]={{ date }}'
+                        
+                                >aaaaaa</a>#}
+
+
+                        {% endfor %}
+
+                        {% if sps_heads__jm_sp[man_id] is not defined %}
+                            <small style="padding:3px; background-color: yellow;" > << укажите главную точку продаж</small>
+                        {% endif %}
+
+                        <div id="info_sp_head_{{ man_id }}" style="display:none;"></div>
+
+                    {% else %}
+
+                        <abbr title="текущая точка продаж главная" style="color: gray;" >{{ sps[get.sp]['head'] }}</abbr>
+
+                    {% endif %}
+
+                </div>
+
+                <div class="tcell" >&nbsp;</div>
+                <div class="tcell" >&nbsp;</div>
+                <div class="tcell" >&nbsp;</div>
+
             </div>
 
-            <div class="tcell" >&nbsp;</div>
-            <div class="tcell" >&nbsp;</div>
-            <div class="tcell" >&nbsp;</div>
+        {% endif %}
 
-        </div>
 
     {% else %}
 

@@ -7,6 +7,16 @@
         .sup_hover_gray:HOVER > sup.gray{ color: rgba(0,0,0,0.7); }
     </style>
 
+
+    {# если бух то показываем формочки #}
+
+    {% if session.now_user_di.admin_status is defined and 'buh' in session.now_user_di.admin_status %}
+        {% set now_buh = true %}
+    {% else %}
+        {% set now_buh = false %}    
+    {% endif %}
+
+
     {# таблицы если выбрана дата показа #}
 
     <div class="row">
@@ -21,20 +31,23 @@
             {# новая версия #}
             {% if 1 == 1 %}
 
-                {% if session['now_user_di']['soc_web_id'] == 5903492 %}
+                {#{% if session['now_user_di']['soc_web_id'] == 5903492 %}
                     {{ didrive_f__timer_start(781) }}
-                {% endif %}
+                {% endif %}#}
 
                 {# кто  #}
                 {% set jobmans = jobdesc_ms__get_list_jobmans_job_on_sp_month( db, sp_now, date_start ) %}
-                {# pa(jobmans) {{ pa(jobmans,2) }} #}
+                 {#pa(jobmans) {{ pa(jobmans,2) }} #}
 
-                {% if session['now_user_di']['soc_web_id'] == 5903492 %}
+                {#pa(jobmans.data.ar__jm_sp) {{ pa(jobmans.data.ar__jm_sp,2) }} #}
+
+
+                {#{% if session['now_user_di']['soc_web_id'] == 5903492 %}
                     <small>
                         <br/>
                         jobmans {{ didrive_f__timer_stop(781) }}
                     </small>
-                {% endif %}
+                {% endif %}#}
 
                 {#{{ pa(jobmans) }}#}
                 {#     pa(jobmans.data.send_on_job,2) 
@@ -43,28 +56,31 @@
                     {{ pa(jobmans.data.spec,2) }}
                 #}
 
-                {% if session['now_user_di']['soc_web_id'] == 5903492 %}
+                {#{% if session['now_user_di']['soc_web_id'] == 5903492 %}
                     {{ didrive_f__timer_start(781) }}
-                {% endif %}
+                {% endif %}#}
 
                 {% set actions = buh__jobdesc_ms__get_actions_jobmans_on_month( db, jobmans.data.jobmans|keys , date_start ) %}
 
-                {% if session['now_user_di']['soc_web_id'] == 5903492 %}
+                {#{% if session['now_user_di']['soc_web_id'] == 5903492 %}
                     <br/> pa(actions,2) {{ pa(actions,2) }}
-                {% endif %}
+                {% endif %}#}
 
+                {% if 1 == 2 %}
                 {% if session['now_user_di']['soc_web_id'] == 5903492 %}
                     <small>
                         <br/> 
                         actions {{ didrive_f__timer_stop(781) }}
                     </small>
                 {% endif %}
-
-                {% if session['now_user_di']['soc_web_id'] == 5903492 %}
-                    {{ didrive_f__timer_start(781) }}
                 {% endif %}
+                
+                {#{% if session['now_user_di']['soc_web_id'] == 5903492 %}
+                    {{ didrive_f__timer_start(781) }}
+                {% endif %}#}
 
                 {% if 1 == 2 %}
+
                     {% set position_pay = jobdesc_get_size_pay_position_month( db, sp_now, now_dolgn['dolgnost'], date_start ) %}
 
                     {% if session['now_user_di']['soc_web_id'] == 5903492 %}
@@ -78,17 +94,21 @@
                             </small>
                         </div>
                     {% endif %}
+
                 {% endif %}
 
                 
                 
-                {% set head_sps__jobman_sp = job_buh__get_head_sp( db, date_finish ) %}
-                {% if session['now_user_di']['soc_web_id'] == 5903492 %}
-                    <br/>pa(head_sps__jobman_sp)
-                    {{ pa(head_sps__jobman_sp,2) }} 
+                
+                {# 2010160823 #}
+                {#{% set head_sps__jobman_sp = job_buh__get_head_sp( db, date_finish ) %}#}
+
+                {% if 1 == 2 %}
+                    {% if session['now_user_di']['soc_web_id'] == 5903492 %}
+                        <br/>pa(head_sps__jobman_sp)
+                        {{ pa(head_sps__jobman_sp,2) }} 
+                    {% endif %}
                 {% endif %}
-
-
 
                 {% set pays = jobbuh__get_list_pays_for_jobmans_on_month( db, jobmans.data.jobmans|keys , get.d_fin ) %}
                 {#pays#}
@@ -99,25 +119,22 @@
             {% endif %}
 
 
-
-
-
-
-
             {#{% if get.sp is defined and getListJobsPeriodAll.data.job_on_sp[get.sp] is defined %}#}
             {% if get.sp is defined %}
 
+
+                {% set w = get %}
+                {% set w = w|merge({'type': 'print'}) %}
+                <a href="/i.didrive.php?{{ f__http_build_query(w) }}" target="_blank" >версия для печати</a>
+
                 {% set buh_pm_cfg = get_buh_PM_cfg() %}
 
-                {% set sps = items__get( db, 'sale_point' )  %}    
-                {#{ pa(sps) }#} 
                 {% set dolgnosti = items__get( db, '061.dolgnost' )  %}
                 {#{ pa(dolgns.data,2) }#}
 
                 {#используется 200708#}
                 {% set dolgn = jobdesc__get_dolgnosti( db, '061.dolgnost' )  %}
                 {#{ pa(dolgn,2) }#}
-
 
                 {# показ таблицы с данными #}
                 {% if 1 == 1 %}
@@ -136,34 +153,64 @@
                         <div class="ttable cell-padding5 list_otrezki2 cell-border">
 
                             <div class="trow user_head alert-warning stick-top"  >
-                                <div class="tcell" >
-                                    <span>Когда</span>
-                                </div>
-                                <div class="tcell" >
-                                    <span>За что</span>
-                                </div>
 
-                                <div class="tcell" >
-                                    <span>Начислено</span>&nbsp;₽
-                                </div>
-                                <div class="tcell" >
-                                    <span>Оплачено</span>&nbsp;₽
-                                </div>
+                                {# версия для печати #}
+                                {% if get.type is defined and get.type == 'print' %}
 
-                                <div class="tcell" >
-                                    <span>Остаток</span>&nbsp;₽
-                                </div>
+                                    <div class="tcell" >
+                                        <span>ФИО</span>
+                                    </div>
+
+                                    <div class="tcell" >
+                                        <span>Вознаграждения, Взыскания</span>&nbsp;(₽)
+                                    </div>
+
+                                    <div class="tcell" >
+                                        <span>Начислено</span>&nbsp;₽
+                                    </div>
+
+                                    <div class="tcell" >
+                                        <span>Сумма к&nbsp;выдаче</span>&nbsp;₽
+                                    </div>
+
+                                    <div class="tcell" >
+                                        <span>Личная подпись</span>
+                                    </div>
+
+                                    {# версия норм #}
+                                {% else %}
+
+
+                                    <div class="tcell" >
+                                        {#<span>Когда</span>#}
+                                    </div>
+                                    <div class="tcell" >
+                                        {#<span>За что</span>#}
+                                    </div>
+
+                                    <div class="tcell" >
+                                        Начислено<sup>(₽)</sup>
+                                    </div>
+
+                                    <div class="tcell" >
+                                        Оплачено<sup>(₽)</sup>
+                                    </div>
+
+                                    <div class="tcell" >
+                                        Остаток<sup>(₽)</sup>
+                                    </div>
+
+                                {% endif %}
 
                             </div>
 
-                            {#{%  for kk1, sort1 in dolgn.sort %}#}
-
-
                             {%  for kk1, sort1 in dolgn.sort %}
                                 {% for jobman_id, user_v in jobmans.data.send_on_job if user_v[0]['dolgnost'] == sort1.id %}
+                                    
                                     {#{{ pa(user_v) }}#}
                                     {% set man_id = user_v[0]['jobman'] %}
                                     {% set man = user_v[0]['fio'] %}
+                                    
                                     {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.2007.tables.user.htm' %}
                                 {% endfor %}
                             {% endfor %}

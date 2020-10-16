@@ -198,6 +198,9 @@ $function = new Twig_SimpleFunction('jobbuh__newGetSmensFullMonth', function ( $
 });
 $twig->addFunction($function);
 
+
+
+
 $function = new Twig_SimpleFunction('jobdesc__newGetPaysDopFullMonth', function ( $db, $user, $date ) {
 
     $res = \Nyos\mod\JobDesc::newGetPaysDopFullMonth($db, $user, $date);
@@ -206,6 +209,11 @@ $function = new Twig_SimpleFunction('jobdesc__newGetPaysDopFullMonth', function 
     return $res;
 });
 $twig->addFunction($function);
+
+
+
+
+
 
 $function = new Twig_SimpleFunction('get_buh_PM_cfg', function () {
 
@@ -226,11 +234,14 @@ $function = new Twig_SimpleFunction('get_buh_PM_cfg', function () {
                 !empty(\Nyos\Nyos::$menu[\Nyos\mod\JobDesc::$mod_buh_pm]['type_' . $t]['item' . $w . 'val'])) {
             $return[$t][\Nyos\Nyos::$menu[\Nyos\mod\JobDesc::$mod_buh_pm]['type_' . $t]['item' . $w . 'val']] = \Nyos\Nyos::$menu[\Nyos\mod\JobDesc::$mod_buh_pm]['type_' . $t]['item' . $w];
         }
+
     }
 
     return $return;
 });
 $twig->addFunction($function);
+
+
 
 
 

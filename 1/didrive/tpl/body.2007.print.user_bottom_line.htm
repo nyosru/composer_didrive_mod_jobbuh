@@ -1,0 +1,81 @@
+{% spaceless %}
+
+    <div class="trow xstick-top3" >
+
+        <div class="tcell" >{{ man }}</div>
+
+        <div class="tcell summa1" style="font-size: 13px;" >
+
+            {% set pm_user = job_buh__get_buh_PM2(db,get.d_start,man_id) %}
+
+            {% set diff_summ = 0 %}
+            {% set buh = 0 %}
+
+            {% for k,v in buh_pm_cfg.plus if k != 'skip' %}
+
+                {% if pm_user[k]['summa'] > 0 %}
+                    {% set diff_summ = diff_summ + ( pm_user[k]['summa'] ?? 0 ) %}
+                    {% set plus = plus + ( pm_user[k]['summa'] ?? 0 ) %}
+                {% endif %}
+
+                {# формочка добавить выплату доступна всем #}
+                {% if pm_user[k]['summa'] is defined and pm_user[k]['summa'] > 0 %}
+                    + {{ pm_user[k]['summa']|number_format(2, '.', '`') }}р - {{ v }}<br/>
+                {% endif %}
+
+            {% endfor %}
+
+            {% for k,v in buh_pm_cfg.minus if k != 'skip' %}
+
+                {% if pm_user[k]['summa'] > 0 %}
+                    {% set diff_summ = diff_summ - ( pm_user[k]['summa'] ?? 0 ) %}
+                    {% set minus = minus - ( pm_user[k]['summa'] ?? 0 ) %}
+                {% endif %}
+
+                {% if pm_user[k]['summa'] is defined and pm_user[k]['summa'] > 0 %}
+                    - {{ pm_user[k]['summa']|number_format(2, '.', '`') }}р - {{ v }}<br/>
+                {% endif %}
+
+            {% endfor %}
+
+            {% set pays0 = 0 %}
+
+            {% if pays[man_id] is defined %}
+
+                <br/>Произведённые выплаты 
+
+                {% for k,pay in pays[man_id] %}
+                    <br/><nobr>
+                        {{ pay.date }} - {{ pay.summa|number_format(2, '.', '`') }} р
+
+                        {% set pays0 = pays0 - pay.summa %}
+                    </nobr>
+                {% endfor %}
+
+            {% endif %}
+
+        </div>
+
+        <div class="tcell" style="text-align:right;" >
+            {% set summa_man = summa_man1 + minus + plus %}
+            {{ summa_man|number_format(2, '.', '`') }}
+        </div>
+
+        <div class="tcell" style="text-align:right;" >
+
+            {% if get.d_fin|date('d') == 20 %}
+                {% set itogo = ( ( ( summa_man/100*90 + diff_summ + pays0 ) / 100 ) )|round(0, 'floor') %}
+                {{ ( itogo * 100 )|number_format(2, '.', '`') }}
+            {% else %}
+                {% set itogo = summa_man + diff_summ + pays0 %}
+                {{ itogo|number_format(2, '.', '`') }}
+            {% endif %}
+
+        </div>
+        <div class="tcell" >
+
+        </div>
+
+    </div>
+
+{% endspaceless %}

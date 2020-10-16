@@ -15,7 +15,7 @@
                         {% set now_m = "now"|date("m") %}
                         {% set now_d = "now"|date("d") %}
 
-                        {% for year in 2019..2030 if year <= now_y %}
+                        {% for year in 2020..2030 if year <= now_y %}
 
                             <div class="btn-date-pick btn btn-xs btn-info" >{{ year }}</div>
                             {% set year2 = year+1 %}
@@ -229,7 +229,8 @@
             {% set d_now = "now"|date("Y-m-d") %}
             
             {#% set d_start = "2019-11-01" %#}
-            {% set d_start = "2020-04-01" %}
+            {#{% set d_start = "2020-04-01" %}#}
+            {% set d_start = "2020-09-01" %}
 
             {% for k in 0..50 %}
 

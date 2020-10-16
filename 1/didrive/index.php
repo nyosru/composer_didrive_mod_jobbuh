@@ -1,82 +1,38 @@
 <?php
 
-if (isset($_REQUEST['new_buh']{0})) {
-    $_SESSION['new_buh'] = $_REQUEST['new_buh'];
-    \f\redirect('/', 'i.didrive.php?level=' . $_GET['level']);
-}
+// получаем список точек продаж
 
+\Nyos\mod\items::$sql_select_vars = ['head', 'id'];
+$vv['sps'] = \Nyos\mod\items::get($db, \Nyos\mod\JobDesc::$mod_sale_point, 'show', 'id_id');
+//\f\pa($vv['sps']);
+// получаем список главных точек продаж (по дате конца периода отслеживаем)
 
+if (!empty($_GET['d_fin'])) {
+    \Nyos\mod\items::$sql_select_vars = ['jobman', 'sale_point'];
+    \Nyos\mod\items::$search['date'] = $_GET['d_fin'];
 
+    $t = \Nyos\mod\items::get($db, \Nyos\mod\JobDesc::$mod_buh_head_sp);
+    $vv['sps_heads__jm_sp'] = [];
 
-if ( 1 == 2 && isset($_SESSION['new_buh']) && $_SESSION['new_buh'] == 2 ) {
-
-    if (empty($vv['dihead']))
-        $vv['dihead'] = '';
-
-    echo '<div style="position: fixed; bottom: 100px; right: 50px; width: 350px;" >';
-
-    $dirs_for_scan = [
-//        __DIR__ . DS . 'dist' . DS . 'assets' . DS . 'css' . DS => '/vendor/didrive_mod/jobdesc/1/didrive/dist/assets/css/',
-//        __DIR__ . DS . 'dist' . DS . 'assets' . DS . 'js' . DS => '/vendor/didrive_mod/jobdesc/1/didrive/dist/assets/js/',
-//        __DIR__ . DS . 'dist' . DS . 'css' . DS => '/vendor/didrive_mod/jobdesc/1/didrive/dist/css/',
-//        __DIR__ . DS . 'dist' . DS . 'js' . DS => '/vendor/didrive_mod/jobdesc/1/didrive/dist/js/',
-        __DIR__ . DS . 'vue' . DS . 'dist' . DS . 'css' . DS => '/vendor/didrive_mod/job_buh/1/didrive/vue/dist/css/',
-        __DIR__ . DS . 'vue' . DS . 'dist' . DS . 'js' . DS => '/vendor/didrive_mod/job_buh/1/didrive/vue/dist/js/',
-    ];
-
-    foreach ($dirs_for_scan as $d => $dir_local) {
-
-// echo '<br/>#'.__LINE__.' '.__DIR__;
-        if (is_dir($d)) {
-
-            $list_f = scandir($d);
-            foreach ($list_f as $v) {
-
-                if (!isset($v{5}))
-                    continue;
-
-                // echo '<br/>#' . __LINE__ . ' ++1++ ' . $v;
-
-                if (strpos($v, '.css') !== false && strpos($v, 'app.') !== false) {
-                    echo '<br/>#' . __LINE__ . ' ' . $v;
-                    $vv['dihead'] .= '<link href="' . $dir_local . $v . '" rel="stylesheet">';
-                }
-
-                if (strpos($v, '.js') !== false && ( strpos($v, 'app.') !== false || strpos($v, 'chunk') !== false )) {
-                    echo '<br/>#' . __LINE__ . ' ' . $v;
-                    $vv['in_body_end'][] = '<script type="text/javascript" defer="defer" src="' . $dir_local . $v . '"></script>';
-                }
-
-            }
-
-        }
+    foreach ($t as $k => $v) {
+        if (!empty($v['jobman']) && !empty($v['sale_point']))
+            $vv['sps_heads__jm_sp'][$v['jobman']] = $v['sale_point'];
     }
-//// $vv['dihead'] .= '<link href="/assets/css/app.640f582b232504c57832.css" rel="stylesheet">';
-//
-//    if (is_dir(__DIR__ . DS . 'dist' . DS . 'assets' . DS . 'js' . DS)) {
-//        $list_f = scandir(__DIR__ . DS . 'dist' . DS . 'assets' . DS . 'js' . DS);
-//        foreach ($list_f as $v) {
-//            if (strpos($v, '.js') !== false && (strpos($v, 'app.') !== false || strpos($v, 'vendors.') !== false)) {
-//                // echo '<br/>#' . __LINE__ . ' ' . $v;
-//                $vv['in_body_end'][] = '<script type="text/javascript" defer="defer" src="/vendor/didrive_mod/jobdesc/1/didrive/dist/assets/js/' . $v . '"></script>';
-//            }
-//        }
-//    }
-// $vv['in_body_end'][] = '<script type="text/javascript" src="/assets/js/vendors.f2e79c865ce2172cb7cb.js"></script>';
-// $vv['in_body_end'][] = '<script type="text/javascript" src="/assets/js/app.caac25aa43296c4b8c6d.js"></script>';
 
-    echo '</div>';
+    //unset($t);
+    
+    
+//    echo '-------';
+//    \f\pa($vv['sps_heads__jm_sp']);
+//    \f\pa($t);
+//    echo '++++++++';
+
 }
-
-
-
-
-
 
 
 if (isset($_REQUEST['type']) && $_REQUEST['type'] == 'print') {
 
-    $tpl_print_end = \f\like_tpl('body.print', dir_mods_mod_vers_didrive_tpl, dir_site_module_nowlev_tpldidr, DR);
+    $tpl_print_end = \f\like_tpl('body.2007.print', dir_mods_mod_vers_didrive_tpl, dir_site_module_nowlev_tpldidr, DR);
 
 // echo '<br/>#'.__LINE__.' '.$tpl_print_end;
 } else {
@@ -90,14 +46,4 @@ if (isset($_REQUEST['type']) && $_REQUEST['type'] == 'print') {
     );
 
     $vv['tpl_body'] = \f\like_tpl('body', dir_mods_mod_vers_didrive_tpl, dir_site_module_nowlev_tpldidr, DR);
-    
 }
-
-
-
-//$vv['in_body_end'][] = '<script defer="defer" src="' . DS . 'vendor' . DS . 'didrive' . DS . 'base' . DS . 'js.lib' . DS . 'jquery.ba-throttle-debounce.min.js"></script>';
-
-
-
-
-
