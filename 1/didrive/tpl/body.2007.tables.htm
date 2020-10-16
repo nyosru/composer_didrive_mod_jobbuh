@@ -122,10 +122,11 @@
             {#{% if get.sp is defined and getListJobsPeriodAll.data.job_on_sp[get.sp] is defined %}#}
             {% if get.sp is defined %}
 
-
+                {% if hide_link_print_buh is not defined %}                
                 {% set w = get %}
                 {% set w = w|merge({'type': 'print'}) %}
                 <a href="/i.didrive.php?{{ f__http_build_query(w) }}" target="_blank" >версия для печати</a>
+                {% endif %}
 
                 {% set buh_pm_cfg = get_buh_PM_cfg() %}
 
