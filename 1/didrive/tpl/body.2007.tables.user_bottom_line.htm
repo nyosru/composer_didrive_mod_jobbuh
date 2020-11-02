@@ -50,43 +50,8 @@
                                     {% set dops = { 'jobman' : man_id ,
                                            "date" : get.d_start ,
                                            "type_plus" :  k } %}
-                                    {% if 1 == 2 %}
-                                        <input type="number" 
-                                               class="didrive__items__new_edit"
-                                               style="width: 80px;"
 
-                                               step="0.01"
-                                               min="1"
-                                               max="99999"
-                                               placeholder=""
-
-                                               action="{{ action }}"
-                                               items_module="{{ aj_module }}"
-
-                                               edit_dop_name="{{ aj_edit_pole }}"
-                                               value="{{ aj_value }}"
-
-                                               {% set string_dop = '' %}
-                                               {% set nn = 1 %}
-
-                                               {% for k,v in dops %}
-
-                                                   addpole{{ nn }} = "{{ k }}"
-                                                   addpole{{ nn }}val = "{{ v }}"
-
-                                                   {% set string_dop = string_dop~'_'~k~'_'~v %}
-
-                                                   {% set nn = nn+1 %}
-
-                                               {% endfor %}
-
-                                               aj_id="{{ action }}_{{ aj_module }}{{ string_dop }}"
-                                               aj_s="{{ creatSecret( action ~'_'~ aj_module ~ string_dop ) }}"
-
-                                               >
-                                    {% endif %}                            
-
-                                    <input type="number" max="30000" min="0" step="0.1"
+                                    <input type="number" min="1" step="0.1"
                                            {#placeholder="уточнить"#}
                                            title="укажите сумму"
 
@@ -359,10 +324,13 @@
                                     {#date_end_period#}
                                     <input type="hidden" name="date_end_period" value="{{ get.d_fin }}" />
 
-                                    <input type="date" name="date" value="{{ "now"|date('Y-m-d') }}" />
-                                    <br/>
-                                    <input type="number" name="summa" value="" />
-
+                                    <input type="date" name="date" value="{{ "now"|date('Y-m-d') }}" 
+                                           title="дата выплаты"
+                                           style="width: 130px;" class="form-control" />
+                                    <input type="number" min="1" name="summa" value="" 
+                                           title="сумма руб выплаты"
+                                           placeholder="Сумма (руб)"
+                                           style="width: 130px;" class="form-control" />
                                     {#sale_point#}
                                     <input type="hidden" name="sale_point" value="{{ get.sp }}" />
 
@@ -376,7 +344,10 @@
                                     {#pay_buh_dt
                                     <input type="datetime" name="pay_buh_dt" value="" />#}
 
-                                    <input type="submit" name="add" value="Добавить выплату" />
+                                    <input type="submit" 
+                                           class="btn btn-xs btn-success"
+                                           name="add" value="Добавить выплату" />
+                                    
                                 </form>
                             </center>
                         </div>

@@ -67,7 +67,8 @@ try {
 //            . '</nobr>'
 //            . '</div>', true);
 
-    \f\end2('не', false);
+    \f\end2('выплата добавлена', true);
+    
 } catch (Exception $exc) {
 
     echo '<pre>';
