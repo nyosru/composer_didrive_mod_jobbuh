@@ -518,6 +518,20 @@ class JobBuh {
             // новая версия с новыми бд
             if (1 == 1) {
 
+                $sql = 'SELECT oborot FROM v__month_oborot WHERE date_y = :date_y AND date_m = :date_m AND sale_point = :sp LIMIT 1;';
+                $ff = $db->prepare($sql);
+                $ff->execute([
+                    ':date_y' => date('Y', strtotime($str_date)),
+                    ':date_m' => ceil(date('m', strtotime($str_date))),
+                    ':sp' => $sp_id
+                ]);
+                $kk0 = $ff->fetch();
+                $kk = $kk0['oborot'];
+
+            }
+            // новая версия с новыми бд
+            elseif (2 == 1) {
+
                 $sql = 'SELECT oborot FROM temp_oborot WHERE date_y = :date_y AND date_m = :date_m AND sale_point = :sp LIMIT 1;';
                 $ff = $db->prepare($sql);
                 $ff->execute([
