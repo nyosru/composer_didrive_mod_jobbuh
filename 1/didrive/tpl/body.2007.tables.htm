@@ -7,7 +7,6 @@
         .sup_hover_gray:HOVER > sup.gray{ color: rgba(0,0,0,0.7); }
     </style>
 
-
     {# если бух то показываем формочки #}
 
     {% if session.now_user_di.admin_status is defined and 'buh' in session.now_user_di.admin_status %}
@@ -15,7 +14,6 @@
     {% else %}
         {% set now_buh = false %}    
     {% endif %}
-
 
     {# таблицы если выбрана дата показа #}
 
@@ -28,104 +26,18 @@
 
             {% set sp_now = get.sp %}
 
-            {# новая версия #}
-            {% if 1 == 1 %}
-
-                {#{% if session['now_user_di']['soc_web_id'] == 5903492 %}
-                    {{ didrive_f__timer_start(781) }}
-                {% endif %}#}
-
-                {# кто  #}
-                {% set jobmans = jobdesc_ms__get_list_jobmans_job_on_sp_month( db, sp_now, date_start ) %}
-                 {#pa(jobmans) {{ pa(jobmans,2) }} #}
-
-                {#pa(jobmans.data.ar__jm_sp) {{ pa(jobmans.data.ar__jm_sp,2) }} #}
-
-
-                {#{% if session['now_user_di']['soc_web_id'] == 5903492 %}
-                    <small>
-                        <br/>
-                        jobmans {{ didrive_f__timer_stop(781) }}
-                    </small>
-                {% endif %}#}
-
-                {#{{ pa(jobmans) }}#}
-                {#     pa(jobmans.data.send_on_job,2) 
-                    {{ pa(jobmans.data.send_on_job,2) }}
-                     pa(jobmans.data.spec,2) 
-                    {{ pa(jobmans.data.spec,2) }}
-                #}
-
-                {#{% if session['now_user_di']['soc_web_id'] == 5903492 %}
-                    {{ didrive_f__timer_start(781) }}
-                {% endif %}#}
-
-                {% set actions = buh__jobdesc_ms__get_actions_jobmans_on_month( db, jobmans.data.jobmans|keys , date_start ) %}
-
-                {#{% if session['now_user_di']['soc_web_id'] == 5903492 %}
-                    <br/> pa(actions,2) {{ pa(actions,2) }}
-                {% endif %}#}
-
-                {% if 1 == 2 %}
-                {% if session['now_user_di']['soc_web_id'] == 5903492 %}
-                    <small>
-                        <br/> 
-                        actions {{ didrive_f__timer_stop(781) }}
-                    </small>
-                {% endif %}
-                {% endif %}
-                
-                {#{% if session['now_user_di']['soc_web_id'] == 5903492 %}
-                    {{ didrive_f__timer_start(781) }}
-                {% endif %}#}
-
-                {% if 1 == 2 %}
-
-                    {% set position_pay = jobdesc_get_size_pay_position_month( db, sp_now, now_dolgn['dolgnost'], date_start ) %}
-
-                    {% if session['now_user_di']['soc_web_id'] == 5903492 %}
-                        <div style="border-left: 1px solid green; padding-left: 10px;" >
-                            <Br/>
-                            position_pay
-                            {{ pa(position_pay,2) }}
-                            <br/>
-                            <small>
-                                <br/> position_pay {{ didrive_f__timer_stop(781) }}
-                            </small>
-                        </div>
-                    {% endif %}
-
-                {% endif %}
-
-                
-                
-                
-                {# 2010160823 #}
-                {#{% set head_sps__jobman_sp = job_buh__get_head_sp( db, date_finish ) %}#}
-
-                {% if 1 == 2 %}
-                    {% if session['now_user_di']['soc_web_id'] == 5903492 %}
-                        <br/>pa(head_sps__jobman_sp)
-                        {{ pa(head_sps__jobman_sp,2) }} 
-                    {% endif %}
-                {% endif %}
-
-                {% set pays = jobbuh__get_list_pays_for_jobmans_on_month( db, jobmans.data.jobmans|keys , get.d_fin ) %}
-                {#pays#}
-                {#{{ pa( pays ) }} #}
-
-
-
-            {% endif %}
+            {% set jobmans = jobdesc_ms__get_list_jobmans_job_on_sp_month( db, sp_now, date_start ) %}
+            {% set actions = buh__jobdesc_ms__get_actions_jobmans_on_month( db, jobmans.data.jobmans|keys , date_start ) %}
+            {% set pays = jobbuh__get_list_pays_for_jobmans_on_month( db, jobmans.data.jobmans|keys , get.d_fin ) %}
 
 
             {#{% if get.sp is defined and getListJobsPeriodAll.data.job_on_sp[get.sp] is defined %}#}
             {% if get.sp is defined %}
 
                 {% if hide_link_print_buh is not defined %}                
-                {% set w = get %}
-                {% set w = w|merge({'type': 'print'}) %}
-                <a href="/i.didrive.php?{{ f__http_build_query(w) }}" target="_blank" >версия для печати</a>
+                    {% set w = get %}
+                    {% set w = w|merge({'type': 'print'}) %}
+                    <a href="/i.didrive.php?{{ f__http_build_query(w) }}" target="_blank" >версия для печати</a>
                 {% endif %}
 
                 {% set buh_pm_cfg = get_buh_PM_cfg() %}
@@ -181,7 +93,6 @@
                                     {# версия норм #}
                                 {% else %}
 
-
                                     <div class="tcell" >
                                         {#<span>Когда</span>#}
                                     </div>
@@ -207,15 +118,14 @@
 
                             {%  for kk1, sort1 in dolgn.sort %}
                                 {% for jobman_id, user_v in jobmans.data.send_on_job if user_v[0]['dolgnost'] == sort1.id %}
-                                    
+
                                     {#{{ pa(user_v) }}#}
                                     {% set man_id = user_v[0]['jobman'] %}
                                     {% set man = user_v[0]['fio'] %}
-                                    
+
                                     {% include '/vendor/didrive_mod/job_buh/1/didrive/tpl/body.2007.tables.user.htm' %}
                                 {% endfor %}
                             {% endfor %}
-
 
                         </div>
                     </span>
