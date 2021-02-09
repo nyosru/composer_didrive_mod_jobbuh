@@ -5,6 +5,7 @@
     <div class="row">
         <div class="col-xs-12 col-xl-12" style="margin-top: 3vh; margin-bottom: 3vh;">
 
+            
             <div xclass="btn-group" xrole="group" xaria-label="Basic example">
 
                 {% if 1 == 2 %}
@@ -185,10 +186,11 @@
                 {% set gets = get %}
                 {#{ pa(gets) }#}
 
-                <div class="btn-group" role="group" aria-label="Basic example" style="margin-bottom: 0.2em; margin-top: 0.2em;" >
+                <div {#class="btn-group" role="group" aria-label="Basic example"#} style="margin-bottom: 0.2em; margin-top: 0.2em;" >
 
                     {# <div class="btn-group mr-2" role="group" aria-label="First group"> #}
-                    <button type="button" class="btn btn-xs btn-default">Показать:</button>
+                    {#<button type="button" class="btn btn-xs btn-default">Показать:</button>#}
+                    <b>Точки продаж:</b>
                     {# </div>
                     <div class="btn-group mr-2" role="group" aria-label="First group"> #}
 
@@ -208,7 +210,9 @@
 
                         {#% set gets['now_sp'] = sp_now %#}
                         {% set gets = gets|merge({'sp':sp_now['id']}) %}
-                        <a class="btn btn-xs  {% if get.sp == sp_now.id %}btn-info{% else %}btn-light{% endif %} " href="?{{ http_build_query(gets) }}" >{{ sp_now['head'] }}</a>
+                        <a class="btn btn-xs  {% if get.sp == sp_now.id %}btn-info{% else %}btn-light{% endif %} " 
+                           style="margin-right:2px;margin-bottom:2px;"
+                           href="?{{ http_build_query(gets) }}" >{{ sp_now['head'] }}</a>
                         {#{ pa(sp_now) }#}
 
                     {% endfor %}
@@ -243,10 +247,11 @@
                     {% if last_y != now_y %}
                         
                         {% if last_y != '' %}
-                        </div>
+                        {#</div>#}
+                        <br/>
                         {% endif %}
                         
-                        <br/>
+                        {#<br/>#}
 
                         {#<button type="button" class="btn-date-pick btn btn-xs btn-light"><b>{{ now_y }}</b>:</button>#}
                         <b>{{ now_y }}</b>:
@@ -264,7 +269,7 @@
 
                         {% set gets = gets|merge({ 'd_start0':d1, 'd_start':d1, 'd_fin':d2 , 'd_stop':'' }) %}
                         
-                        <div class="btn-group" role="group" aria-label="Basic example" style="margin-bottom: 0.2em; margin-top: 0.2em; margin-right: 5px;">
+                        <div class="btn-group" role="group" {#aria-label="Basic example"#} style="xmargin-bottom: 0.2em; margin-top: 0.2em; margin-right: 5px;" >
                         <button type="button" class="btn-date-pick btn btn-xs btn-light"><b>
                             {% if d2[5:2]|round == 1 %}
                                 Январь
@@ -322,6 +327,8 @@
 
                      </div> 
 
+
+                           
                 {% endif %}
 
             {% endfor %}
