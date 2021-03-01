@@ -35,14 +35,17 @@
         {% if date|date("U") <= date_finish|date("U") %}
 
             {% set new_dolgn = '' %}
+            {% set last_id = '' %}
 
             {% for k3,i in actions.data.actions if i['date'] == date and ( i['type'] == 'check' 
                     or i['type'] == 'plus' 
                     or i['type'] == 'minus' 
                     or i['type'] == 'auto_plus' 
-                    ) and i['jobman'] == man_id %}
+                    ) and i['jobman'] == man_id 
+                    and last_id != i.id 
+            %}
 
-
+            {% set last_id = i.id %}
 
             {% set today_summ = 0 %}
             {% set today_summa = 0 %}
